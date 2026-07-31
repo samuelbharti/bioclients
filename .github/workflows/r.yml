@@ -1,0 +1,110 @@
+name: R-CMD-check
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ["pkg-r/**", ".github/workflows/r.yml"]
+  pull_request:
+    paths: ["pkg-r/**", ".github/workflows/r.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+    name: R-CMD-check (${{ matrix.config.os }}, ${{ matrix.config.r }})
+    strategy:
+      fail-fast: false
+      # CRAN checks against r-devel, r-release, and r-oldrel, so the matrix
+      # covers all three. devel and oldrel run on ubuntu; the other platforms
+      # cover release, which is what most users are on.
+      matrix:
+        config:
+          - { os: ubuntu-latest, r: "devel", http-user-agent: "release" }
+          - { os: ubuntu-latest, r: "release" }
+          - { os: ubuntu-latest, r: "oldrel-1" }
+          - { os: windows-latest, r: "release" }
+          - { os: macos-latest, r: "release" }
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+          working-directory: pkg-r
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          working-directory: pkg-r
+          upload-snapshots: true
+
+  # The Suggests split is an architectural requirement (build plan section 5.2):
+  # a caller that wants one service must not install the dependency closure of
+  # every other one. This job is what enforces it. It installs hard dependencies
+  # only, so any client reaching for an optional package without a
+  # requireNamespace() guard fails here.
+  #
+  # testthat is added back by hand because it is the test harness rather than a
+  # per-service dependency. Everything else in Suggests stays absent, so a test
+  # that needs one must skip_if_not_installed() rather than assume it.
+  imports-only:
+    runs-on: ubuntu-latest
+    name: imports-only
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          # "hard" is Depends, Imports and LinkingTo. No Suggests.
+          dependencies: '"hard"'
+          extra-packages: any::testthat, local::.
+          working-directory: pkg-r
+
+      - name: Run the suite with no Suggests installed
+        run: Rscript testthat.R
+        working-directory: pkg-r/tests
+
+  lint-r:
+    runs-on: ubuntu-latest
+    name: lint-r
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::lintr, local::.
+          needs: lint
+          working-directory: pkg-r
+
+      - name: Lint
+        run: lintr::lint_package()
+        shell: Rscript {0}
+        working-directory: pkg-r
+        env:
+          LINTR_ERROR_ON_LINT: true
