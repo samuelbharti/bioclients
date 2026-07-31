@@ -1,0 +1,35 @@
+url: https://www.samuelbharti.com/bioclients/
+
+# pkgdown defaults to docs/, which would collide with the package's own docs
+# directory, so the generated site gets its own.
+destination: _site
+
+template:
+  bootstrap: 5
+  light-switch: true
+  bslib:
+    primary: "#1a6b54"
+    base_font: {google: "Source Sans 3"}
+    heading_font: {google: "Bricolage Grotesque"}
+    code_font: {google: "JetBrains Mono"}
+    border-radius: "0.25rem"
+
+home:
+  title: bioclients
+  description: >
+    One client per biological database, each with a pure parser that runs
+    offline.
+
+navbar:
+  structure:
+    left: [reference, news]
+    right: [github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/samuelbharti/bioclients
+
+reference:
+  - title: Package
+    contents:
+      - bioclients-package

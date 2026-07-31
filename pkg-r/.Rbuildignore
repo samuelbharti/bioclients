@@ -1,0 +1,7 @@
+^LICENSE\.md$
+^\.Rbuildignore$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^vignettes/articles$
+^cran-comments\.md$

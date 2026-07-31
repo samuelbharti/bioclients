@@ -1,0 +1,29 @@
+Package: bioclients
+Title: Clients for Biological Database Web Services
+Version: 0.0.0.9000
+Authors@R:
+    person("Samuel", "Bharti", , "samuelbharti.io@gmail.com",
+           role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0003-4190-7058"))
+Description: One client per biological database, each split into a request half
+    that calls the service and a parser half that turns a response body into a
+    canonical structure. The parser is pure, so it is tested against a stored
+    response with no network. Transport, retries, caching, and error handling
+    are left to the 'biohttp' package. Per-service dependencies are optional, so
+    a caller that wants one service does not install the requirements of the
+    rest.
+License: MIT + file LICENSE
+URL: https://github.com/samuelbharti/bioclients
+BugReports: https://github.com/samuelbharti/bioclients/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.0)
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    webfakes,
+    withr
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
