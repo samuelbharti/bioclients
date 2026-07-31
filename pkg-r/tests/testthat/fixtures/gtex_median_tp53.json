@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "median": 30.5,
+      "tissueSiteDetailId": "Nerve_Tibial",
+      "datasetId": "gtex_v8",
+      "gencodeId": "ENSG00000141510.16",
+      "geneSymbol": "TP53",
+      "unit": "TPM"
+    },
+    {
+      "median": 25.1,
+      "tissueSiteDetailId": "Liver",
+      "datasetId": "gtex_v8",
+      "gencodeId": "ENSG00000141510.16",
+      "geneSymbol": "TP53",
+      "unit": "TPM"
+    },
+    {
+      "median": 40.0,
+      "tissueSiteDetailId": "Brain_Cortex",
+      "datasetId": "gtex_v8",
+      "gencodeId": "ENSG00000141510.16",
+      "geneSymbol": "TP53",
+      "unit": "TPM"
+    }
+  ]
+}
