@@ -1,0 +1,19 @@
+{
+  "Gene": "TP53",
+  "Ensembl": "ENSG00000141510",
+  "Uniprot": ["P04637"],
+  "Protein class": [
+    "Cancer-related genes",
+    "Disease related genes",
+    "Human disease related genes",
+    "Potential drug targets",
+    "Transcription factors"
+  ],
+  "Disease involvement": [
+    "Cancer-related genes",
+    "Disease variant",
+    "Li-Fraumeni syndrome",
+    "Tumor suppressor"
+  ],
+  "RNA tissue specificity": "Low tissue specificity"
+}
