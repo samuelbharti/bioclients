@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: If you use bioclients in your work, please cite it as below.
+title: "bioclients: Clients for Biological Database Web Services"
+abstract: >-
+  One client per biological database, each split into a request half that calls
+  the service and a parser half that turns a response body into a canonical
+  structure. The parser is pure, so it is tested against a stored response with
+  no network. Transport, retries, caching, and error handling are left to the
+  biohttp package. Per-service dependencies are optional, so a caller that wants
+  one service does not install the requirements of the rest.
+type: software
+version: 0.0.0.9000
+authors:
+  - family-names: Bharti
+    given-names: Samuel
+    email: samuelbharti.io@gmail.com
+    orcid: https://orcid.org/0000-0003-4190-7058
+repository-code: https://github.com/samuelbharti/bioclients
+url: https://www.samuelbharti.com/bioclients/
+license: MIT
+keywords:
+  - bioinformatics
+  - api-client
+  - genomics
+  - variant-annotation
+  - r
