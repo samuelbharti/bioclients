@@ -1,0 +1,188 @@
+{
+  "limit": 20,
+  "offset": 0,
+  "total": 26,
+  "items": [
+    {
+      "id": "MONDO:0007947",
+      "category": "biolink:Disease",
+      "name": "Marfan syndrome",
+      "full_name": null,
+      "in_taxon": null,
+      "in_taxon_label": null,
+      "symbol": null,
+      "file_source": "phenio_nodes",
+      "provided_by": "phenio_nodes",
+      "type": null,
+      "description": "A disorder of the connective tissue. Connective tissue provides strength and flexibility to structures throughout the body such as bones, ligaments, muscles, walls of blood vessels, and heart valves. Marfan syndrome affects most organs and tissues, especially the skeleton, lungs, eyes, heart, and the large blood vessel that distributes blood from the heart to the rest of the body (the aorta). It is caused by mutations in the FBN1 gene, which provides instructions for making a protein called fibrillin-1. Marfan syndrome is inherited in an autosomal dominant pattern. At least 25% of cases are due to a new (de novo) mutation. Treatment is based on the signs and symptoms in each person.",
+      "iri": null,
+      "has_attribute": null,
+      "has_biological_sex": null,
+      "broad_synonym": null,
+      "narrow_synonym": null,
+      "related_synonym": null,
+      "deprecated": null,
+      "same_as": null,
+      "synonyms": null,
+      "has_gene": null,
+      "namespace": "MONDO",
+      "has_phenotype_count": 105,
+      "has_descendant": [
+        "MONDO:0017309",
+        "MONDO:0007947"
+      ],
+      "has_descendant_label": [
+        "neonatal Marfan syndrome",
+        "Marfan syndrome"
+      ],
+      "has_descendant_count": 2,
+      "score": null,
+      "highlighting": {
+        "name": [
+          "<em>Marfan<\/em> <em>syndrome<\/em>"
+        ],
+        "description": [
+          ". <em>Marfan<\/em> <em>syndrome<\/em> affects most organs and tissues, especially the skeleton, lungs, eyes, heart, and the"
+        ],
+        "synonym": [
+          "<em>Marfan<\/em> <em>syndrome<\/em>"
+        ]
+      }
+    },
+    {
+      "id": "MONDO:0017309",
+      "category": "biolink:Disease",
+      "name": "neonatal Marfan syndrome",
+      "synonym": [
+        "neonatal MFS"
+      ],
+      "full_name": null,
+      "in_taxon": null,
+      "in_taxon_label": null,
+      "symbol": null,
+      "file_source": "phenio_nodes",
+      "provided_by": "phenio_nodes",
+      "type": null,
+      "description": "Neonatal Marfan syndrome is a rare, severe and life-threatening genetic disease, occurring during the neonatal period, characterized by classical Marfan syndrome manifestations in addition to facial dysmorphism (megalocornea, iridodonesis, ectopia lentis, crumpled ears, loose redundant skin giving a 'senile' facial appearance), flexion joint contractures, pulmonary emphysema, and a severe, rapidly progressive cardiovascular disease (including ascending aortic dilatation and severe mitral and/or tricuspid valve insufficiency). Additionally, skeletal manifestations (arachnodactyly, dolichostenomelia, pectus deformities) are also associated.",
+      "iri": null,
+      "has_attribute": null,
+      "has_biological_sex": null,
+      "exact_synonym": [
+        "neonatal MFS"
+      ],
+      "broad_synonym": null,
+      "narrow_synonym": null,
+      "related_synonym": null,
+      "deprecated": null,
+      "same_as": null,
+      "synonyms": null,
+      "has_gene": null,
+      "namespace": "MONDO",
+      "has_phenotype_count": 43,
+      "has_descendant": [
+        "MONDO:0017309"
+      ],
+      "has_descendant_label": [
+        "neonatal Marfan syndrome"
+      ],
+      "has_descendant_count": 1,
+      "score": null,
+      "highlighting": {
+        "name": [
+          "neonatal <em>Marfan<\/em> <em>syndrome<\/em>"
+        ],
+        "description": [
+          "Neonatal <em>Marfan<\/em> <em>syndrome<\/em> is a rare, severe and life-threatening genetic disease, occurring during"
+        ]
+      }
+    },
+    {
+      "id": "MONDO:1010296",
+      "category": "biolink:Disease",
+      "name": "Marfan syndrome, non-human animal",
+      "xref": [
+        "OMIA:000628"
+      ],
+      "synonym": null,
+      "full_name": null,
+      "in_taxon": null,
+      "in_taxon_label": null,
+      "symbol": null,
+      "file_source": "phenio_nodes",
+      "provided_by": "phenio_nodes",
+      "type": null,
+      "description": "Marfan syndrome that occurs in non-human animals.",
+      "iri": null,
+      "has_attribute": null,
+      "has_biological_sex": null,
+      "exact_synonym": null,
+      "broad_synonym": null,
+      "narrow_synonym": null,
+      "related_synonym": null,
+      "deprecated": null,
+      "same_as": null,
+      "subsets": null,
+      "synonyms": null,
+      "has_gene": null,
+      "namespace": "MONDO",
+      "has_phenotype": null,
+      "has_phenotype_label": null,
+      "has_phenotype_count": 0,
+      "has_phenotype_closure": null,
+      "has_phenotype_closure_label": null,
+      "has_descendant": [
+        "MONDO:1011155",
+        "MONDO:1011156",
+        "MONDO:1010296"
+      ],
+      "has_descendant_label": [
+        "Marfan syndrome, FBN1-related, pig",
+        "Marfan syndrome, FBN1-related, cattle",
+        "Marfan syndrome, non-human animal"
+      ],
+      "has_descendant_count": 3,
+      "score": null,
+      "highlighting": {
+        "name": [
+          "<em>Marfan<\/em> <em>syndrome<\/em>, non-human animal"
+        ],
+        "description": [
+          "<em>Marfan<\/em> <em>syndrome<\/em> that occurs in non-human animals."
+        ]
+      }
+    }
+  ],
+  "facet_fields": [
+    {
+      "label": "category",
+      "facet_values": [
+        {
+          "label": "biolink:Disease",
+          "count": 22
+        },
+        {
+          "label": "biolink:Gene",
+          "count": 3
+        },
+        {
+          "label": "biolink:MolecularActivity",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "label": "in_taxon_label",
+      "facet_values": [
+        {
+          "label": "Bos taurus",
+          "count": 2
+        },
+        {
+          "label": "Homo sapiens",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "facet_queries": []
+}

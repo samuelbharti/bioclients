@@ -1,0 +1,217 @@
+{
+  "limit": 20,
+  "offset": 0,
+  "total": 206,
+  "items": [
+    {
+      "id": "HGNC:3603",
+      "category": "biolink:Gene",
+      "name": "FBN1",
+      "xref": [
+        "ENSEMBL:ENSG00000166147",
+        "OMIM:134797"
+      ],
+      "full_name": "fibrillin 1",
+      "in_taxon": "NCBITaxon:9606",
+      "in_taxon_label": "Homo sapiens",
+      "symbol": "FBN1",
+      "file_source": "hgnc_gene_nodes",
+      "provided_by": "hgnc_gene_nodes",
+      "type": "SO:0001217",
+      "description": null,
+      "iri": null,
+      "has_attribute": null,
+      "has_biological_sex": null,
+      "exact_synonym": null,
+      "broad_synonym": null,
+      "narrow_synonym": null,
+      "related_synonym": null,
+      "deprecated": null,
+      "same_as": null,
+      "subsets": null,
+      "synonyms": null,
+      "has_gene": null,
+      "namespace": "HGNC",
+      "has_phenotype_count": 191,
+      "has_descendant": null,
+      "has_descendant_label": null,
+      "has_descendant_count": 0,
+      "score": null,
+      "highlighting": {
+        "symbol": [
+          "<em>FBN1<\/em>"
+        ],
+        "name": [
+          "<em>FBN1<\/em>"
+        ]
+      }
+    },
+    {
+      "id": "NCBIGene:373992",
+      "category": "biolink:Gene",
+      "name": "FBN1",
+      "xref": null,
+      "synonym": null,
+      "full_name": "fibrillin 1",
+      "in_taxon": "NCBITaxon:9031",
+      "in_taxon_label": "Gallus gallus",
+      "symbol": "FBN1",
+      "file_source": "ncbi_gene_9031_nodes",
+      "provided_by": "ncbi_gene_9031_nodes",
+      "type": null,
+      "description": "fibrillin 1",
+      "iri": null,
+      "has_attribute": null,
+      "has_biological_sex": null,
+      "exact_synonym": null,
+      "broad_synonym": null,
+      "narrow_synonym": null,
+      "related_synonym": null,
+      "deprecated": null,
+      "same_as": null,
+      "subsets": null,
+      "synonyms": null,
+      "has_gene": null,
+      "namespace": "NCBIGene",
+      "has_phenotype": null,
+      "has_phenotype_label": null,
+      "has_phenotype_count": 0,
+      "has_phenotype_closure": null,
+      "has_phenotype_closure_label": null,
+      "has_descendant": null,
+      "has_descendant_label": null,
+      "has_descendant_count": 0,
+      "score": null,
+      "highlighting": {
+        "symbol": [
+          "<em>FBN1<\/em>"
+        ],
+        "name": [
+          "<em>FBN1<\/em>"
+        ]
+      }
+    },
+    {
+      "id": "NCBIGene:478293",
+      "category": "biolink:Gene",
+      "name": "FBN1",
+      "xref": null,
+      "synonym": null,
+      "full_name": "fibrillin 1",
+      "in_taxon": "NCBITaxon:9615",
+      "in_taxon_label": "Canis lupus familiaris",
+      "symbol": "FBN1",
+      "file_source": "ncbi_gene_9615_nodes",
+      "provided_by": "ncbi_gene_9615_nodes",
+      "type": null,
+      "description": "fibrillin 1",
+      "iri": null,
+      "has_attribute": null,
+      "has_biological_sex": null,
+      "exact_synonym": null,
+      "broad_synonym": null,
+      "narrow_synonym": null,
+      "related_synonym": null,
+      "deprecated": null,
+      "same_as": null,
+      "subsets": null,
+      "synonyms": null,
+      "has_gene": null,
+      "namespace": "NCBIGene",
+      "has_phenotype": null,
+      "has_phenotype_label": null,
+      "has_phenotype_count": 0,
+      "has_phenotype_closure": null,
+      "has_phenotype_closure_label": null,
+      "has_descendant": null,
+      "has_descendant_label": null,
+      "has_descendant_count": 0,
+      "score": null,
+      "highlighting": {
+        "symbol": [
+          "<em>FBN1<\/em>"
+        ],
+        "name": [
+          "<em>FBN1<\/em>"
+        ]
+      }
+    }
+  ],
+  "facet_fields": [
+    {
+      "label": "category",
+      "facet_values": [
+        {
+          "label": "biolink:SequenceVariant",
+          "count": 129
+        },
+        {
+          "label": "biolink:Genotype",
+          "count": 53
+        },
+        {
+          "label": "biolink:Gene",
+          "count": 12
+        },
+        {
+          "label": "biolink:Disease",
+          "count": 7
+        },
+        {
+          "label": "biolink:ClinicalMeasurement",
+          "count": 4
+        },
+        {
+          "label": "biolink:NamedThing",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "label": "in_taxon_label",
+      "facet_values": [
+        {
+          "label": "Homo sapiens",
+          "count": 100
+        },
+        {
+          "label": "Mus musculus",
+          "count": 83
+        },
+        {
+          "label": "Danio rerio",
+          "count": 3
+        },
+        {
+          "label": "Xenopus laevis",
+          "count": 2
+        },
+        {
+          "label": "Bos taurus",
+          "count": 1
+        },
+        {
+          "label": "Canis lupus familiaris",
+          "count": 1
+        },
+        {
+          "label": "Gallus gallus",
+          "count": 1
+        },
+        {
+          "label": "Rattus norvegicus",
+          "count": 1
+        },
+        {
+          "label": "Sus scrofa",
+          "count": 1
+        },
+        {
+          "label": "Xenopus tropicalis",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "facet_queries": []
+}

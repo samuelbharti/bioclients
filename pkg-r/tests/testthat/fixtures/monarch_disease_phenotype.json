@@ -1,0 +1,37 @@
+{
+  "items": [
+    {
+      "subject": "MONDO:0017309",
+      "subject_label": "neonatal Marfan syndrome",
+      "subject_category": "biolink:Disease",
+      "predicate": "biolink:has_phenotype",
+      "object": "HP:0001653",
+      "object_label": "Mitral regurgitation",
+      "object_category": "biolink:PhenotypicFeature",
+      "primary_knowledge_source": "infores:orphanet",
+      "publications": null,
+      "aggregator_knowledge_source": [
+        "infores:monarchinitiative",
+        "infores:hpo-annotations"
+      ],
+      "knowledge_level": "knowledge_assertion"
+    },
+    {
+      "subject": "MONDO:0017309",
+      "subject_label": "neonatal Marfan syndrome",
+      "subject_category": "biolink:Disease",
+      "predicate": "biolink:has_phenotype",
+      "object": "HP:0002097",
+      "object_label": "Emphysema",
+      "object_category": "biolink:PhenotypicFeature",
+      "primary_knowledge_source": "infores:orphanet",
+      "publications": null,
+      "aggregator_knowledge_source": [
+        "infores:monarchinitiative",
+        "infores:hpo-annotations"
+      ],
+      "knowledge_level": "knowledge_assertion"
+    }
+  ],
+  "total": 181
+}
