@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "_id": "36197410",
+      "pmid": 36197410,
+      "title": "TP53 or Not TP53: That Is the Question.",
+      "journal": "Clin Cancer Res",
+      "authors": ["Green SD", "Zeidner JF"],
+      "date": "2022-12-15T00:00:00Z",
+      "doi": "10.1158/1078-0432.CCR-22-2664",
+      "score": 249.2345
+    }
+  ],
+  "facets": {},
+  "page_size": 10,
+  "current": 1,
+  "count": 287754,
+  "total_pages": 28776
+}
