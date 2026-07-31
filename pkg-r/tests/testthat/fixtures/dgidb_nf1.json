@@ -1,0 +1,16 @@
+{
+  "data": {
+    "genes": {
+      "nodes": [
+        {
+          "name": "NF1",
+          "conceptId": "hgnc:7765",
+          "interactions": [
+            { "interactionScore": 0.5 },
+            { "interactionScore": 0.2 }
+          ]
+        }
+      ]
+    }
+  }
+}

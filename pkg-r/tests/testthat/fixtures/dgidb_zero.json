@@ -1,0 +1,13 @@
+{
+  "data": {
+    "genes": {
+      "nodes": [
+        {
+          "name": "XYZ",
+          "conceptId": "hgnc:1",
+          "interactions": []
+        }
+      ]
+    }
+  }
+}
