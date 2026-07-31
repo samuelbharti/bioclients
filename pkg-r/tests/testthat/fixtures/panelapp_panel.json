@@ -1,0 +1,28 @@
+{
+  "id": 255,
+  "name": "Neurofibromatosis Type 1",
+  "relevant_disorders": ["Neurofibromatosis type 1", "NF1"],
+  "version": "1.12",
+  "genes": [
+    {
+      "entity_name": "NF1",
+      "gene_data": { "gene_symbol": "NF1", "hgnc_id": "HGNC:7765" },
+      "confidence_level": "3"
+    },
+    {
+      "entity_name": "SUZ12",
+      "gene_data": { "gene_symbol": "SUZ12", "hgnc_id": "HGNC:17101" },
+      "confidence_level": "3"
+    },
+    {
+      "entity_name": "SPRED1",
+      "gene_data": { "gene_symbol": "SPRED1", "hgnc_id": "HGNC:20249" },
+      "confidence_level": "2"
+    },
+    {
+      "entity_name": "LZTR1",
+      "gene_data": { "gene_symbol": "LZTR1", "hgnc_id": "HGNC:6742" },
+      "confidence_level": "1"
+    }
+  ]
+}
