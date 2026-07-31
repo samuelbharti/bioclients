@@ -206,3 +206,133 @@ test_that("blank inputs are no_data and never reach the network", {
   expect_identical(opentargets_disease_targets("")$status, "no_data")
   expect_identical(opentargets_resolve_disease("  ")$status, "no_data")
 })
+
+# --- Known drugs -------------------------------------------------------------
+
+test_that("the ported known-drugs fixture parses as expected", {
+  body <- read_fixture("opentargets_drugs_braf.json")
+  out <- opentargets_parse_drugs(body)
+
+  expect_s3_class(out, "tbl_df")
+  expect_identical(out$drug[1], "BELVARAFENIB")
+  expect_identical(out$drug_id[1], "CHEMBL3977543")
+  expect_identical(out$drug_type[1], "Small molecule")
+  expect_identical(out$max_phase[1], "PHASE_2")
+})
+
+test_that("every disease a drug was tried against is kept", {
+  # Taking the first would report one of five here, and the first is the one
+  # Open Targets could not map at all.
+  body <- read_fixture("opentargets_drugs_braf.json")
+  out <- opentargets_parse_drugs(body)
+
+  expect_type(out$diseases, "list")
+  expect_length(out$diseases[[1]], 5)
+  expect_true("melanoma" %in% out$diseases[[1]])
+})
+
+test_that("an unmapped disease falls back to the source label", {
+  # disease is null on the first entry; diseaseFromSource is all there is.
+  body <- read_fixture("opentargets_drugs_braf.json")
+  out <- opentargets_parse_drugs(body)
+
+  expect_identical(out$diseases[[1]][1], "extracranial solid tumours")
+  expect_true(is.na(out$disease_ids[[1]][1]))
+})
+
+test_that("the clinical stage is not reformatted for display", {
+  # "PHASE_2" is what Open Targets sends. Turning it into "Phase 2" is
+  # presentation, and presentation belongs to whatever is presenting.
+  body <- read_fixture("opentargets_drugs_braf.json")
+
+  expect_true(all(grepl(
+    "^[A-Z_0-9]+$",
+    opentargets_parse_drugs(body)$max_phase
+  )))
+})
+
+test_that("a target with no known drugs is NULL", {
+  expect_null(opentargets_parse_drugs(list(
+    data = list(
+      target = list(
+        drugAndClinicalCandidates = list(count = 0, rows = list())
+      )
+    )
+  )))
+  expect_null(opentargets_parse_drugs(list()))
+})
+
+# --- Pharmacogenomics --------------------------------------------------------
+
+test_that("the ported pharmacogenomics fixture parses as expected", {
+  body <- read_fixture("opentargets_pgx_cyp2c19.json")
+  out <- opentargets_parse_pgx(body)
+
+  expect_s3_class(out, "tbl_df")
+  expect_identical(out$phenotype[1], "decreased metabolism of venlafaxine")
+  expect_identical(out$drugs[[1]], "venlafaxine")
+})
+
+test_that("a genotype-keyed annotation has no rsid, and that is not an error", {
+  # variantRsId is null whenever the annotation is keyed on a genotype instead.
+  body <- read_fixture("opentargets_pgx_cyp2c19.json")
+
+  expect_true(is.na(opentargets_parse_pgx(body)$rsid[1]))
+})
+
+test_that("several drugs on one annotation stay separate", {
+  body <- list(
+    data = list(
+      target = list(
+        pharmacogenomics = list(
+          list(
+            drugs = list(
+              list(drugFromSource = "venlafaxine"),
+              list(drugFromSource = "citalopram"),
+              list(drugFromSource = "venlafaxine")
+            )
+          )
+        )
+      )
+    )
+  )
+  out <- opentargets_parse_pgx(body)
+
+  expect_identical(out$drugs[[1]], c("venlafaxine", "citalopram"))
+})
+
+test_that("a gene with no pharmacogenomics is NULL", {
+  # The normal case for most genes, not a failure.
+  expect_null(opentargets_parse_pgx(list(
+    data = list(
+      target = list(
+        pharmacogenomics = list()
+      )
+    )
+  )))
+})
+
+# --- The client halves -------------------------------------------------------
+
+test_that("both new queries post the Ensembl id as a variable", {
+  reset_transport()
+  seen <- list()
+  httr2::local_mocked_responses(function(req) {
+    seen[[length(seen) + 1]] <<- req$body$data
+    mock_json('{"data":{"target":null}}')
+  })
+
+  opentargets_drugs("ENSG00000157764")
+  opentargets_pgx("ENSG00000165841")
+
+  expect_identical(seen[[1]]$variables$id, "ENSG00000157764")
+  expect_match(seen[[1]]$query, "drugAndClinicalCandidates", fixed = TRUE)
+  expect_identical(seen[[2]]$variables$id, "ENSG00000165841")
+  expect_match(seen[[2]]$query, "pharmacogenomics", fixed = TRUE)
+})
+
+test_that("a blank id never reaches the network for either", {
+  reset_transport()
+  expect_identical(opentargets_drugs("")$status, "no_data")
+  expect_identical(opentargets_pgx(NULL)$status, "no_data")
+})

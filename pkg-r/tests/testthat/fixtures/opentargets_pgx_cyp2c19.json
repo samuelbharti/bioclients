@@ -1,0 +1,80 @@
+{
+  "data": {
+    "target": {
+      "pharmacogenomics": [
+        {
+          "variantRsId": null,
+          "genotypeId": null,
+          "drugs": [
+            {
+              "drugFromSource": "venlafaxine"
+            }
+          ],
+          "phenotypeText": "decreased metabolism of venlafaxine",
+          "genotypeAnnotationText": "Patients carrying the CYP2C19*2 allele in combination with another no function allele may have decreased metabolism of venlafaxine. This annotation only covers the pharmacokinetic relationship between CYP2C19 and venlafaxine and does not include evidence about clinical outcomes. Other genetic and clinical factors may also influence a patient's metabolism of venlafaxine.",
+          "evidenceLevel": "3"
+        },
+        {
+          "variantRsId": null,
+          "genotypeId": null,
+          "drugs": [
+            {
+              "drugFromSource": "norclobazam"
+            }
+          ],
+          "phenotypeText": "decreased clearance of norclobazam",
+          "genotypeAnnotationText": "Patients with the *3 allele in combination with another no function allele may have decreased clearance of norclobazam (N-desmethylclobazam), the main metabolite of clobazam, as compared to patients with two normal function alleles or patients with a normal function allele in combination with a no function allele, while patients with the *3 allele in combination with a normal function allele may have decreased clearance of norclobazam as compared to patients with two normal function alleles. Other genetic and clinical factors may also affect clobazam metabolism. This annotation only covers the pharmacokinetic relationship between CYP2C19 and clobazam and does not include evidence about clinical outcomes.",
+          "evidenceLevel": "2A"
+        },
+        {
+          "variantRsId": null,
+          "genotypeId": null,
+          "drugs": [
+            {
+              "drugFromSource": "amitriptyline"
+            }
+          ],
+          "phenotypeText": "increased metabolism",
+          "genotypeAnnotationText": "The CYP2C19*17 allele is assigned as an increased function allele by CPIC. Patients carrying the CYP2C19*17 allele in combination with a normal or increased function allele may have increased metabolism of amitriptyline as compared to patients with two normal function alleles. Patients carrying the CYP2C19*17 allele in combination with a no or decreased function allele may have decreased metabolism of amitriptyline as compared to patients with two normal function alleles. However, conflicting evidence has been reported. This drug-variant pair has been assigned a “no recommendation” by DPWG, as it was determined to be not clinically actionable. This annotation only covers the pharmacokinetic relationship between CYP2C19 and amitriptyline and does not include evidence about clinical outcomes. Other genetic and clinical factors may also influence metabolism of amitriptyline.",
+          "evidenceLevel": "1A"
+        },
+        {
+          "variantRsId": null,
+          "genotypeId": null,
+          "drugs": [
+            {
+              "drugFromSource": "clobazam"
+            }
+          ],
+          "phenotypeText": null,
+          "genotypeAnnotationText": "Patients with epilepsy and the *2 allele in combination with another no function allele may have an increased response to clobazam as compared to patients with two normal function alleles or patients with a normal function allele in combination with a no function allele, while patients with the *2 allele in combination with a normal function allele may have an increased response as compared to patients with two normal function alleles. Other genetic and clinical factors may also affect a patient's response to clobazam.",
+          "evidenceLevel": "3"
+        },
+        {
+          "variantRsId": null,
+          "genotypeId": null,
+          "drugs": [
+            {
+              "drugFromSource": "trimipramine"
+            }
+          ],
+          "phenotypeText": "decreased metabolism of trimipramine",
+          "genotypeAnnotationText": "The CYP2C19*2 allele is assigned as a no function allele by CPIC. Patients carrying the CYP2C19*2 allele in combination with a no, decreased, normal, or increased function allele may have decreased metabolism of trimipramine as compared to patients with two normal function alleles. This annotation only covers the pharmacokinetic relationship between CYP2C19 and trimipramine and does not include evidence about clinical outcomes. Other genetic and clinical factors may also influence the metabolism of trimipramine.",
+          "evidenceLevel": "1A"
+        },
+        {
+          "variantRsId": "rs4244285",
+          "genotypeId": "10_94781859_G_A,G",
+          "drugs": [
+            {
+              "drugFromSource": "nelfinavir"
+            }
+          ],
+          "phenotypeText": "decreased metabolism and increased concentrations of nelfinavir",
+          "genotypeAnnotationText": "Patients with the AG genotype and pancreatic cancer or HIV may have decreased metabolism and increased concentrations of nelfinavir as compared to patients with the GG genotype. Other genetic and clinical factors may also influence metabolism and concentration of nelfinavir.",
+          "evidenceLevel": "3"
+        }
+      ]
+    }
+  }
+}
