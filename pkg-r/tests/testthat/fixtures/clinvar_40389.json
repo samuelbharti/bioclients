@@ -1,0 +1,14 @@
+{
+ "accession": "VCV000040389",
+ "title": "NM_004333.6(BRAF):c.1799T>G (p.Val600Gly)",
+ "germline_classification": {
+  "description": "Pathogenic",
+  "review_status": "reviewed by expert panel",
+  "last_evaluated": "2020/06/25 00:00",
+  "trait_set": [
+   {
+    "trait_name": "RASopathy"
+   }
+  ]
+ }
+}
