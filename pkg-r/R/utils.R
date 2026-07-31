@@ -29,3 +29,41 @@ num_at <- function(x, key, default = NA) {
 chr_at <- function(x, key) {
   as.character(biohttp::pluck_at(x, key, default = NA_character_))
 }
+
+# Pull one column out of a list of parsed JSON records.
+#
+# Nearly every parser in this package turns an array of records into a tibble
+# column, following a key path that may be missing on any given record. Writing
+# that as a bare vapply at each call site is where the length-zero and
+# wrong-type bugs come from, so it lives here once.
+#
+# `...` is the key path, outermost first, the same as biohttp::pluck_at().
+col_chr <- function(records, ...) {
+  keys <- c(...)
+  vapply(
+    records,
+    function(rec) {
+      value <- do.call(
+        biohttp::pluck_at,
+        c(list(rec), as.list(keys), list(default = NA_character_))
+      )
+      if (length(value) == 0) NA_character_ else as.character(value)[[1]]
+    },
+    character(1)
+  )
+}
+
+col_num <- function(records, ...) {
+  keys <- c(...)
+  vapply(
+    records,
+    function(rec) {
+      value <- do.call(
+        biohttp::pluck_at,
+        c(list(rec), as.list(keys), list(default = NA_real_))
+      )
+      if (length(value) == 0) NA_real_ else as.numeric(value)[[1]]
+    },
+    numeric(1)
+  )
+}
