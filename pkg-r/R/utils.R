@@ -19,6 +19,23 @@ clean_symbol <- function(symbol) {
   if (cleaned == "") NULL else cleaned
 }
 
+# Strip a UniProt accession down to what an endpoint will accept.
+#
+# Separate from clean_symbol() because accessions are upper-case alphanumeric
+# with no punctuation at all, so the looser gene-symbol rule would let through
+# characters that end up in a URL path.
+clean_accession <- function(accession) {
+  if (biohttp::is_blank(accession)) {
+    return(NULL)
+  }
+  cleaned <- gsub(
+    "[^A-Z0-9]",
+    "",
+    toupper(trimws(as.character(accession)))
+  )
+  if (cleaned == "") NULL else cleaned
+}
+
 # A numeric field from a parsed JSON list. NA by default when absent, but
 # counts that are being summed want 0 instead, so the default is settable.
 num_at <- function(x, key, default = NA) {
