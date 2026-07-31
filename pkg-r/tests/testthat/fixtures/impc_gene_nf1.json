@@ -1,0 +1,15 @@
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":0,
+    "params":{
+      "q":"human_gene_symbol:NF1",
+      "fl":"mgi_accession_id,marker_symbol,human_gene_symbol",
+      "rows":"1",
+      "wt":"json"}},
+  "response":{"numFound":1,"start":0,"docs":[
+      {
+        "human_gene_symbol":["NF1"],
+        "marker_symbol":"Nf1",
+        "mgi_accession_id":"MGI:97306"}]
+  }}

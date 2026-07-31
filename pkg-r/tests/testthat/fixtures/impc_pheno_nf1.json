@@ -1,0 +1,39 @@
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":0,
+    "params":{
+      "q":"marker_accession_id:\"MGI:97306\"",
+      "fl":"mp_term_id,mp_term_name,allele_accession_id,allele_symbol,marker_accession_id,zygosity",
+      "rows":"100",
+      "wt":"json"}},
+  "response":{"numFound":4,"start":0,"docs":[
+      {
+        "allele_accession_id":"MGI:4364806",
+        "allele_symbol":"Nf1<tm1a(KOMP)Wtsi>",
+        "marker_accession_id":"MGI:97306",
+        "mp_term_id":"MP:0011100",
+        "mp_term_name":"preweaning lethality, complete penetrance",
+        "zygosity":"homozygote"},
+      {
+        "allele_accession_id":"MGI:4364806",
+        "allele_symbol":"Nf1<tm1a(KOMP)Wtsi>",
+        "marker_accession_id":"MGI:97306",
+        "mp_term_id":"MPATH:212",
+        "mp_term_name":"inflammation",
+        "zygosity":"heterozygote"},
+      {
+        "allele_accession_id":"MGI:4364806",
+        "allele_symbol":"Nf1<tm1a(KOMP)Wtsi>",
+        "marker_accession_id":"MGI:97306",
+        "mp_term_id":"MP:0011100",
+        "mp_term_name":"preweaning lethality, complete penetrance",
+        "zygosity":"homozygote"},
+      {
+        "allele_accession_id":"MGI:4364806",
+        "allele_symbol":"Nf1<tm1a(KOMP)Wtsi>",
+        "marker_accession_id":"MGI:97306",
+        "mp_term_id":"MPATH:212",
+        "mp_term_name":"inflammation",
+        "zygosity":"heterozygote"}]
+  }}
