@@ -24,6 +24,16 @@ read_fixture <- function(name) {
   )
 }
 
+# Read a stored flat file the way biohttp would hand it to a parser: one string,
+# not a vector of lines. A parser fed lines instead would look like it worked
+# and silently read only the first one.
+read_fixture_text <- function(name) {
+  paste(
+    readLines(testthat::test_path("fixtures", name), warn = FALSE),
+    collapse = "\n"
+  )
+}
+
 # A mocked JSON response, for the client halves.
 mock_json <- function(body, status = 200L) {
   httr2::response(
