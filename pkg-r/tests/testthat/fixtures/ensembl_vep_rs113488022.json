@@ -1,0 +1,39 @@
+{
+ "most_severe_consequence": "missense_variant",
+ "assembly_name": "GRCh38",
+ "transcript_consequences": [
+  {
+   "gene_symbol": "BRAF",
+   "transcript_id": "ENST00000288602",
+   "consequence_terms": [
+    "missense_variant"
+   ],
+   "impact": "MODERATE",
+   "biotype": "protein_coding",
+   "sift_prediction": "deleterious_low_confidence",
+   "polyphen_prediction": "possibly_damaging"
+  },
+  {
+   "gene_symbol": "BRAF",
+   "transcript_id": "ENST00000288602",
+   "consequence_terms": [
+    "missense_variant"
+   ],
+   "impact": "MODERATE",
+   "biotype": "protein_coding",
+   "sift_prediction": "deleterious_low_confidence",
+   "polyphen_prediction": "benign"
+  },
+  {
+   "gene_symbol": "BRAF",
+   "transcript_id": "ENST00000288602",
+   "consequence_terms": [
+    "missense_variant"
+   ],
+   "impact": "MODERATE",
+   "biotype": "protein_coding",
+   "sift_prediction": "deleterious_low_confidence",
+   "polyphen_prediction": "benign"
+  }
+ ]
+}
