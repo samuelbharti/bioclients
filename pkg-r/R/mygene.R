@@ -1,0 +1,311 @@
+# MyGene.info: gene identity and annotation.
+#
+# Ported from genescout/R/tools/mygene.R, which is the better of the family's two
+# copies. variant-reviewer/R/api_mygene.R is the other and had no batch path.
+#
+# Endpoint: https://mygene.info/v3
+
+MYGENE_BASE <- "https://mygene.info/v3"
+
+# The fields fetched by both the single and the batch path, kept in one place so
+# the two cannot drift.
+MYGENE_FIELDS <- paste(
+  "name",
+  "symbol",
+  "entrezgene",
+  "ensembl.gene",
+  "uniprot",
+  "type_of_gene",
+  "summary",
+  sep = ","
+)
+
+# The fields the batch POST matches each query against, so mixed identifier
+# types resolve in one request without a per-token prefix.
+MYGENE_BATCH_SCOPES <- "symbol,alias,ensembl.gene,entrezgene,retired"
+
+# Build the query term, detecting Ensembl gene and Entrez ids so they resolve
+# precisely rather than as free-text symbol matches.
+mygene_query_term <- function(symbol) {
+  if (grepl("^ENSG\\d+", symbol, ignore.case = TRUE)) {
+    paste0("ensembl.gene:", symbol)
+  } else if (grepl("^\\d+$", symbol)) {
+    paste0("entrezgene:", symbol)
+  } else {
+    symbol
+  }
+}
+
+# A MyGene field can be a scalar or a list of several mappings. Take the first.
+mygene_first <- function(x) {
+  if (is.null(x) || length(x) == 0) {
+    return(NA_character_)
+  }
+  if (is.list(x)) {
+    x <- unlist(x, use.names = FALSE)
+  }
+  if (length(x) == 0) NA_character_ else as.character(x[[1]])
+}
+
+#' Choose the best MyGene hit for a queried token
+#'
+#' MyGene's `_score` can rank a fuzzy alias or retired match to a **different**
+#' gene above the exact symbol match. Querying `"TTN"` with the alias and retired
+#' scopes returns TTR (entrez 7276, score 19.07) ahead of TTN (7273, score
+#' 18.29). Taking the top-scored hit therefore returns the wrong gene, quietly.
+#'
+#' So a hit whose official symbol equals the token wins, case-insensitively.
+#' Only when none does, which is the case for a deliberate alias such as
+#' `"p53"`, does MyGene's own best-scored hit get used.
+#'
+#' This is the single most important thing in this file. It is exported so a
+#' caller assembling its own hits can apply the same rule.
+#'
+#' @param hits A list of hit records from a MyGene response.
+#' @param token The identifier that was queried.
+#'
+#' @return One hit record, or `NULL` when `hits` is empty.
+#'
+#' @examples
+#' hits <- list(
+#'   list(symbol = "TTR", entrezgene = "7276"),
+#'   list(symbol = "TTN", entrezgene = "7273")
+#' )
+#' mygene_pick_hit(hits, "TTN")$entrezgene
+#'
+#' @export
+mygene_pick_hit <- function(hits, token) {
+  if (is.null(hits) || length(hits) == 0) {
+    return(NULL)
+  }
+  for (hit in hits) {
+    symbol <- biohttp::pluck_at(hit, "symbol", default = "")
+    if (nzchar(symbol) && identical(toupper(symbol), toupper(token))) {
+      return(hit)
+    }
+  }
+  hits[[1]]
+}
+
+#' Turn MyGene hits into a gene table
+#'
+#' Pure. Takes an already-parsed response body and never touches the network, so
+#' it is tested directly against a stored response.
+#'
+#' @param body A parsed MyGene `/query` response, the whole body including
+#'   `hits`.
+#' @param symbol The identifier that was queried, used to break the scoring tie
+#'   described in [mygene_pick_hit()] and as the fallback symbol.
+#'
+#' @return A one-row tibble with `symbol`, `name`, `summary`, `entrez`,
+#'   `ensembl_gene`, `uniprot`, and `type_of_gene`. `NULL` when the body carries
+#'   no usable hit.
+#'
+#' @examples
+#' body <- list(hits = list(list(
+#'   symbol = "TP53",
+#'   name = "tumor protein p53",
+#'   entrezgene = "7157"
+#' )))
+#' mygene_parse_hits(body, "TP53")
+#'
+#' @export
+mygene_parse_hits <- function(body, symbol = NA_character_) {
+  hits <- biohttp::pluck_at(body, "hits")
+  hit <- mygene_pick_hit(hits, symbol)
+  mygene_row(hit, symbol)
+}
+
+# One hit record to one tibble row. NULL for a missing or explicitly notfound
+# hit, so a caller never has to tell "no gene" apart from "wrong gene".
+mygene_row <- function(hit, fallback_symbol = NA_character_) {
+  if (is.null(hit)) {
+    return(NULL)
+  }
+  if (isTRUE(biohttp::pluck_at(hit, "notfound", default = FALSE))) {
+    return(NULL)
+  }
+  tibble::tibble(
+    symbol = as.character(
+      biohttp::pluck_at(hit, "symbol", default = fallback_symbol)
+    ),
+    name = chr_at(hit, "name"),
+    summary = chr_at(hit, "summary"),
+    entrez = as.character(
+      biohttp::pluck_at(hit, "entrezgene", default = NA_character_)
+    ),
+    ensembl_gene = mygene_first(biohttp::pluck_at(hit, "ensembl", "gene")),
+    uniprot = mygene_first(
+      biohttp::pluck_at(hit, "uniprot", "Swiss-Prot")
+    ),
+    type_of_gene = chr_at(hit, "type_of_gene")
+  )
+}
+
+#' Turn a MyGene batch response into a gene table
+#'
+#' Pure. The batch `/query` POST returns a flat array where each element echoes
+#' its input `query`. An ambiguous query yields several elements, best `_score`
+#' first, and an unmatched one yields an element with `notfound = true`.
+#'
+#' Hits are grouped by the echoed query and resolved through [mygene_pick_hit()],
+#' then mapped back onto `symbols` **in input order**, so a caller zips the
+#' result onto its input by position. An unmatched or invalid token yields a row
+#' of `NA` rather than being dropped, because a shorter table would silently
+#' shift every row after it.
+#'
+#' @param body A parsed MyGene batch response, a flat list of hit records.
+#' @param symbols The identifiers that were queried, in the order asked.
+#'
+#' @return A tibble with one row per entry in `symbols`, same order.
+#'
+#' @examples
+#' body <- list(
+#'   list(query = "TP53", symbol = "TP53", entrezgene = "7157"),
+#'   list(query = "NOPE", notfound = TRUE)
+#' )
+#' mygene_parse_batch(body, c("TP53", "NOPE"))
+#'
+#' @export
+mygene_parse_batch <- function(body, symbols) {
+  by_query <- list()
+  for (hit in body) {
+    query <- biohttp::pluck_at(hit, "query")
+    if (biohttp::is_blank(query)) {
+      next
+    }
+    # Keep EVERY hit for a query, in MyGene's best-score-first order, so
+    # mygene_pick_hit() can override the score with an exact symbol match.
+    by_query[[query]] <- c(by_query[[query]], list(hit))
+  }
+  rows <- lapply(symbols, function(symbol) {
+    cleaned <- clean_symbol(symbol)
+    if (is.null(cleaned)) {
+      return(mygene_empty_row(as.character(symbol)))
+    }
+    row <- mygene_row(mygene_pick_hit(by_query[[cleaned]], cleaned), cleaned)
+    row %||% mygene_empty_row(cleaned)
+  })
+  do.call(rbind, rows)
+}
+
+# A placeholder row for a token that resolved to nothing. Keeps the output the
+# same length as the input.
+mygene_empty_row <- function(symbol) {
+  tibble::tibble(
+    symbol = as.character(symbol),
+    name = NA_character_,
+    summary = NA_character_,
+    entrez = NA_character_,
+    ensembl_gene = NA_character_,
+    uniprot = NA_character_,
+    type_of_gene = NA_character_
+  )
+}
+
+#' Look up one gene
+#'
+#' @param symbol A gene symbol, Ensembl gene id, or Entrez id.
+#' @param species Passed through to MyGene.
+#' @param ... Passed to [biohttp::get_json()], for example `throttle`.
+#'
+#' @return A biohttp envelope whose `data` is a one-row tibble. See
+#'   [mygene_parse_hits()] for the columns.
+#'
+#' @examples
+#' \dontrun{
+#' res <- mygene_gene("TP53")
+#' biohttp::body_or_null(res)
+#' }
+#'
+#' @export
+mygene_gene <- function(symbol, species = "human", ...) {
+  cleaned <- clean_symbol(symbol)
+  if (is.null(cleaned)) {
+    return(biohttp::status_no_data(
+      source = "MyGene",
+      detail = "no usable gene identifier was supplied"
+    ))
+  }
+  res <- biohttp::get_json(
+    MYGENE_BASE,
+    path = "query",
+    query = list(
+      q = mygene_query_term(cleaned),
+      species = species,
+      # Ask for several candidates rather than the top score alone, so
+      # mygene_pick_hit() has something to choose between.
+      size = 5,
+      fields = MYGENE_FIELDS
+    ),
+    source = "MyGene",
+    ...
+  )
+  if (!isTRUE(res$ok)) {
+    return(res)
+  }
+  parsed <- mygene_parse_hits(res$data, cleaned)
+  if (is.null(parsed)) {
+    return(biohttp::status_no_data(
+      source = "MyGene",
+      http = res$http,
+      detail = paste0("no MyGene hit for ", cleaned)
+    ))
+  }
+  biohttp::status_ok(data = parsed, source = "MyGene", http = res$http)
+}
+
+#' Look up many genes in one request
+#'
+#' The batch POST, which is the reason this client is worth installing. An
+#' N-symbol list is one round trip rather than N, and the round trip is where
+#' essentially all the time goes.
+#'
+#' @param symbols Gene symbols, Ensembl gene ids, or Entrez ids.
+#' @inheritParams mygene_gene
+#' @param ... Passed to [biohttp::post_json()].
+#'
+#' @return A biohttp envelope whose `data` is a tibble with one row per entry in
+#'   `symbols`, in the same order.
+#'
+#' @examples
+#' \dontrun{
+#' res <- mygene_genes(c("TP53", "BRCA1", "EGFR"))
+#' biohttp::body_or_null(res)
+#' }
+#'
+#' @export
+mygene_genes <- function(symbols, species = "human", ...) {
+  cleaned <- vapply(
+    symbols,
+    function(symbol) clean_symbol(symbol) %||% NA_character_,
+    character(1),
+    USE.NAMES = FALSE
+  )
+  usable <- unique(cleaned[!is.na(cleaned)])
+  if (length(usable) == 0) {
+    return(biohttp::status_no_data(
+      source = "MyGene",
+      detail = "no usable gene identifiers were supplied"
+    ))
+  }
+  res <- biohttp::post_json(
+    paste0(MYGENE_BASE, "/query"),
+    body = list(
+      q = as.list(usable),
+      scopes = MYGENE_BATCH_SCOPES,
+      fields = MYGENE_FIELDS,
+      species = species
+    ),
+    source = "MyGene",
+    ...
+  )
+  if (!isTRUE(res$ok)) {
+    return(res)
+  }
+  biohttp::status_ok(
+    data = mygene_parse_batch(res$data, symbols),
+    source = "MyGene",
+    http = res$http
+  )
+}
