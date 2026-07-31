@@ -5,6 +5,12 @@
 #   prek install --hook-type commit-msg
 default_install_hook_types: [pre-commit, commit-msg]
 
+# Stored API responses are recordings, not source. They are copied byte for byte
+# out of the app they came from and a test asserts they still match, so a hook
+# that "tidies" one (a trailing newline, a line ending) breaks the recording and
+# the guarantee that a ported parser reads exactly what the app read.
+exclude: ^pkg-r/tests/testthat/fixtures/
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
