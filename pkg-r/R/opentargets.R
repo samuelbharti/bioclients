@@ -63,6 +63,43 @@ OPENTARGETS_LOOKUP_QUERY <- paste(
   sep = "\n"
 )
 
+# Known drugs and clinical candidates. Each row is one drug with its highest
+# clinical stage and every disease it has been tried against.
+OPENTARGETS_DRUGS_QUERY <- paste(
+  "query($id: String!) {",
+  "  target(ensemblId: $id) {",
+  "    drugAndClinicalCandidates {",
+  "      count",
+  "      rows {",
+  "        maxClinicalStage",
+  "        drug { id name drugType }",
+  "        diseases { diseaseFromSource disease { id name } }",
+  "      }",
+  "    }",
+  "  }",
+  "}",
+  sep = "\n"
+)
+
+# Pharmacogenomics: variant or genotype to drug-response effect, with an
+# evidence level. Most genes carry none; a pharmacogene such as CYP2C19 carries
+# many, so an empty result here is the normal case rather than a failure.
+OPENTARGETS_PGX_QUERY <- paste(
+  "query($id: String!) {",
+  "  target(ensemblId: $id) {",
+  "    pharmacogenomics {",
+  "      variantRsId",
+  "      genotypeId",
+  "      drugs { drugFromSource }",
+  "      phenotypeText",
+  "      genotypeAnnotationText",
+  "      evidenceLevel",
+  "    }",
+  "  }",
+  "}",
+  sep = "\n"
+)
+
 #' Is a term an ontology id rather than free text
 #'
 #' Open Targets takes an exact id for a direct lookup and free text for a search,
@@ -222,6 +259,122 @@ opentargets_parse_matches <- function(body) {
     score = col_num(hits, "score"),
     description = col_chr(hits, "description"),
     source_url = paste0(OPENTARGETS_WEB, "/disease/", ids)
+  )
+}
+
+#' Turn known-drug rows into a table
+#'
+#' Pure.
+#'
+#' @section Every disease, not just the first:
+#' A drug row carries the whole list of diseases it has been tried against, and
+#' the first entry is often the least useful one. In the stored BRAF response,
+#' BELVARAFENIB lists five, and the first has no mapped `disease` at all. So the
+#' diseases arrive as list columns rather than as one picked value.
+#'
+#' `diseases` prefers the mapped disease name and falls back to
+#' `diseaseFromSource`, which is the label the trial registry used. `disease_ids`
+#' is `NA` in the positions Open Targets could not map.
+#'
+#' `max_phase` is the raw `maxClinicalStage`, for example `"PHASE_2"`. Turning
+#' that into "Phase 2" is presentation and belongs to whatever is presenting it.
+#'
+#' @param body A parsed Open Targets GraphQL response body.
+#'
+#' @return A tibble of `drug`, `drug_id`, `drug_type`, `max_phase`, `diseases`,
+#'   `disease_ids`, and `source_url`. `NULL` when the target has no known drugs.
+#'
+#' @examples
+#' body <- list(data = list(target = list(
+#'   drugAndClinicalCandidates = list(count = 1, rows = list(
+#'     list(
+#'       maxClinicalStage = "PHASE_2",
+#'       drug = list(id = "CHEMBL1", name = "DRUGX", drugType = "Small molecule"),
+#'       diseases = list(list(
+#'         diseaseFromSource = "melanoma",
+#'         disease = list(id = "MONDO_0005105", name = "melanoma")
+#'       ))
+#'     )
+#'   ))
+#' )))
+#' opentargets_parse_drugs(body)
+#'
+#' @export
+opentargets_parse_drugs <- function(body) {
+  rows <- biohttp::pluck_at(
+    body,
+    "data",
+    "target",
+    "drugAndClinicalCandidates",
+    "rows"
+  )
+  if (is.null(rows) || length(rows) == 0) {
+    return(NULL)
+  }
+  drug_id <- col_chr(rows, "drug", "id")
+  diseases <- lapply(rows, function(row) {
+    entries <- biohttp::pluck_at(row, "diseases", default = list())
+    names <- col_chr(entries, "disease", "name")
+    from_source <- col_chr(entries, "diseaseFromSource")
+    names[is.na(names)] <- from_source[is.na(names)]
+    unname(names)
+  })
+  tibble::tibble(
+    drug = col_chr(rows, "drug", "name"),
+    drug_id = drug_id,
+    drug_type = col_chr(rows, "drug", "drugType"),
+    max_phase = col_chr(rows, "maxClinicalStage"),
+    diseases = diseases,
+    disease_ids = lapply(rows, function(row) {
+      entries <- biohttp::pluck_at(row, "diseases", default = list())
+      unname(col_chr(entries, "disease", "id"))
+    }),
+    source_url = paste0(OPENTARGETS_WEB, "/drug/", drug_id)
+  )
+}
+
+#' Turn pharmacogenomics rows into a table
+#'
+#' Pure.
+#'
+#' `drugs` is a list column because one annotation can name several. `rsid` is
+#' `NA` where the annotation is keyed on a genotype rather than a variant, which
+#' is common.
+#'
+#' @param body A parsed Open Targets GraphQL response body.
+#'
+#' @return A tibble of `rsid`, `genotype_id`, `drugs`, `phenotype`,
+#'   `annotation`, and `evidence_level`. `NULL` when the target has none, which
+#'   is the normal case for most genes.
+#'
+#' @examples
+#' body <- list(data = list(target = list(pharmacogenomics = list(
+#'   list(
+#'     variantRsId = "rs4244285",
+#'     drugs = list(list(drugFromSource = "venlafaxine")),
+#'     phenotypeText = "decreased metabolism of venlafaxine",
+#'     evidenceLevel = "3"
+#'   )
+#' ))))
+#' opentargets_parse_pgx(body)
+#'
+#' @export
+opentargets_parse_pgx <- function(body) {
+  rows <- biohttp::pluck_at(body, "data", "target", "pharmacogenomics")
+  if (is.null(rows) || length(rows) == 0) {
+    return(NULL)
+  }
+  tibble::tibble(
+    rsid = col_chr(rows, "variantRsId"),
+    genotype_id = col_chr(rows, "genotypeId"),
+    drugs = lapply(rows, function(row) {
+      entries <- biohttp::pluck_at(row, "drugs", default = list())
+      names <- unname(col_chr(entries, "drugFromSource"))
+      unique(names[!is.na(names) & nzchar(names)])
+    }),
+    phenotype = col_chr(rows, "phenotypeText"),
+    annotation = col_chr(rows, "genotypeAnnotationText"),
+    evidence_level = col_chr(rows, "evidenceLevel")
   )
 }
 
@@ -386,6 +539,85 @@ opentargets_resolve_disease <- function(term, limit = 5, ...) {
       source = "Open Targets",
       http = res$http,
       detail = paste0("no Open Targets disease matched ", term)
+    ))
+  }
+  biohttp::status_ok(data = parsed, source = "Open Targets", http = res$http)
+}
+
+#' Known drugs and clinical candidates for a gene
+#'
+#' Takes an Ensembl gene id, the same as [opentargets_gene_diseases()].
+#'
+#' @inheritParams opentargets_gene_diseases
+#'
+#' @return A biohttp envelope whose `data` is the tibble described in
+#'   [opentargets_parse_drugs()].
+#'
+#' @examples
+#' \dontrun{
+#' biohttp::body_or_null(opentargets_drugs("ENSG00000157764"))
+#' }
+#'
+#' @export
+opentargets_drugs <- function(ensembl_id, ...) {
+  if (biohttp::is_blank(ensembl_id)) {
+    return(biohttp::status_no_data(
+      source = "Open Targets",
+      detail = "no Ensembl gene id was supplied"
+    ))
+  }
+  id <- trimws(as.character(ensembl_id))
+  res <- opentargets_post(OPENTARGETS_DRUGS_QUERY, list(id = id), ...)
+  if (!isTRUE(res$ok)) {
+    return(res)
+  }
+  parsed <- opentargets_parse_drugs(res$data)
+  if (is.null(parsed)) {
+    return(biohttp::status_no_data(
+      source = "Open Targets",
+      http = res$http,
+      detail = paste0("no Open Targets known drugs for ", id)
+    ))
+  }
+  biohttp::status_ok(data = parsed, source = "Open Targets", http = res$http)
+}
+
+#' Pharmacogenomics annotations for a gene
+#'
+#' Takes an Ensembl gene id, the same as [opentargets_gene_diseases()].
+#'
+#' Most genes have none, so `no_data` here is the ordinary answer rather than a
+#' sign anything went wrong.
+#'
+#' @inheritParams opentargets_gene_diseases
+#'
+#' @return A biohttp envelope whose `data` is the tibble described in
+#'   [opentargets_parse_pgx()].
+#'
+#' @examples
+#' \dontrun{
+#' biohttp::body_or_null(opentargets_pgx("ENSG00000165841"))
+#' }
+#'
+#' @export
+opentargets_pgx <- function(ensembl_id, ...) {
+  if (biohttp::is_blank(ensembl_id)) {
+    return(biohttp::status_no_data(
+      source = "Open Targets",
+      detail = "no Ensembl gene id was supplied"
+    ))
+  }
+  id <- trimws(as.character(ensembl_id))
+  res <- opentargets_post(OPENTARGETS_PGX_QUERY, list(id = id), ...)
+  if (!isTRUE(res$ok)) {
+    return(res)
+  }
+  parsed <- opentargets_parse_pgx(res$data)
+  if (is.null(parsed)) {
+    return(biohttp::status_no_data(
+      source = "Open Targets",
+      http = res$http,
+      detail = paste0("no Open Targets pharmacogenomics for ", id)
     ))
   }
   biohttp::status_ok(data = parsed, source = "Open Targets", http = res$http)
