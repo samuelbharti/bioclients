@@ -60,6 +60,43 @@ reference:
       - clinvar_category
       - clinvar_conditions
 
+  - title: Open Targets
+    desc: >
+      Gene and disease association, both directions, plus the disease resolver
+      that existed twice in the family.
+    contents:
+      - opentargets_gene_diseases
+      - opentargets_disease_targets
+      - opentargets_resolve_disease
+      - opentargets_parse_diseases
+      - opentargets_parse_targets
+      - opentargets_parse_matches
+      - opentargets_is_id
+
+  - title: DGIdb
+    desc: >
+      Curated drug-gene interaction counts. An unknown gene is NA, a known gene
+      with none is 0.
+    contents:
+      - dgidb_gene
+      - dgidb_genes
+      - dgidb_parse_genes
+
+  - title: Pharos
+    desc: >
+      Target Development Level. The classification only; turning it into a
+      weight is the caller's job.
+    contents:
+      - pharos_target
+      - pharos_targets
+      - pharos_parse_targets
+
+  - title: CIViC
+    desc: Expert-curated cancer variant evidence counts.
+    contents:
+      - civic_gene
+      - civic_parse_gene
+
   - title: Package
     contents:
       - bioclients-package

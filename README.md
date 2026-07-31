@@ -6,7 +6,7 @@
 
 One client per biological database, each with a pure parser that runs offline.
 
-> **Status:** three pilot clients, working. Installs from local source today;
+> **Status:** seven clients, working. Installs from local source today;
 > not published anywhere yet.
 
 ## Why
@@ -65,12 +65,18 @@ bioclients/
 
 ## What is in it
 
+Seven of the 27 services the app family actually uses:
+
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
 | MyGene | `mygene_gene()` | `mygene_genes()` | `mygene_parse_hits()`, `mygene_parse_batch()` |
 | gnomAD constraint | `gnomad_constraint()` | `gnomad_constraints()` | `gnomad_parse_constraint()`, `gnomad_parse_constraints()` |
 | gnomAD frequency | `gnomad_frequency()` | | `gnomad_parse_frequency()`, `gnomad_parse_populations()` |
 | ClinVar | `clinvar_classification()` | | `clinvar_parse_record()` |
+| Open Targets | `opentargets_gene_diseases()`, `opentargets_disease_targets()`, `opentargets_resolve_disease()` | | `opentargets_parse_diseases()`, `opentargets_parse_targets()`, `opentargets_parse_matches()` |
+| DGIdb | `dgidb_gene()` | `dgidb_genes()` | `dgidb_parse_genes()` |
+| Pharos | `pharos_target()` | `pharos_targets()` | `pharos_parse_targets()` |
+| CIViC | `civic_gene()` | | `civic_parse_gene()` |
 
 ```r
 res <- mygene_genes(c("TP53", "BRCA1", "EGFR"))
@@ -98,6 +104,25 @@ separate entry points. Neither is folded into the other, and constraint is not
 dropped because two of the three callers wanted frequency.
 `gene-list-builder`'s whole ranking model is built on LOEUF, which is
 `gnomad_constraint()`.
+
+### Where the line sits on scoring
+
+Two of these clients had a scoring step in their original app copy and it did not
+come across. Pharos's source clients mapped its TDL category onto a 0 to 1
+weight; this client returns the category. DGIdb's returned a count the app then
+weighted; this one returns the count.
+
+Turning a value into a weight is ranking, and ranking is the consuming app's
+product. Copying the weights down here would put `gene-list-builder`'s model in
+two places, and a change to it would then need a release of this package.
+
+### Absence of evidence is not evidence of absence
+
+`dgidb_parse_genes()` reports `NA` for a gene DGIdb has never heard of and `0`
+for a gene it knows with no recorded interactions. `civic_parse_gene()` draws the
+same line. The difference matters: collapsing them tells a caller that an unknown
+gene is known not to be druggable, which is a much stronger claim than the data
+supports.
 
 ## Dependencies
 
@@ -152,6 +177,7 @@ runner. Local `R CMD check` is clean.
 | --- | --- |
 | 0. Scaffold | done |
 | 1. Three pilot clients: MyGene, gnomAD, ClinVar | done |
+| 1b. Batch A, the GraphQL services: Open Targets, DGIdb, Pharos, CIViC | done |
 | 2. Migrate `variant-reviewer` onto `biohttp` and `bioclients` | not started |
 | 3. Expand to the remaining services, three at a time | not started |
 
