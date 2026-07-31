@@ -1,0 +1,4 @@
+[
+  {"queryIndex": 0, "queryItem": "SEPTIN9", "stringId": "9606.ENSP00000329125", "ncbiTaxonId": 9606, "taxonName": "Homo sapiens", "preferredName": "SEPT9", "annotation": "Septin-9"},
+  {"queryIndex": 1, "queryItem": "TP53", "stringId": "9606.ENSP00000269305", "ncbiTaxonId": 9606, "taxonName": "Homo sapiens", "preferredName": "TP53", "annotation": "Cellular tumor antigen p53"}
+]

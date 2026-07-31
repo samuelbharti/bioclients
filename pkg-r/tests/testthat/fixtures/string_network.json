@@ -1,0 +1,9 @@
+[
+  {"stringId_A": "9606.ENSP00000269305", "stringId_B": "9606.ENSP00000316578", "preferredName_A": "TP53", "preferredName_B": "SUZ12", "ncbiTaxonId": "9606", "score": 0.791},
+  {"stringId_A": "9606.ENSP00000269305", "stringId_B": "9606.ENSP00000351015", "preferredName_A": "TP53", "preferredName_B": "NF1", "ncbiTaxonId": "9606", "score": 0.88},
+  {"stringId_A": "9606.ENSP00000269305", "stringId_B": "9606.ENSP00000275493", "preferredName_A": "TP53", "preferredName_B": "EGFR", "ncbiTaxonId": "9606", "score": 0.943},
+  {"stringId_A": "9606.ENSP00000269305", "stringId_B": "9606.ENSP00000418915", "preferredName_A": "TP53", "preferredName_B": "CDKN2A", "ncbiTaxonId": "9606", "score": 0.999},
+  {"stringId_A": "9606.ENSP00000275493", "stringId_B": "9606.ENSP00000351015", "preferredName_A": "EGFR", "preferredName_B": "NF1", "ncbiTaxonId": "9606", "score": 0.847},
+  {"stringId_A": "9606.ENSP00000275493", "stringId_B": "9606.ENSP00000418915", "preferredName_A": "EGFR", "preferredName_B": "CDKN2A", "ncbiTaxonId": "9606", "score": 0.91},
+  {"stringId_A": "9606.ENSP00000351015", "stringId_B": "9606.ENSP00000418915", "preferredName_A": "NF1", "preferredName_B": "CDKN2A", "ncbiTaxonId": "9606", "score": 0.772}
+]
