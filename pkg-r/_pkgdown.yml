@@ -30,6 +30,36 @@ navbar:
       href: https://github.com/samuelbharti/bioclients
 
 reference:
+  - title: MyGene
+    desc: Gene identity and annotation.
+    contents:
+      - mygene_gene
+      - mygene_genes
+      - mygene_parse_hits
+      - mygene_parse_batch
+      - mygene_pick_hit
+
+  - title: gnomAD
+    desc: >
+      Population frequency and gene constraint, as separate entry points. One
+      function cannot serve both.
+    contents:
+      - gnomad_constraint
+      - gnomad_constraints
+      - gnomad_frequency
+      - gnomad_parse_constraint
+      - gnomad_parse_constraints
+      - gnomad_parse_frequency
+      - gnomad_parse_populations
+
+  - title: ClinVar
+    desc: Clinical significance, via NCBI E-utilities.
+    contents:
+      - clinvar_classification
+      - clinvar_parse_record
+      - clinvar_category
+      - clinvar_conditions
+
   - title: Package
     contents:
       - bioclients-package

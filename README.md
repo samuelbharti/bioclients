@@ -6,8 +6,8 @@
 
 One client per biological database, each with a pure parser that runs offline.
 
-> **Status:** scaffold only. No clients yet. Phase 1 is gated on `biohttp`
-> becoming installable.
+> **Status:** three pilot clients, working. Installs from local source today;
+> not published anywhere yet.
 
 ## Why
 
@@ -63,13 +63,45 @@ bioclients/
         └── fixtures/     stored response bodies, ported from the apps
 ```
 
+## What is in it
+
+| Service | Ask about one | Ask about many | Pure parser |
+| --- | --- | --- | --- |
+| MyGene | `mygene_gene()` | `mygene_genes()` | `mygene_parse_hits()`, `mygene_parse_batch()` |
+| gnomAD constraint | `gnomad_constraint()` | `gnomad_constraints()` | `gnomad_parse_constraint()`, `gnomad_parse_constraints()` |
+| gnomAD frequency | `gnomad_frequency()` | | `gnomad_parse_frequency()`, `gnomad_parse_populations()` |
+| ClinVar | `clinvar_classification()` | | `clinvar_parse_record()` |
+
+```r
+res <- mygene_genes(c("TP53", "BRCA1", "EGFR"))
+biohttp::body_or_null(res)
+#> # A tibble: 3 x 7
+#>   symbol name              entrez ensembl_gene    uniprot ...
+#>   TP53   tumor protein p53 7157   ENSG00000141510 P04637
+#>   ...
+```
+
+Every client returns a `biohttp` envelope rather than raising, so you branch on
+`res$status` and write no `tryCatch()`. Reaching a source that has nothing is
+`no_data`, which is an answer rather than a fault.
+
+The batch entry points return one row per input, **in input order**, so you can
+zip results onto your inputs by position. An unmatched gene gets a row of `NA`
+rather than being dropped, because a shorter table silently shifts every row
+after it onto the wrong gene.
+
+### gnomAD has two query types, not one
+
+The three copies of this client in the family disagreed because they answer
+different questions: variant frequency, and gene constraint. Both are here, as
+separate entry points. Neither is folded into the other, and constraint is not
+dropped because two of the three callers wanted frequency.
+`gene-list-builder`'s whole ranking model is built on LOEUF, which is
+`gnomad_constraint()`.
+
 ## Dependencies
 
-`Imports` is empty right now and that is deliberate. `biohttp`, `jsonlite`,
-`rlang`, and `tibble` all belong there, but `biohttp` is not installable from any
-repository until it reaches r-universe, and declaring it now would fail
-`R CMD check` for everyone including CI. All four go in together with the first
-client.
+`Imports` is `biohttp` and `tibble`.
 
 Everything a single service needs goes in `Suggests`, guarded at the call site
 with `requireNamespace()`. This is an architectural requirement, not a cleanup
@@ -103,16 +135,31 @@ for an existing C or C++ implementation: `yyjsonr` or `RcppSimdJson` for JSON,
 
 ## Installation
 
-Not published yet, and it will not install until `biohttp` is on r-universe.
+Not published anywhere. Both packages install from local source:
+
+```r
+install.packages("path/to/biohttp", repos = NULL, type = "source")
+install.packages("path/to/bioclients/pkg-r", repos = NULL, type = "source")
+```
+
+`bioclients` needs `biohttp` installed first. Until `biohttp` is published, the
+`R-CMD-check` and `imports-only` CI jobs cannot resolve it and will fail on a
+runner. Local `R CMD check` is clean.
 
 ## Roadmap
 
 | Phase | State |
 | --- | --- |
-| 0. Scaffold | in progress |
-| 1. Three pilot clients: MyGene, gnomAD, ClinVar | blocked on `biohttp` r-universe |
+| 0. Scaffold | done |
+| 1. Three pilot clients: MyGene, gnomAD, ClinVar | done |
 | 2. Migrate `variant-reviewer` onto `biohttp` and `bioclients` | not started |
 | 3. Expand to the remaining services, three at a time | not started |
+
+## Testing
+
+Offline. No test touches a real host. The parsers run against stored response
+bodies ported unchanged from `variant-reviewer`, and a fixture that needed
+editing would mean the parser changed behavior during the port.
 
 ## License
 

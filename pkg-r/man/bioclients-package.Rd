@@ -9,23 +9,38 @@
 One client per biological database, each split into a request half that calls the service and a parser half that turns a response body into a canonical structure. The parser is pure, so it is tested against a stored response with no network. Transport, retries, caching, and error handling are left to the 'biohttp' package. Per-service dependencies are optional, so a caller that wants one service does not install the requirements of the rest.
 }
 \details{
-Nothing is exported yet. The package is scaffolded and waiting on \code{biohttp}
-to become installable, which is what Phase 1 of the build plan is gated on.
+Every service module ships two halves, and the split is the point.
 
-The shape every service module will take, once they land: a request function
-that calls one of \code{biohttp}'s entry points and returns its envelope, and a
-parser function that takes an already-parsed body and returns a canonical
-structure. The parser never touches the network, so a caller that already has
-a response body can use it alone and the offline tests exercise it directly.
+The \strong{client} builds a request, calls into \code{biohttp}, and returns its
+envelope. It knows URLs, parameters, and rate limits, and it touches the
+network. Start at \code{\link[=mygene_gene]{mygene_gene()}}, \code{\link[=gnomad_constraint]{gnomad_constraint()}},
+\code{\link[=gnomad_frequency]{gnomad_frequency()}}, or \code{\link[=clinvar_classification]{clinvar_classification()}}.
+
+The \strong{parser} takes an already-parsed response body and returns a canonical
+structure. It is pure, it never touches the network, and it is what the
+offline tests exercise. See \code{\link[=mygene_parse_hits]{mygene_parse_hits()}},
+\code{\link[=gnomad_parse_constraint]{gnomad_parse_constraint()}}, and \code{\link[=clinvar_parse_record]{clinvar_parse_record()}}.
+
+A caller that already has a response body can use a parser on its own.
 }
-\section{On the empty Imports field}{
+\section{What comes back}{
 
-\code{biohttp}, \code{jsonlite}, \code{rlang}, and \code{tibble} all belong in \code{Imports} and are
-deliberately not there yet. \code{biohttp} is not installable from any repository
-until it reaches r-universe, and declaring it now would fail \verb{R CMD check}
-for everyone including CI. Declaring the other three without it would leave
-three imports that nothing calls, which is its own check note. All four go in
-together with the first client.
+Every client returns a \code{biohttp} envelope rather than raising, so a caller
+branches on \code{res$status} and writes no \code{tryCatch()} of its own. Reach for
+\code{biohttp::body_or_null()} when the reason for a failure is genuinely not
+actionable.
+
+Reaching a source that has nothing for a query is \code{no_data}, not an error.
+It is an answer.
+}
+
+\section{Batching}{
+
+\code{\link[=mygene_genes]{mygene_genes()}} and \code{\link[=gnomad_constraints]{gnomad_constraints()}} ask about many genes in one or a
+few requests rather than one request per gene. The round trip is where
+essentially all the time in these calls goes, so this is the difference that
+matters. Both return rows in input order, one row per input, so a caller can
+zip results onto its inputs by position.
 }
 
 \seealso{
