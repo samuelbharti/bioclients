@@ -141,3 +141,72 @@ test_that("a failed esearch passes its envelope straight through", {
   expect_identical(res$status, "error")
   reset_transport()
 })
+
+# --- The NCBI API key --------------------------------------------------------
+
+test_that("the key is sent on both requests when one is configured", {
+  # E-utilities takes it in the query string; there is no header form.
+  reset_transport()
+  withr::local_envvar(NCBI_API_KEY = "SECRET123")
+  urls <- character()
+  httr2::local_mocked_responses(function(req) {
+    urls <<- c(urls, req$url)
+    if (grepl("esearch", req$url, fixed = TRUE)) {
+      return(mock_json('{"esearchresult":{"idlist":["40389"]}}'))
+    }
+    mock_json('{"result":{"40389":{"accession":"VCV000040389"}}}')
+  })
+
+  clinvar_classification("rs113488022")
+
+  expect_length(urls, 2)
+  expect_true(all(grepl("api_key=SECRET123", urls, fixed = TRUE)))
+})
+
+test_that("no key configured sends no api_key at all", {
+  # An empty api_key= is not the same as omitting it.
+  reset_transport()
+  withr::local_envvar(NCBI_API_KEY = "")
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json('{"esearchresult":{"idlist":[]}}')
+  })
+
+  clinvar_classification("rs113488022")
+
+  expect_false(grepl("api_key", url, fixed = TRUE))
+})
+
+test_that("the key does not partition the cache", {
+  # A rate-limit credential does not change the answer, so a call made with one
+  # must be served from an entry warmed without one. Otherwise configuring or
+  # rotating a key silently discards everything already fetched.
+  reset_transport()
+  calls <- 0L
+  httr2::local_mocked_responses(function(req) {
+    calls <<- calls + 1L
+    mock_json('{"esearchresult":{"idlist":[]}}')
+  })
+
+  withr::with_envvar(c(NCBI_API_KEY = ""), clinvar_classification("rs1"))
+  withr::with_envvar(
+    c(NCBI_API_KEY = "SECRET123"),
+    clinvar_classification("rs1")
+  )
+
+  expect_identical(calls, 1L)
+})
+
+test_that("a transport failure does not report the key back", {
+  reset_transport()
+  withr::local_envvar(NCBI_API_KEY = "SECRET123")
+  httr2::local_mocked_responses(function(req) {
+    stop("Could not resolve host: eutils.ncbi.nlm.nih.gov/?api_key=SECRET123")
+  })
+
+  res <- clinvar_classification("rs113488022")
+
+  expect_false(isTRUE(res$ok))
+  expect_false(grepl("SECRET123", res$detail, fixed = TRUE))
+})
