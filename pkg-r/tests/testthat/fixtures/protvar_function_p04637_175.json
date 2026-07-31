@@ -1,0 +1,196 @@
+{
+ "accession": "P04637",
+ "comments": [
+  {
+   "type": "FUNCTION",
+   "molecule": null,
+   "text": [
+    {
+     "value": "Multifunctional transcription factor that induces cell cycle arrest, DNA repair or apoptosis upon binding to its target DNA sequence (PubMed:11025664, PubMed:12524540, PubMed:12810724, PubMed:15186775, PubMed:15340061, PubMed:17317671, PubMed:17349958, PubMed:19556538, PubMed:20673990, PubMed:20959462, PubMed:22726440, PubMed:24051492, PubMed:24652652, PubMed:35618207, PubMed:36634798, PubMed:38653238, PubMed:9840937). Acts as a tumor suppressor in many tumor types; induces growth arrest or apoptosis depending on the physiological circumstances and cell type (PubMed:11025664, PubMed:12524540, PubMed:12810724, PubMed:15186775, PubMed:15340061, PubMed:17189187, PubMed:17317671, PubMed:17349958, PubMed:19556538, PubMed:20673990, PubMed:20959462, PubMed:22726440, PubMed:24051492, PubMed:24652652, PubMed:38653238, PubMed:9840937). Negatively regulates cell division by controlling expression of a set of genes required for this process (PubMed:11025664, PubMed:12524540, PubMed:12810724, PubMed:15186775, PubMed:15340061, PubMed:17317671, PubMed:17349958, PubMed:19556538, PubMed:20673990, PubMed:20959462, PubMed:22726440, PubMed:24051492, PubMed:24652652, PubMed:9840937). One of the activated genes is an inhibitor of cyclin-dependent kinases. Apoptosis induction seems to be mediated either by stimulation of BAX and FAS antigen expression, or by repression of Bcl-2 expression (PubMed:12524540, PubMed:17189187). Its pro-apoptotic activity is activated via its interaction with PPP1R13B/ASPP1 or TP53BP2/ASPP2 (PubMed:12524540). However, this activity is inhibited when the interaction with PPP1R13B/ASPP1 or TP53BP2/ASPP2 is displaced by PPP1R13L/iASPP (PubMed:12524540). In cooperation with mitochondrial PPIF is involved in activating oxidative stress-induced necrosis; the function is largely independent of transcription. Induces the transcription of long intergenic non-coding RNA p21 (lincRNA-p21) and lincRNA-Mkln1. LincRNA-p21 participates in TP53-dependent transcriptional repression leading to apoptosis and seems to have an effect on cell-cycle regulation. Implicated in Notch signaling cross-over. Prevents CDK7 kinase activity when associated to CAK complex in response to DNA damage, thus stopping cell cycle progression. Isoform 2 enhances the transactivation activity of isoform 1 from some but not all TP53-inducible promoters. Isoform 4 suppresses transactivation activity and impairs growth suppression mediated by isoform 1. Isoform 7 inhibits isoform 1-mediated apoptosis. Regulates the circadian clock by repressing CLOCK-BMAL1-mediated transcriptional activation of PER2 (PubMed:24051492)",
+     "evidences": [
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "11025664",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/11025664",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/11025664",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "12524540",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/12524540",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/12524540",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "12810724",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/12810724",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/12810724",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "15186775",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/15186775",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/15186775",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "15340061",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/15340061",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/15340061",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "17189187",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/17189187",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/17189187",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "17317671",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/17317671",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/17317671",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "17349958",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/17349958",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/17349958",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "19556538",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/19556538",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/19556538",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "20673990",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/20673990",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/20673990",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "20959462",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/20959462",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/20959462",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "22726440",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/22726440",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/22726440",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "24051492",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/24051492",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/24051492",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "24652652",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/24652652",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/24652652",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "35618207",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/35618207",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/35618207",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "36634798",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/36634798",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/36634798",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "38653238",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/38653238",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/38653238",
+        "reviewed": false
+       }
+      },
+      {
+       "code": "ECO:0000269",
+       "source": {
+        "name": "PubMed",
+        "id": "9840937",
+        "url": "http://www.ncbi.nlm.nih.gov/pubmed/9840937",
+        "alternativeUrl": "https://europepmc.org/abstract/MED/9840937",
+        "reviewed": false
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

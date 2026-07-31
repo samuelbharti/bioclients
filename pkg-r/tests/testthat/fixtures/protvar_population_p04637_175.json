@@ -1,0 +1,57 @@
+{
+ "accession": "P04637",
+ "position": 175,
+ "variants": [
+  {
+   "alternativeSequence": "Cys",
+   "xrefs": [
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    }
+   ]
+  },
+  {
+   "alternativeSequence": "Gly",
+   "xrefs": [
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    }
+   ]
+  },
+  {
+   "alternativeSequence": "His",
+   "xrefs": [
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    },
+    {
+     "name": "NCI-TCGA"
+    }
+   ]
+  }
+ ]
+}
