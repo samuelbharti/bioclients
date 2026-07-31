@@ -17,10 +17,16 @@
 GNOMAD_URL <- "https://gnomad.broadinstitute.org/api"
 GNOMAD_DATASET <- "gnomad_r4"
 
-# gnomAD's real limit is a query COST cap of 25, not a request count. Cost, not
-# count: a batch of aliased gene lookups is charged per alias, so 20 keeps a
-# chunk under the cap with room to spare. Raising this is how a batch starts
-# failing for reasons that look like rate limiting but are not.
+# gnomAD's real limit is a query COST cap, not a request count, and the verified
+# ceiling is exactly 25 aliases: a 26th returns "Query is too expensive". That
+# was established against the live API and is recorded in
+# multi-variant-reviewer/R/source_registry.R as a hard limit rather than tuning.
+#
+# 20 rather than 25 on purpose. Cost is charged per field, not only per alias,
+# and this query asks for eight fields per gene where the client that verified
+# the 25 asked for two. Sitting on the exact ceiling with a wider selection set
+# is how a batch starts failing for a reason that reads like rate limiting and
+# is not. Raising this needs a live re-check, not a guess.
 GNOMAD_CHUNK <- 20
 
 # Display labels for gnomAD's genetic-ancestry group codes.
