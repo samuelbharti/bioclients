@@ -21,9 +21,9 @@ Depends:
     R (>= 4.0)
 Imports:
     biohttp,
+    httr2,
     tibble
 Suggests:
-    httr2,
     jsonlite,
     knitr,
     rmarkdown,
