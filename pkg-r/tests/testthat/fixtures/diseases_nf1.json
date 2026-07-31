@@ -1,0 +1,25 @@
+[
+  {
+    "ENSP00000351015": {
+      "name": "NF1",
+      "score": 5.0,
+      "url": "https://diseases.jensenlab.org/Entity?type1=9606&id1=ENSP00000351015"
+    },
+    "ENSP00000322610": {
+      "name": "SUZ12",
+      "score": 4.2,
+      "url": "https://diseases.jensenlab.org/Entity?type1=9606&id1=ENSP00000322610"
+    },
+    "ENSP00000418960": {
+      "name": "CDKN2A",
+      "score": 3.5,
+      "url": "https://diseases.jensenlab.org/Entity?type1=9606&id1=ENSP00000418960"
+    },
+    "ENSP00000269305": {
+      "name": "TP53",
+      "score": 2.7,
+      "url": "https://diseases.jensenlab.org/Entity?type1=9606&id1=ENSP00000269305"
+    }
+  },
+  {}
+]
