@@ -1,0 +1,2493 @@
+[{
+  "@context": "http://reg.genome.network/schema/allele.jsonld",
+  "@id": "http://reg.genome.network/allele/CA000072",
+  "communityStandardTitle": [
+    "NM_000546.6(TP53):c.215C>G (p.Pro72Arg)"
+  ],
+  "externalRecords": {
+    "COSMIC": [
+      {
+        "active": false,
+        "id": "COSM250061"
+      },
+      {
+        "active": false,
+        "id": "COSM3766190"
+      },
+      {
+        "active": false,
+        "id": "COSM3766191"
+      },
+      {
+        "active": false,
+        "id": "COSM3766192"
+      },
+      {
+        "active": false,
+        "id": "COSM3766193"
+      }
+    ],
+    "ClinVarAlleles": [
+      {
+        "@id": "http://www.ncbi.nlm.nih.gov/clinvar/?term=27390[alleleid]",
+        "alleleId": 27390,
+        "preferredName": "NM_000546.6(TP53):c.215C>G (p.Pro72Arg)"
+      }
+    ],
+    "ClinVarVariations": [
+      {
+        "@id": "http://www.ncbi.nlm.nih.gov/clinvar/variation/12351",
+        "RCV": [
+          "RCV000013144",
+          "RCV000034639",
+          "RCV000079202",
+          "RCV000132165",
+          "RCV000144668",
+          "RCV000300782",
+          "RCV001255631",
+          "RCV002225263",
+          "RCV002496335",
+          "RCV002510562"
+        ],
+        "variationId": 12351
+      }
+    ],
+    "ExAC": [
+      {
+        "@id": "http://exac.broadinstitute.org/variant/17-7579472-G-C",
+        "id": "17-7579472-G-C",
+        "variant": "17:7579472 G / C"
+      }
+    ],
+    "MyVariantInfo_hg19": [
+      {
+        "@id": "http://myvariant.info/v1/variant/chr17:g.7579472G>C?assembly=hg19",
+        "id": "chr17:g.7579472G>C"
+      }
+    ],
+    "MyVariantInfo_hg38": [
+      {
+        "@id": "http://myvariant.info/v1/variant/chr17:g.7676154G>C?assembly=hg38",
+        "id": "chr17:g.7676154G>C"
+      }
+    ],
+    "dbSNP": [
+      {
+        "@id": "http://www.ncbi.nlm.nih.gov/snp/1042522",
+        "rs": 1042522
+      }
+    ],
+    "gnomAD_2": [
+      {
+        "@id": "http://gnomad.broadinstitute.org/variant/17-7579472-G-C?dataset=gnomad_r2_1",
+        "id": "17-7579472-G-C",
+        "variant": "17:7579472 G / C"
+      }
+    ],
+    "gnomAD_3": [
+      {
+        "@id": "http://gnomad.broadinstitute.org/variant/17-7676154-G-C?dataset=gnomad_r3",
+        "id": "17-7676154-G-C",
+        "variant": "17:7676154 G / C"
+      }
+    ],
+    "gnomAD_4": [
+      {
+        "@id": "http://gnomad.broadinstitute.org/variant/17-7676154-G-C?dataset=gnomad_r4",
+        "id": "17-7676154-G-C",
+        "variant": "17:7676154 G / C"
+      }
+    ]
+  },
+  "genomicAlleles": [
+    {
+      "chromosome": "17",
+      "coordinates": [
+        {
+          "allele": "C",
+          "end": 7676154,
+          "referenceAllele": "G",
+          "start": 7676153
+        }
+      ],
+      "hgvs": [
+        "NC_000017.11:g.7676154G>C",
+        "CM000679.2:g.7676154G>C"
+      ],
+      "referenceGenome": "GRCh38",
+      "referenceSequence": "http://reg.genome.network/refseq/RS000065"
+    },
+    {
+      "chromosome": "17",
+      "coordinates": [
+        {
+          "allele": "C",
+          "end": 7579472,
+          "referenceAllele": "G",
+          "start": 7579471
+        }
+      ],
+      "hgvs": [
+        "NC_000017.10:g.7579472G>C",
+        "CM000679.1:g.7579472G>C"
+      ],
+      "referenceGenome": "GRCh37",
+      "referenceSequence": "http://reg.genome.network/refseq/RS000041"
+    },
+    {
+      "chromosome": "17",
+      "coordinates": [
+        {
+          "allele": "C",
+          "end": 7520197,
+          "referenceAllele": "G",
+          "start": 7520196
+        }
+      ],
+      "hgvs": [
+        "NC_000017.9:g.7520197G>C"
+      ],
+      "referenceGenome": "NCBI36",
+      "referenceSequence": "http://reg.genome.network/refseq/RS000017"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 16397,
+          "referenceAllele": "C",
+          "start": 16396
+        }
+      ],
+      "hgvs": [
+        "NG_017013.2:g.16397C>G",
+        "LRG_321:g.16397C>G"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS003369"
+    }
+  ],
+  "transcriptAlleles": [
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 397,
+          "referenceAllele": "C",
+          "start": 396
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000503591.2:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000426252.2:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000426252.2:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS914179"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 497,
+          "referenceAllele": "C",
+          "start": 496
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000508793.6:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000424104.2:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000424104.2:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS914191"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 111,
+          "endIntronDirection": "-",
+          "endIntronOffset": 917,
+          "referenceAllele": "C",
+          "start": 111,
+          "startIntronDirection": "-",
+          "startIntronOffset": 918
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000509690.6:c.-21-918C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000425104.2:n.-21-918C>G"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS914194"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 175,
+          "endIntronDirection": "+",
+          "endIntronOffset": 228,
+          "referenceAllele": "C",
+          "start": 175,
+          "startIntronDirection": "+",
+          "startIntronOffset": 227
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000514944.6:c.96+228C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000423862.2:n.96+228C>G"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS914205"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 354,
+          "referenceAllele": "C",
+          "start": 353
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000604348.6:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000473895.2:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000473895.2:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS914353"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000269305.9:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000269305.4:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000269305.4:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS743105",
+      "MANE": {
+        "maneVersion": "1.3",
+        "maneStatus": "MANE Select",
+        "nucleotide": {
+          "Ensembl": {
+            "hgvs": "ENST00000269305.9:c.215C>G"
+          },
+          "RefSeq": {
+            "hgvs": "NM_000546.6:c.215C>G"
+          }
+        },
+        "protein": {
+          "Ensembl": {
+            "hgvs": "ENSP00000269305.4:p.Pro72Arg"
+          },
+          "RefSeq": {
+            "hgvs": "NP_000537.3:p.Pro72Arg"
+          }
+        }
+      }
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 405,
+          "referenceAllele": "C",
+          "start": 404
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000269305.8:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000269305.4:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000269305.4:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247246"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 215,
+          "referenceAllele": "C",
+          "start": 214
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000359597.8:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000352610.4:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000352610.4:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247341"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 215,
+          "referenceAllele": "C",
+          "start": 214
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000413465.6:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000410739.2:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000410739.2:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247363"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 348,
+          "referenceAllele": "C",
+          "start": 347
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000420246.6:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000391127.2:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000391127.2:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247205"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 351,
+          "referenceAllele": "C",
+          "start": 350
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000445888.6:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000391478.2:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000391478.2:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247156"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 348,
+          "referenceAllele": "C",
+          "start": 347
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000455263.6:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000398846.2:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000398846.2:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS246735"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 397,
+          "referenceAllele": "C",
+          "start": 396
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000503591.1:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000426252.1:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000426252.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247405"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 471,
+          "referenceAllele": "C",
+          "start": 470
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000505014.5:n.471C>G"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS336915"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 353,
+          "referenceAllele": "C",
+          "start": 352
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000508793.5:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000424104.1:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000424104.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247237"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 111,
+          "endIntronDirection": "-",
+          "endIntronOffset": 917,
+          "referenceAllele": "C",
+          "start": 111,
+          "startIntronDirection": "-",
+          "startIntronOffset": 918
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000509690.5:c.-21-918C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000425104.1:n.-21-918C>G"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247215"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 175,
+          "endIntronDirection": "+",
+          "endIntronOffset": 228,
+          "referenceAllele": "C",
+          "start": 175,
+          "startIntronDirection": "+",
+          "startIntronOffset": 227
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000514944.5:c.96+228C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000423862.1:n.96+228C>G"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247340"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 354,
+          "referenceAllele": "C",
+          "start": 353
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000604348.5:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000473895.1:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000473895.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS247300"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 465,
+          "referenceAllele": "C",
+          "start": 464
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000610292.4:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000478219.1:p.Pro33Arg",
+        "hgvsWellDefined": "ENSP00000478219.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS400360"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 348,
+          "referenceAllele": "C",
+          "start": 347
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000610538.4:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000480868.1:p.Pro33Arg",
+        "hgvsWellDefined": "ENSP00000480868.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS400464"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 215,
+          "referenceAllele": "C",
+          "start": 214
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000615910.4:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000482903.1:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000482903.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS402821"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 417,
+          "referenceAllele": "C",
+          "start": 416
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000617185.4:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000482258.1:p.Pro72Arg",
+        "hgvsWellDefined": "ENSP00000482258.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS403371"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 351,
+          "referenceAllele": "C",
+          "start": 350
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000619485.4:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000482537.1:p.Pro33Arg",
+        "hgvsWellDefined": "ENSP00000482537.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS404399"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 405,
+          "referenceAllele": "C",
+          "start": 404
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000620739.4:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000481638.1:p.Pro33Arg",
+        "hgvsWellDefined": "ENSP00000481638.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS404959"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 348,
+          "referenceAllele": "C",
+          "start": 347
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000622645.4:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000482222.1:p.Pro33Arg",
+        "hgvsWellDefined": "ENSP00000482222.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS405818"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 358,
+          "referenceAllele": "C",
+          "start": 357
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "ENST00000635293.1:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000488924.1:p.Pro33Arg",
+        "hgvsWellDefined": "ENSP00000488924.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS408095"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122137",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 417,
+          "referenceAllele": "C",
+          "start": 416
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_000546.5:c.215C>G",
+        "LRG_321t1:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_000537.3:p.Pro72Arg",
+        "hgvsWellDefined": "NP_000537.3:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS006605"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122138",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 414,
+          "referenceAllele": "C",
+          "start": 413
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001126112.2:c.215C>G",
+        "LRG_321t2:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001119584.1:p.Pro72Arg",
+        "hgvsWellDefined": "NP_001119584.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS011490"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122139",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 417,
+          "referenceAllele": "C",
+          "start": 416
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001126113.2:c.215C>G",
+        "LRG_321t4:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001119585.1:p.Pro72Arg",
+        "hgvsWellDefined": "NP_001119585.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS011491"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122140",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 417,
+          "referenceAllele": "C",
+          "start": 416
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001126114.2:c.215C>G",
+        "LRG_321t3:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001119586.1:p.Pro72Arg",
+        "hgvsWellDefined": "NP_001119586.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS011492"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122136",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 534,
+          "referenceAllele": "C",
+          "start": 533
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001126118.1:c.98C>G",
+        "LRG_321t8:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001119590.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001119590.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS011496"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826559031",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 417,
+          "referenceAllele": "C",
+          "start": 416
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276695.1:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263624.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263624.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS020927"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826560489",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 417,
+          "referenceAllele": "C",
+          "start": 416
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276696.1:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263625.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263625.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS020928"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826564880",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 417,
+          "referenceAllele": "C",
+          "start": 416
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276760.1:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263689.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263689.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS020942"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826566538",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 414,
+          "referenceAllele": "C",
+          "start": 413
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276761.1:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263690.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263690.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS020943"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826559031",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276695.2:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263624.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263624.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS681331"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826560489",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276696.2:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263625.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263625.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS681332"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826564880",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276760.2:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263689.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263689.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS681339"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826566538",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 354,
+          "referenceAllele": "C",
+          "start": 353
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276761.2:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263690.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263690.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS681340"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122137",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_000546.6:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_000537.3:p.Pro72Arg",
+        "hgvsWellDefined": "NP_000537.3:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS710844",
+      "MANE": {
+        "maneVersion": "1.3",
+        "maneStatus": "MANE Select",
+        "nucleotide": {
+          "Ensembl": {
+            "hgvs": "ENST00000269305.9:c.215C>G"
+          },
+          "RefSeq": {
+            "hgvs": "NM_000546.6:c.215C>G"
+          }
+        },
+        "protein": {
+          "Ensembl": {
+            "hgvs": "ENSP00000269305.4:p.Pro72Arg"
+          },
+          "RefSeq": {
+            "hgvs": "NP_000537.3:p.Pro72Arg"
+          }
+        }
+      }
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122138",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 354,
+          "referenceAllele": "C",
+          "start": 353
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001126112.3:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001119584.1:p.Pro72Arg",
+        "hgvsWellDefined": "NP_001119584.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS712176"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122139",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001126113.3:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001119585.1:p.Pro72Arg",
+        "hgvsWellDefined": "NP_001119585.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS712177"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122140",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001126114.3:c.215C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001119586.1:p.Pro72Arg",
+        "hgvsWellDefined": "NP_001119586.1:p.Pro72Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS712178"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA122136",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 474,
+          "referenceAllele": "C",
+          "start": 473
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001126118.2:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001119590.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001119590.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS712182"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826559031",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276695.3:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263624.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263624.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS715405"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826560489",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276696.3:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263625.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263625.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS715406"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826564880",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 357,
+          "referenceAllele": "C",
+          "start": 356
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276760.3:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263689.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263689.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS715416"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2826566538",
+      "coordinates": [
+        {
+          "allele": "G",
+          "end": 354,
+          "referenceAllele": "C",
+          "start": 353
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN011998",
+      "geneNCBI_id": 7157,
+      "geneSymbol": "TP53",
+      "hgvs": [
+        "NM_001276761.3:c.98C>G"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001263690.1:p.Pro33Arg",
+        "hgvsWellDefined": "NP_001263690.1:p.Pro33Arg"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS715417"
+    }
+  ],
+  "type": "nucleotide"
+}
+,{
+  "@context": "http://reg.genome.network/schema/allele.jsonld",
+  "@id": "http://reg.genome.network/allele/CA123643",
+  "communityStandardTitle": [
+    "NM_004333.6(BRAF):c.1799T>A (p.Val600Glu)"
+  ],
+  "externalRecords": {
+    "COSMIC": [
+      {
+        "@id": "http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=476",
+        "active": true,
+        "id": "COSM476"
+      }
+    ],
+    "ClinVarAlleles": [
+      {
+        "@id": "http://www.ncbi.nlm.nih.gov/clinvar/?term=29000[alleleid]",
+        "alleleId": 29000,
+        "preferredName": "NM_004333.6(BRAF):c.1799T>A (p.Val600Glu)"
+      }
+    ],
+    "ClinVarVariations": [
+      {
+        "@id": "http://www.ncbi.nlm.nih.gov/clinvar/variation/13961",
+        "RCV": [
+          "RCV000014992",
+          "RCV000014993",
+          "RCV000014994",
+          "RCV000022677",
+          "RCV000080903",
+          "RCV000037936",
+          "RCV000067669",
+          "RCV000208763",
+          "RCV000420614",
+          "RCV000425847",
+          "RCV000429915",
+          "RCV000440802",
+          "RCV000425166",
+          "RCV000430562",
+          "RCV000443745",
+          "RCV000433305",
+          "RCV000435441",
+          "RCV000440540",
+          "RCV000443448",
+          "RCV000417746",
+          "RCV000424470",
+          "RCV000432628",
+          "RCV000662278",
+          "RCV000860020",
+          "RCV001030023",
+          "RCV001248834",
+          "RCV001254874",
+          "RCV002051586",
+          "RCV004018627",
+          "RCV003458334"
+        ],
+        "variationId": 13961
+      }
+    ],
+    "ExAC": [
+      {
+        "@id": "http://exac.broadinstitute.org/variant/7-140453136-A-T",
+        "id": "7-140453136-A-T",
+        "variant": "7:140453136 A / T"
+      }
+    ],
+    "MyVariantInfo_hg19": [
+      {
+        "@id": "http://myvariant.info/v1/variant/chr7:g.140453136A>T?assembly=hg19",
+        "id": "chr7:g.140453136A>T"
+      }
+    ],
+    "MyVariantInfo_hg38": [
+      {
+        "@id": "http://myvariant.info/v1/variant/chr7:g.140753336A>T?assembly=hg38",
+        "id": "chr7:g.140753336A>T"
+      }
+    ],
+    "dbSNP": [
+      {
+        "@id": "http://www.ncbi.nlm.nih.gov/snp/113488022",
+        "rs": 113488022
+      }
+    ],
+    "gnomAD_2": [
+      {
+        "@id": "http://gnomad.broadinstitute.org/variant/7-140453136-A-T?dataset=gnomad_r2_1",
+        "id": "7-140453136-A-T",
+        "variant": "7:140453136 A / T"
+      }
+    ],
+    "gnomAD_4": [
+      {
+        "@id": "http://gnomad.broadinstitute.org/variant/7-140753336-A-T?dataset=gnomad_r4",
+        "id": "7-140753336-A-T",
+        "variant": "7:140753336 A / T"
+      }
+    ]
+  },
+  "genomicAlleles": [
+    {
+      "chromosome": "7",
+      "coordinates": [
+        {
+          "allele": "T",
+          "end": 140753336,
+          "referenceAllele": "A",
+          "start": 140753335
+        }
+      ],
+      "hgvs": [
+        "NC_000007.14:g.140753336A>T",
+        "CM000669.2:g.140753336A>T"
+      ],
+      "referenceGenome": "GRCh38",
+      "referenceSequence": "http://reg.genome.network/refseq/RS000055"
+    },
+    {
+      "chromosome": "7",
+      "coordinates": [
+        {
+          "allele": "T",
+          "end": 140453136,
+          "referenceAllele": "A",
+          "start": 140453135
+        }
+      ],
+      "hgvs": [
+        "NC_000007.13:g.140453136A>T",
+        "CM000669.1:g.140453136A>T"
+      ],
+      "referenceGenome": "GRCh37",
+      "referenceSequence": "http://reg.genome.network/refseq/RS000031"
+    },
+    {
+      "chromosome": "7",
+      "coordinates": [
+        {
+          "allele": "T",
+          "end": 140099605,
+          "referenceAllele": "A",
+          "start": 140099604
+        }
+      ],
+      "hgvs": [
+        "NC_000007.12:g.140099605A>T"
+      ],
+      "referenceGenome": "NCBI36",
+      "referenceSequence": "http://reg.genome.network/refseq/RS000007"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 176429,
+          "referenceAllele": "T",
+          "start": 176428
+        }
+      ],
+      "hgvs": [
+        "NG_007873.3:g.176429T>A",
+        "LRG_299:g.176429T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS000682"
+    }
+  ],
+  "transcriptAlleles": [
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2025,
+          "referenceAllele": "T",
+          "start": 2024
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000646891.2:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000493543.1:p.Val600Glu",
+        "hgvsWellDefined": "ENSP00000493543.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS906449",
+      "MANE": {
+        "maneVersion": "1.3",
+        "maneStatus": "MANE Select",
+        "nucleotide": {
+          "Ensembl": {
+            "hgvs": "ENST00000646891.2:c.1799T>A"
+          },
+          "RefSeq": {
+            "hgvs": "NM_004333.6:c.1799T>A"
+          }
+        },
+        "protein": {
+          "Ensembl": {
+            "hgvs": "ENSP00000493543.1:p.Val600Glu"
+          },
+          "RefSeq": {
+            "hgvs": "NP_004324.2:p.Val600Glu"
+          }
+        }
+      }
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1948,
+          "referenceAllele": "T",
+          "start": 1947
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000288602.11:c.1919T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000288602.7:p.Val640Glu",
+        "hgvsWellDefined": "ENSP00000288602.7:p.Val640Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS743952"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 469,
+          "referenceAllele": "T",
+          "start": 468
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000479537.6:c.469T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS757306"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1906,
+          "referenceAllele": "T",
+          "start": 1905
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000496384.7:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000419060.2:p.Val600Glu",
+        "hgvsWellDefined": "ENSP00000419060.2:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS757830"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1885,
+          "referenceAllele": "T",
+          "start": 1884
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000497784.2:c.*1249T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000420119.2:n.*1249T>A"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS757877"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1789,
+          "referenceAllele": "T",
+          "start": 1788
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000642228.1:c.*877T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000493678.1:n.*877T>A"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS766628"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1258,
+          "endIntronDirection": "-",
+          "endIntronOffset": 3917,
+          "referenceAllele": "T",
+          "start": 1258,
+          "startIntronDirection": "-",
+          "startIntronOffset": 3918
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000642875.1:n.1259-3918T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS766965"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2189,
+          "referenceAllele": "T",
+          "start": 2188
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000644120.1:n.2189T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS767644"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 895,
+          "referenceAllele": "T",
+          "start": 894
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000644650.1:c.895T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS767921"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2681,
+          "referenceAllele": "T",
+          "start": 2680
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000644905.1:n.2681T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS768066"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2145,
+          "referenceAllele": "T",
+          "start": 2144
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000644969.2:c.1919T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000496776.1:p.Val640Glu",
+        "hgvsWellDefined": "ENSP00000496776.1:p.Val640Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS768098",
+      "MANE": {
+        "maneVersion": "1.3",
+        "maneStatus": "MANE Plus Clinical",
+        "nucleotide": {
+          "Ensembl": {
+            "hgvs": "ENST00000644969.2:c.1919T>A"
+          },
+          "RefSeq": {
+            "hgvs": "NM_001374258.1:c.1919T>A"
+          }
+        },
+        "protein": {
+          "Ensembl": {
+            "hgvs": "ENSP00000496776.1:p.Val640Glu"
+          },
+          "RefSeq": {
+            "hgvs": "NP_001361187.1:p.Val640Glu"
+          }
+        }
+      }
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2135,
+          "referenceAllele": "T",
+          "start": 2134
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000646730.1:c.*375T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000494784.1:n.*375T>A"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS769037"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2024,
+          "referenceAllele": "T",
+          "start": 2023
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000646891.1:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000493543.1:p.Val600Glu",
+        "hgvsWellDefined": "ENSP00000493543.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS769120"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 737,
+          "endIntronDirection": "-",
+          "endIntronOffset": 3917,
+          "referenceAllele": "T",
+          "start": 737,
+          "startIntronDirection": "-",
+          "startIntronOffset": 3918
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000647434.1:c.738-3918T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000495132.1:n.738-3918T>A"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS769410"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1860,
+          "referenceAllele": "T",
+          "start": 1859
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000288602.10:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000288602.6:p.Val600Glu",
+        "hgvsWellDefined": "ENSP00000288602.6:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS253526"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 83,
+          "referenceAllele": "T",
+          "start": 82
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000479537.5:c.83T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000418033.1:p.Val28Glu",
+        "hgvsWellDefined": "ENSP00000418033.1:p.Val28Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS319895"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 622,
+          "referenceAllele": "T",
+          "start": 621
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000496384.6:c.622T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS332865"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1834,
+          "referenceAllele": "T",
+          "start": 1833
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "ENST00000497784.1:c.1834T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "ENSP00000420119.1:n.1834T>A"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS333935"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA094029",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1860,
+          "referenceAllele": "T",
+          "start": 1859
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_004333.4:c.1799T>A",
+        "LRG_299t1:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_004324.2:p.Val600Glu",
+        "hgvsWellDefined": "NP_004324.2:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS029502"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1807,
+          "referenceAllele": "T",
+          "start": 1806
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XM_005250045.1:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "XP_005250102.1:p.Val600Glu",
+        "hgvsWellDefined": "XP_005250102.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS059048"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1807,
+          "referenceAllele": "T",
+          "start": 1806
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XM_005250046.1:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "XP_005250103.1:p.Val600Glu",
+        "hgvsWellDefined": "XP_005250103.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS059049"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1807,
+          "referenceAllele": "T",
+          "start": 1806
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XM_011516529.1:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "XP_011514831.1:p.Val600Glu",
+        "hgvsWellDefined": "XP_011514831.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS083730"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1702,
+          "endIntronDirection": "-",
+          "endIntronOffset": 3917,
+          "referenceAllele": "T",
+          "start": 1702,
+          "startIntronDirection": "-",
+          "startIntronOffset": 3918
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XM_011516530.1:c.1695-3918T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "XP_011514832.1:n.1695-3918T>A"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS083731"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1807,
+          "referenceAllele": "T",
+          "start": 1806
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XR_242190.1:n.1807T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS116222"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1807,
+          "referenceAllele": "T",
+          "start": 1806
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XR_927520.1:n.1807T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS123925"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1807,
+          "referenceAllele": "T",
+          "start": 1806
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XR_927521.1:n.1807T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS123926"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1702,
+          "endIntronDirection": "-",
+          "endIntronOffset": 3917,
+          "referenceAllele": "T",
+          "start": 1702,
+          "startIntronDirection": "-",
+          "startIntronOffset": 3918
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XR_927522.1:n.1703-3918T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS123927"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1702,
+          "endIntronDirection": "-",
+          "endIntronOffset": 3917,
+          "referenceAllele": "T",
+          "start": 1702,
+          "startIntronDirection": "-",
+          "startIntronOffset": 3918
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XR_927523.1:n.1703-3918T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS123928"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2827883514",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2024,
+          "referenceAllele": "T",
+          "start": 2023
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001354609.1:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001341538.1:p.Val600Glu",
+        "hgvsWellDefined": "NP_001341538.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS522553"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA094029",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2024,
+          "referenceAllele": "T",
+          "start": 2023
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_004333.5:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_004324.2:p.Val600Glu",
+        "hgvsWellDefined": "NP_004324.2:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS525199"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2897,
+          "referenceAllele": "T",
+          "start": 2896
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NR_148928.1:n.2897T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS531377"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1927,
+          "referenceAllele": "T",
+          "start": 1926
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XM_017012558.1:c.1919T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "XP_016868047.1:p.Val640Glu",
+        "hgvsWellDefined": "XP_016868047.1:p.Val640Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS566138"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1927,
+          "referenceAllele": "T",
+          "start": 1926
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XM_017012559.1:c.1919T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "XP_016868048.1:p.Val640Glu",
+        "hgvsWellDefined": "XP_016868048.1:p.Val640Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS566139"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1927,
+          "referenceAllele": "T",
+          "start": 1926
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XR_001744857.1:n.1927T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS593501"
+    },
+    {
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1822,
+          "endIntronDirection": "-",
+          "endIntronOffset": 3917,
+          "referenceAllele": "T",
+          "start": 1822,
+          "startIntronDirection": "-",
+          "startIntronOffset": 3918
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "XR_001744858.1:n.1823-3918T>A"
+      ],
+      "referenceSequence": "http://reg.genome.network/refseq/RS593502"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2827883514",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2025,
+          "referenceAllele": "T",
+          "start": 2024
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001354609.2:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001341538.1:p.Val600Glu",
+        "hgvsWellDefined": "NP_001341538.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS690253"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828475059",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2145,
+          "referenceAllele": "T",
+          "start": 2144
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001374244.1:c.1919T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001361173.1:p.Val640Glu",
+        "hgvsWellDefined": "NP_001361173.1:p.Val640Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS693184"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA1139743298",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2145,
+          "referenceAllele": "T",
+          "start": 2144
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001374258.1:c.1919T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001361187.1:p.Val640Glu",
+        "hgvsWellDefined": "NP_001361187.1:p.Val640Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS693190",
+      "MANE": {
+        "maneVersion": "1.3",
+        "maneStatus": "MANE Plus Clinical",
+        "nucleotide": {
+          "Ensembl": {
+            "hgvs": "ENST00000644969.2:c.1919T>A"
+          },
+          "RefSeq": {
+            "hgvs": "NM_001374258.1:c.1919T>A"
+          }
+        },
+        "protein": {
+          "Ensembl": {
+            "hgvs": "ENSP00000496776.1:p.Val640Glu"
+          },
+          "RefSeq": {
+            "hgvs": "NP_001361187.1:p.Val640Glu"
+          }
+        }
+      }
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA094029",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2025,
+          "referenceAllele": "T",
+          "start": 2024
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_004333.6:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_004324.2:p.Val600Glu",
+        "hgvsWellDefined": "NP_004324.2:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS696110",
+      "MANE": {
+        "maneVersion": "1.3",
+        "maneStatus": "MANE Select",
+        "nucleotide": {
+          "Ensembl": {
+            "hgvs": "ENST00000646891.2:c.1799T>A"
+          },
+          "RefSeq": {
+            "hgvs": "NM_004333.6:c.1799T>A"
+          }
+        },
+        "protein": {
+          "Ensembl": {
+            "hgvs": "ENSP00000493543.1:p.Val600Glu"
+          },
+          "RefSeq": {
+            "hgvs": "NP_004324.2:p.Val600Glu"
+          }
+        }
+      }
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828775302",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2034,
+          "referenceAllele": "T",
+          "start": 2033
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378467.1:c.1808T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365396.1:p.Val603Glu",
+        "hgvsWellDefined": "NP_001365396.1:p.Val603Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721717"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828776011",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2025,
+          "referenceAllele": "T",
+          "start": 2024
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378468.1:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365397.1:p.Val600Glu",
+        "hgvsWellDefined": "NP_001365397.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721718"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828776665",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1959,
+          "referenceAllele": "T",
+          "start": 1958
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378469.1:c.1733T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365398.1:p.Val578Glu",
+        "hgvsWellDefined": "NP_001365398.1:p.Val578Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721719"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828777346",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1923,
+          "referenceAllele": "T",
+          "start": 1922
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378470.1:c.1697T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365399.1:p.Val566Glu",
+        "hgvsWellDefined": "NP_001365399.1:p.Val566Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721720"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828778025",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1914,
+          "referenceAllele": "T",
+          "start": 1913
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378471.1:c.1688T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365400.1:p.Val563Glu",
+        "hgvsWellDefined": "NP_001365400.1:p.Val563Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721721"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828778630",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1744,
+          "referenceAllele": "T",
+          "start": 1743
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378472.1:c.1643T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365401.1:p.Val548Glu",
+        "hgvsWellDefined": "NP_001365401.1:p.Val548Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721722"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828779239",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1744,
+          "referenceAllele": "T",
+          "start": 1743
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378473.1:c.1643T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365402.1:p.Val548Glu",
+        "hgvsWellDefined": "NP_001365402.1:p.Val548Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721723"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2828779948",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 2025,
+          "referenceAllele": "T",
+          "start": 2024
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378474.1:c.1799T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365403.1:p.Val600Glu",
+        "hgvsWellDefined": "NP_001365403.1:p.Val600Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721724"
+    },
+    {
+      "@id": "http://reg.genome.network/allele/PA2580652578",
+      "coordinates": [
+        {
+          "allele": "A",
+          "end": 1761,
+          "referenceAllele": "T",
+          "start": 1760
+        }
+      ],
+      "gene": "http://reg.genome.network/gene/GN001097",
+      "geneNCBI_id": 673,
+      "geneSymbol": "BRAF",
+      "hgvs": [
+        "NM_001378475.1:c.1535T>A"
+      ],
+      "proteinEffect": {
+        "hgvs": "NP_001365404.1:p.Val512Glu",
+        "hgvsWellDefined": "NP_001365404.1:p.Val512Glu"
+      },
+      "referenceSequence": "http://reg.genome.network/refseq/RS721725"
+    }
+  ],
+  "type": "nucleotide"
+}
+]
