@@ -107,3 +107,97 @@ test_that("a gene HPO has no annotation for is no_data", {
 
   expect_identical(hpo_gene_annotation(7157)$status, "no_data")
 })
+
+# --- Term search -------------------------------------------------------------
+
+test_that("the ported HPO search fixture parses as expected", {
+  body <- read_fixture("hpo_search_seizure.json")
+  out <- hpo_parse_search(body)
+
+  expect_s3_class(out, "tbl_df")
+  expect_identical(out$id[1], "HP:0007207")
+  expect_identical(out$name[1], "Photosensitive tonic-clonic seizure")
+  expect_match(out$definition[1], "flashing or flickering light")
+})
+
+test_that("the descendant count comes through", {
+  # It is what tells a broad term from a specific one without walking the DAG.
+  body <- read_fixture("hpo_search_seizure.json")
+  expect_equal(hpo_parse_search(body)$descendant_count[1], 0)
+})
+
+test_that("no match is NULL, not a zero-row tibble", {
+  expect_null(hpo_parse_search(list(terms = list())))
+  expect_null(hpo_parse_search(list()))
+})
+
+test_that("the search sends the text and the limit", {
+  reset_transport()
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json('{"terms":[]}')
+  })
+
+  hpo_search("seizure", limit = 5)
+
+  expect_match(url, "hp/search", fixed = TRUE)
+  expect_match(url, "q=seizure", fixed = TRUE)
+  expect_match(url, "limit=5", fixed = TRUE)
+})
+
+# --- Term lookup -------------------------------------------------------------
+
+test_that("the ported HPO term fixture parses as expected", {
+  body <- read_fixture("hpo_term_HP0001250.json")
+  out <- hpo_parse_term(body)
+
+  expect_identical(nrow(out), 1L)
+  expect_identical(out$id, "HP:0001250")
+  expect_identical(out$name, "Seizure")
+  expect_equal(out$descendant_count, 346)
+})
+
+test_that("synonyms and xrefs are list columns", {
+  # A term carries any number of each, and flattening them to one string would
+  # make them unusable without re-splitting.
+  body <- read_fixture("hpo_term_HP0001250.json")
+  out <- hpo_parse_term(body)
+
+  expect_type(out$synonyms, "list")
+  expect_true("Epilepsy" %in% out$synonyms[[1]])
+  expect_true(any(grepl("^SNOMEDCT_US:", out$xrefs[[1]])))
+})
+
+test_that("a term with no synonyms gets an empty vector, not NULL", {
+  out <- hpo_parse_term(list(id = "HP:1", name = "X"))
+
+  expect_identical(out$synonyms[[1]], character())
+  expect_identical(out$xrefs[[1]], character())
+})
+
+test_that("a body with no id is NULL", {
+  expect_null(hpo_parse_term(list(name = "Seizure")))
+  expect_null(hpo_parse_term(list()))
+})
+
+test_that("the term id is upper-cased into the path, colon and all", {
+  # JAX takes an HP id in the path directly, with the colon verbatim.
+  reset_transport()
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json('{"id":"HP:0001250","name":"Seizure"}')
+  })
+
+  hpo_term("hp:0001250")
+
+  expect_match(url, "hp/terms/HP:0001250", fixed = TRUE)
+})
+
+test_that("anything that is not an HP id never reaches the network", {
+  reset_transport()
+  expect_identical(hpo_term("seizure")$status, "no_data")
+  expect_identical(hpo_term("HP:0001250/../../x")$status, "no_data")
+  expect_identical(hpo_search("")$status, "no_data")
+})
