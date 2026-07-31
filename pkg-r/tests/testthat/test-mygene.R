@@ -138,3 +138,58 @@ test_that("a transport failure passes the envelope straight through", {
   expect_identical(res$source, "MyGene")
   reset_transport()
 })
+
+# --- The HGNC id -------------------------------------------------------------
+
+test_that("HGNC is requested, and it is upper case", {
+  # Every other field is lower case. MyGene names this one HGNC in both the
+  # request and the response, so asking for `hgnc` returns nothing and reads as
+  # "this gene has no HGNC id" rather than as a mistake.
+  reset_transport()
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json('{"hits":[]}')
+  })
+
+  mygene_gene("TP53")
+
+  expect_match(url, "HGNC", fixed = TRUE)
+  expect_false(grepl("fields=[^&]*[^A-Z]hgnc", url))
+})
+
+test_that("the HGNC id is read off a hit", {
+  # The stored response predates the field, so this is pinned against a record
+  # rather than against the fixture.
+  body <- list(hits = list(list(symbol = "TP53", HGNC = "11998")))
+  out <- mygene_parse_hits(body, "TP53")
+
+  expect_identical(out$hgnc, "11998")
+})
+
+test_that("the id stays in the bare form MyGene sends", {
+  # Monarch wants HGNC:11998 and builds that itself. Baking one consumer's
+  # formatting into the column would make every other consumer strip it again.
+  body <- list(hits = list(list(symbol = "TP53", HGNC = "11998")))
+
+  expect_false(grepl(
+    "HGNC:",
+    mygene_parse_hits(body, "TP53")$hgnc,
+    fixed = TRUE
+  ))
+})
+
+test_that("a gene with no HGNC id gets NA, not an error", {
+  body <- list(hits = list(list(symbol = "TP53")))
+  expect_true(is.na(mygene_parse_hits(body, "TP53")$hgnc))
+})
+
+test_that("the batch path carries the column too", {
+  body <- list(
+    list(query = "TP53", symbol = "TP53", HGNC = "11998"),
+    list(query = "NOPE", notfound = TRUE)
+  )
+  out <- mygene_parse_batch(body, c("TP53", "NOPE"))
+
+  expect_identical(out$hgnc, c("11998", NA_character_))
+})
