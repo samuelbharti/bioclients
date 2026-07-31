@@ -1,0 +1,18 @@
+[
+  {
+    "stId": "R-HSA-114608",
+    "displayName": "Platelet degranulation",
+    "name": ["Platelet degranulation"],
+    "isInDisease": false,
+    "speciesName": "Homo sapiens",
+    "schemaClass": "Pathway"
+  },
+  {
+    "stId": "R-HSA-390522",
+    "displayName": "Striated Muscle Contraction",
+    "name": ["Striated Muscle Contraction"],
+    "isInDisease": false,
+    "speciesName": "Homo sapiens",
+    "schemaClass": "Pathway"
+  }
+]

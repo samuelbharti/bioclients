@@ -1,0 +1,26 @@
+[
+  {
+    "stId": "R-HSA-5658442",
+    "displayName": "Regulation of RAS by GAPs",
+    "name": ["Regulation of RAS by GAPs"],
+    "isInDisease": false,
+    "speciesName": "Homo sapiens",
+    "schemaClass": "Pathway"
+  },
+  {
+    "stId": "R-HSA-6802953",
+    "displayName": "RAS signaling downstream of NF1 loss-of-function variants",
+    "name": ["RAS signaling downstream of NF1 loss-of-function variants"],
+    "isInDisease": true,
+    "speciesName": "Homo sapiens",
+    "schemaClass": "Pathway"
+  },
+  {
+    "stId": "R-HSA-9013149",
+    "displayName": "RAC1 GTPase cycle",
+    "name": ["RAC1 GTPase cycle"],
+    "isInDisease": false,
+    "speciesName": "Homo sapiens",
+    "schemaClass": "Pathway"
+  }
+]
