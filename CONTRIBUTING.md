@@ -26,8 +26,24 @@ request, check that the change fits inside these lines:
 - **No disease-to-gene assembly.** That is `gene-list-builder`'s product.
 - **No Shiny**, in Imports, in Suggests, or in tests.
 - **No transport.** Retries, breakers, caching, and error normalization belong
-  to `biohttp`. A client reaching for `httr2` directly is a sign something is
-  wrong.
+  to `biohttp`.
+
+### The httr2 rule, precisely
+
+Prefer `biohttp::get_json()`, `post_json()`, or `get_text()`. They assemble,
+perform, and cache in one call.
+
+A service that none of those fit, because it wants a body shape biohttp has no
+wrapper for, may assemble its own request with `httr2` and then hand it to
+`biohttp::req_defaults()` and `biohttp::perform()`. That keeps every transport
+rule: retries, the circuit breaker, the envelope, header redaction. `clingen.R`
+is the only client doing this today, because the Allele Registry takes a
+`text/plain` body.
+
+**What is never acceptable is calling `httr2::req_perform()`.** That bypasses
+the whole layer, and it is the line the rule is actually about. A test asserts
+the ClinGen client still trips biohttp's breaker, which is what proves it is
+performing through biohttp rather than around it.
 
 ## The client and parser split
 
