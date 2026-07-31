@@ -15,8 +15,8 @@ described in \code{\link[=mygene_pick_hit]{mygene_pick_hit()}} and as the fallba
 }
 \value{
 A one-row tibble with \code{symbol}, \code{name}, \code{summary}, \code{entrez},
-\code{ensembl_gene}, \code{uniprot}, and \code{type_of_gene}. \code{NULL} when the body carries
-no usable hit.
+\code{ensembl_gene}, \code{uniprot}, \code{hgnc}, and \code{type_of_gene}. \code{NULL} when the body
+carries no usable hit.
 }
 \description{
 Pure. Takes an already-parsed response body and never touches the network, so

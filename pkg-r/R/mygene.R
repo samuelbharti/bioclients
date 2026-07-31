@@ -9,12 +9,19 @@ MYGENE_BASE <- "https://mygene.info/v3"
 
 # The fields fetched by both the single and the batch path, kept in one place so
 # the two cannot drift.
+#
+# HGNC is upper case, and that is not a typo. Every other field here is lower
+# case, but MyGene names this one `HGNC` in both the request and the response,
+# so asking for `hgnc` returns nothing and reads as "this gene has no HGNC id".
+# The id matters because Monarch's gene endpoints are keyed on it and nothing
+# else in this table substitutes.
 MYGENE_FIELDS <- paste(
   "name",
   "symbol",
   "entrezgene",
   "ensembl.gene",
   "uniprot",
+  "HGNC",
   "type_of_gene",
   "summary",
   sep = ","
@@ -98,8 +105,8 @@ mygene_pick_hit <- function(hits, token) {
 #'   described in [mygene_pick_hit()] and as the fallback symbol.
 #'
 #' @return A one-row tibble with `symbol`, `name`, `summary`, `entrez`,
-#'   `ensembl_gene`, `uniprot`, and `type_of_gene`. `NULL` when the body carries
-#'   no usable hit.
+#'   `ensembl_gene`, `uniprot`, `hgnc`, and `type_of_gene`. `NULL` when the body
+#'   carries no usable hit.
 #'
 #' @examples
 #' body <- list(hits = list(list(
@@ -138,6 +145,10 @@ mygene_row <- function(hit, fallback_symbol = NA_character_) {
     uniprot = mygene_first(
       biohttp::pluck_at(hit, "uniprot", "Swiss-Prot")
     ),
+    # Bare digits, the way MyGene sends it. Monarch wants the CURIE form, which
+    # monarch_hgnc_id() builds; keeping the raw value here means this column
+    # does not bake in one consumer's formatting.
+    hgnc = chr_at(hit, "HGNC"),
     type_of_gene = chr_at(hit, "type_of_gene")
   )
 }
@@ -199,6 +210,7 @@ mygene_empty_row <- function(symbol) {
     entrez = NA_character_,
     ensembl_gene = NA_character_,
     uniprot = NA_character_,
+    hgnc = NA_character_,
     type_of_gene = NA_character_
   )
 }
