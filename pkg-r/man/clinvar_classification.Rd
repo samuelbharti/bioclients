@@ -27,6 +27,14 @@ resolve to a record for the other allele. ClinVar returns the first matching
 UID, and this function returns that record.
 }
 
+\section{The NCBI API key}{
+
+Set \code{NCBI_API_KEY} and both requests carry it, which raises the rate limit
+from 3 to 10 requests a second. It is passed as a \code{secret_query}, so it stays
+out of the cache key and out of every message. Without one the client works
+at the lower limit.
+}
+
 \examples{
 \dontrun{
 biohttp::body_or_null(clinvar_classification("rs113488022"))

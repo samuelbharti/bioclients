@@ -20,7 +20,7 @@ Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.0)
 Imports:
-    biohttp,
+    biohttp (>= 0.3.0),
     httr2,
     tibble
 Suggests:

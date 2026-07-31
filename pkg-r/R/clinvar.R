@@ -6,9 +6,28 @@
 # UID into a record. There is no single-call endpoint, so the client makes both
 # and the caller sees one envelope.
 #
+# THE NCBI KEY GOES IN THE QUERY STRING, NOT A HEADER.
+#
+# E-utilities raises a caller from 3 to 10 requests a second with an `api_key`
+# parameter, and offers no header form. A query-string credential needs handling
+# a header one does not: it would land in the cache key, it would print with the
+# request, and it would ride along in the URL inside a transport error message.
+#
+# biohttp::secret_query handles all three. It attaches the key at dispatch, so
+# nothing built from the request beforehand carries it, and redacts its value
+# from any message built from a failure. Ported from genescout's
+# fix/secret-redaction-and-ncbi-key.
+#
 # Docs: https://www.ncbi.nlm.nih.gov/books/NBK25500/
 
 EUTILS_BASE <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+
+# The optional key, read from the environment at call time rather than at load,
+# so setting it in a running session takes effect without reloading the package.
+clinvar_secret_query <- function() {
+  key <- Sys.getenv("NCBI_API_KEY")
+  if (nzchar(key)) list(api_key = key) else NULL
+}
 
 #' Collapse a ClinVar trait set into one condition string
 #'
@@ -118,6 +137,12 @@ clinvar_category <- function(significance) {
 #' resolve to a record for the other allele. ClinVar returns the first matching
 #' UID, and this function returns that record.
 #'
+#' @section The NCBI API key:
+#' Set `NCBI_API_KEY` and both requests carry it, which raises the rate limit
+#' from 3 to 10 requests a second. It is passed as a `secret_query`, so it stays
+#' out of the cache key and out of every message. Without one the client works
+#' at the lower limit.
+#'
 #' @param term A search term, usually an rsID or an accession.
 #' @param ... Passed to [biohttp::get_json()], for example `throttle`.
 #'
@@ -142,6 +167,7 @@ clinvar_classification <- function(term, ...) {
     path = "esearch.fcgi",
     query = list(db = "clinvar", term = as.character(term), retmode = "json"),
     source = "ClinVar",
+    secret_query = clinvar_secret_query(),
     ...
   )
   if (!isTRUE(search$ok)) {
@@ -162,6 +188,7 @@ clinvar_classification <- function(term, ...) {
     path = "esummary.fcgi",
     query = list(db = "clinvar", id = uid, retmode = "json"),
     source = "ClinVar",
+    secret_query = clinvar_secret_query(),
     ...
   )
   if (!isTRUE(summary$ok)) {
