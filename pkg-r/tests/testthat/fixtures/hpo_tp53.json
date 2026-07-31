@@ -1,0 +1,12 @@
+{
+  "diseases": [
+    {"id": "OMIM:151623", "name": "Li-Fraumeni syndrome", "mondoId": "MONDO:0018875", "description": null},
+    {"id": "OMIM:202300", "name": "Adrenocortical carcinoma, pediatric", "mondoId": "MONDO:0008734", "description": null},
+    {"id": "OMIM:114550", "name": "Hepatocellular carcinoma", "mondoId": "MONDO:0007256", "description": null},
+    {"id": "ORPHA:145", "name": "Hereditary breast and/or ovarian cancer syndrome", "mondoId": "MONDO:0003582", "description": null}
+  ],
+  "phenotypes": [
+    {"id": "HP:0003002", "name": "Breast carcinoma"},
+    {"id": "HP:0006744", "name": "Adrenocortical carcinoma"}
+  ]
+}
