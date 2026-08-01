@@ -24,8 +24,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Build only. Publishing the site to Pages waits until the repo goes public,
-  # the same way biohttp holds its site back until r-universe.
+  # A pull request into main builds the site to prove it still builds. Only the
+  # push to main publishes it, which happens when dev is merged in at a release.
   build:
     runs-on: ubuntu-latest
     name: build
@@ -59,8 +59,32 @@ jobs:
         shell: Rscript {0}
         working-directory: pkg-r
 
-      - uses: actions/upload-artifact@v4
+      # upload-pages-artifact rather than upload-artifact, because deploy-pages
+      # below only accepts the Pages artifact format.
+      - uses: actions/upload-pages-artifact@v5
         with:
-          name: site
           path: pkg-r/_site
-          if-no-files-found: error
+
+  # Publish only from main. A pull request stops after build, so the site is
+  # proven to build without anything being published.
+  #
+  # This needs Pages enabled on the repository with "GitHub Actions" as the
+  # source. Until that is done the job fails on a push to main while everything
+  # else still passes, so a pull request is never blocked by it. The repository
+  # is private today; nothing here runs until it is public and a release
+  # actually reaches main.
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    name: deploy
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
