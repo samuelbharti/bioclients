@@ -1,19 +1,27 @@
 name: pkgdown
 
+# Only a pull request into main, and the push to main when it merges. Nothing on
+# a feature branch or a pull request into dev runs here at all; build the site
+# locally with `pkgdown::build_site("pkg-r", preview = FALSE)` while working.
+#
+# The `paths:` filters that used to narrow this to pkg-r/** are gone on purpose.
+# They would skip the job on a docs-only pull request, and a required check that
+# never reports blocks the pull request instead of passing it.
 on:
   push:
-    branches: [main, dev]
-    paths: ["pkg-r/**", ".github/workflows/pkgdown.yml"]
+    branches: [main]
   pull_request:
-    paths: ["pkg-r/**", ".github/workflows/pkgdown.yml"]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# Two deploys must never overlap, but a release already under way should finish
+# rather than be cancelled halfway. Only a pull request build is disposable.
 concurrency:
   group: pkgdown-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   # Build only. Publishing the site to Pages waits until the repo goes public,
