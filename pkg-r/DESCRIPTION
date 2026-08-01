@@ -13,14 +13,15 @@ Description: One client per biological database, each split into a request half
     a caller that wants one service does not install the requirements of the
     rest.
 License: MIT + file LICENSE
-URL: https://github.com/samuelbharti/bioclients
+URL: https://github.com/samuelbharti/bioclients,
+    https://www.samuelbharti.com/bioclients/
 BugReports: https://github.com/samuelbharti/bioclients/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.0)
 Imports:
-    biohttp (>= 0.3.0),
+    biohttp (>= 0.1.0),
     httr2,
     tibble
 Suggests:
@@ -28,7 +29,8 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    webfakes,
     withr
+Remotes:
+    samuelbharti/biohttp
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0

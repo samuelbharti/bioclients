@@ -102,6 +102,29 @@ or `vroom` for the bulk flat-file sources. All of them install everywhere today.
   Keep commits small and focused. The commit-msg hook checks the format.
 - The PR title also follows Conventional Commits. A CI check enforces it.
 
+## Where the checks run
+
+Everything is checked locally, on every commit, through the prek hooks. The
+GitHub workflows run only at the release gate: a pull request into `main`, and
+the push to `main` when it merges. A pull request into `dev` runs nothing on
+GitHub, and neither does a feature branch.
+
+That means the local run is not a convenience, it is the check. Before pushing:
+
+```sh
+prek run --all-files
+Rscript -e 'devtools::test()'
+Rscript -e 'rcmdcheck::rcmdcheck("pkg-r", args = c("--no-manual", "--as-cran"))'
+```
+
+A `dev` to `main` pull request then runs the full matrix once: `R CMD check` on
+five platforms, the imports-only job, lintr, prek, gitleaks, and the pkgdown
+build.
+
+`biohttp` is not on CRAN, so `DESCRIPTION` carries a `Remotes:` line pointing at
+its GitHub repository. That is what lets a clean CI runner resolve it, and it is
+also why a local checkout needs `biohttp` installed before anything here builds.
+
 ## Local setup
 
 Install the git hooks once:
@@ -117,14 +140,15 @@ Then before every push:
 prek run --all-files
 ```
 
-The hooks run air for R formatting plus a set of general checks. CI additionally
-runs `R CMD check` on five platforms, the imports-only job, lintr, and gitleaks.
+The hooks run air for R formatting, gitleaks for secret scanning, and a set of
+general checks.
 
 ## Tests
 
 Tests are offline. No test hits a real host, and CI runs with no network. Parsers
-are tested directly against a stored response body; clients are tested against a
-`webfakes` server.
+are tested directly against a stored response body; clients are tested with
+`httr2::local_mocked_responses()`, which hands back a stored body without a
+server having to exist.
 
 Two rules about fixtures:
 

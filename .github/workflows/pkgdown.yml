@@ -1,23 +1,31 @@
 name: pkgdown
 
+# Only a pull request into main, and the push to main when it merges. Nothing on
+# a feature branch or a pull request into dev runs here at all; build the site
+# locally with `pkgdown::build_site("pkg-r", preview = FALSE)` while working.
+#
+# The `paths:` filters that used to narrow this to pkg-r/** are gone on purpose.
+# They would skip the job on a docs-only pull request, and a required check that
+# never reports blocks the pull request instead of passing it.
 on:
   push:
-    branches: [main, dev]
-    paths: ["pkg-r/**", ".github/workflows/pkgdown.yml"]
+    branches: [main]
   pull_request:
-    paths: ["pkg-r/**", ".github/workflows/pkgdown.yml"]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# Two deploys must never overlap, but a release already under way should finish
+# rather than be cancelled halfway. Only a pull request build is disposable.
 concurrency:
   group: pkgdown-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Build only. Publishing the site to Pages waits until the repo goes public,
-  # the same way biohttp holds its site back until r-universe.
+  # A pull request into main builds the site to prove it still builds. Only the
+  # push to main publishes it, which happens when dev is merged in at a release.
   build:
     runs-on: ubuntu-latest
     name: build
@@ -38,13 +46,45 @@ jobs:
           needs: website
           working-directory: pkg-r
 
+      # dest_dir is passed explicitly because build_site_github_pages() defaults
+      # it to "docs" and that default WINS over the `destination: _site` in
+      # _pkgdown.yml. Without it the site is written to pkg-r/docs, the upload
+      # below finds nothing at pkg-r/_site, and the job fails on an empty
+      # artifact rather than on anything to do with the site.
       - name: Build pkgdown site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: >
+          pkgdown::build_site_github_pages(
+            dest_dir = "_site", new_process = FALSE, install = FALSE
+          )
         shell: Rscript {0}
         working-directory: pkg-r
 
-      - uses: actions/upload-artifact@v4
+      # upload-pages-artifact rather than upload-artifact, because deploy-pages
+      # below only accepts the Pages artifact format.
+      - uses: actions/upload-pages-artifact@v5
         with:
-          name: site
           path: pkg-r/_site
-          if-no-files-found: error
+
+  # Publish only from main. A pull request stops after build, so the site is
+  # proven to build without anything being published.
+  #
+  # This needs Pages enabled on the repository with "GitHub Actions" as the
+  # source. Until that is done the job fails on a push to main while everything
+  # else still passes, so a pull request is never blocked by it. The repository
+  # is private today; nothing here runs until it is public and a release
+  # actually reaches main.
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    name: deploy
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

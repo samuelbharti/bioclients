@@ -30,6 +30,14 @@ repos:
       - id: no-commit-to-branch
         args: [--branch, main, --branch, dev]
 
+  # Secret scanning. This runs on every commit rather than only in CI, because
+  # a secret that reaches a branch has already been written to disk and to the
+  # reflog. Catching it here means it never becomes a commit at all.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
   # R formatting (Posit air). The hook is a Python wheel that bundles the air
   # binary, so it needs no separate toolchain.
   - repo: https://github.com/posit-dev/air-pre-commit
