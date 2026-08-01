@@ -1,4 +1,4 @@
-# bioclients
+# bioclients <img src="pkg-r/man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
@@ -6,8 +6,8 @@
 
 One client per biological database, each with a pure parser that runs offline.
 
-> **Status:** seven clients, working. Installs from local source today;
-> not published anywhere yet.
+> **Status:** 29 clients, 125 exported functions, working. Installs from local
+> source today; not published anywhere yet.
 
 ## Why
 
@@ -65,7 +65,8 @@ bioclients/
 
 ## What is in it
 
-Seven of the 27 services the app family actually uses:
+Every service the app family calls now has a client, 29 of them in all. A few of
+them, to show the shape every client follows:
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
