@@ -38,8 +38,16 @@ jobs:
           needs: website
           working-directory: pkg-r
 
+      # dest_dir is passed explicitly because build_site_github_pages() defaults
+      # it to "docs" and that default WINS over the `destination: _site` in
+      # _pkgdown.yml. Without it the site is written to pkg-r/docs, the upload
+      # below finds nothing at pkg-r/_site, and the job fails on an empty
+      # artifact rather than on anything to do with the site.
       - name: Build pkgdown site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: >
+          pkgdown::build_site_github_pages(
+            dest_dir = "_site", new_process = FALSE, install = FALSE
+          )
         shell: Rscript {0}
         working-directory: pkg-r
 
