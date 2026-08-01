@@ -7,7 +7,8 @@
 One client per biological database, each with a pure parser that runs offline.
 
 > **Status:** 29 clients, 125 exported functions, working. Installs from local
-> source today; not published anywhere yet.
+> source today; not published anywhere yet. `biohttp`, the transport underneath
+> it, is released and public.
 
 ## Why
 
@@ -56,28 +57,96 @@ The R package is in `pkg-r/`, not at the repository root:
 bioclients/
 ├── .github/workflows/   R CMD check, imports-only, lint, pkgdown, secret scan
 ├── air.toml .lintr .pre-commit-config.yaml
+├── README.md            this file: why it exists, scope, roadmap
 └── pkg-r/
-    ├── DESCRIPTION NAMESPACE
+    ├── DESCRIPTION NAMESPACE NEWS.md
+    ├── README.md         the package itself: install and usage
     ├── R/                one file per service, client and parser together
+    ├── man/figures/      the hex logo
     └── tests/testthat/
         └── fixtures/     stored response bodies, ported from the apps
 ```
 
+The workflows only run on a pull request into `main`, and on the push to `main`
+that merges one. Everything else is checked locally through the prek hooks. See
+`CONTRIBUTING.md`.
+
 ## What is in it
 
-Every service the app family calls now has a client, 29 of them in all. A few of
-them, to show the shape every client follows:
+Every service the app family calls now has a client, 29 of them in all, grouped
+below by the question being asked rather than alphabetically, because a caller
+arrives knowing what they want to look up and not which service answers it.
+
+### Which gene is this
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
 | MyGene | `mygene_gene()` | `mygene_genes()` | `mygene_parse_hits()`, `mygene_parse_batch()` |
+
+Nearly every other lookup starts here, because the rest are keyed on an Entrez,
+Ensembl, UniProt or HGNC id rather than a symbol.
+
+### What is known about this variant
+
+| Service | Ask about one | Ask about many | Pure parser |
+| --- | --- | --- | --- |
 | gnomAD constraint | `gnomad_constraint()` | `gnomad_constraints()` | `gnomad_parse_constraint()`, `gnomad_parse_constraints()` |
 | gnomAD frequency | `gnomad_frequency()` | | `gnomad_parse_frequency()`, `gnomad_parse_populations()` |
-| ClinVar | `clinvar_classification()` | | `clinvar_parse_record()` |
-| Open Targets | `opentargets_gene_diseases()`, `opentargets_disease_targets()`, `opentargets_resolve_disease()` | | `opentargets_parse_diseases()`, `opentargets_parse_targets()`, `opentargets_parse_matches()` |
+| ClinVar | `clinvar_classification()` | | `clinvar_parse_record()`, `clinvar_category()` |
+| MyVariant | | `myvariant_variants()` | `myvariant_parse_record()`, `myvariant_parse_batch()` |
+| Ensembl VEP | | `vep_variants()` | `vep_parse_element()`, `vep_parse_batch()` |
+| Ensembl REST | `ensembl_vep_id()`, `ensembl_gene_model()` | | `ensembl_parse_vep()`, `ensembl_parse_gene_model()` |
+| VariantValidator | `variantvalidator_normalize()` | | `variantvalidator_parse()` |
+| ClinGen Allele Registry | | `clingen_alleles()` | `clingen_parse_allele()`, `clingen_parse_batch()` |
+
+### Is this gene linked to disease, and is it druggable
+
+| Service | Ask about one | Ask about many | Pure parser |
+| --- | --- | --- | --- |
+| Open Targets | `opentargets_gene_diseases()`, `opentargets_disease_targets()`, `opentargets_resolve_disease()`, `opentargets_drugs()`, `opentargets_pgx()` | | `opentargets_parse_diseases()`, `opentargets_parse_targets()`, `opentargets_parse_matches()` |
 | DGIdb | `dgidb_gene()` | `dgidb_genes()` | `dgidb_parse_genes()` |
 | Pharos | `pharos_target()` | `pharos_targets()` | `pharos_parse_targets()` |
 | CIViC | `civic_gene()` | | `civic_parse_gene()` |
+| JensenLab DISEASES | `diseases_channel()`, `diseases_gene_associations()` | | `diseases_parse_channel()`, `diseases_merge_channels()` |
+| PanelApp | `panelapp_panel()`, `panelapp_panels()` | `panelapp_all_panels()` | `panelapp_parse_index()`, `panelapp_parse_panel()` |
+| ClinGen gene validity | `clingen_validity_for()` | `clingen_gene_validity()` | `clingen_parse_validity()` |
+
+### What does the protein look like
+
+| Service | Ask about one | Ask about many | Pure parser |
+| --- | --- | --- | --- |
+| UniProt | `uniprot_diseases()`, `uniprot_features()` | | `uniprot_parse_diseases()`, `uniprot_parse_features()` |
+| ProtVar | `protvar_function()`, `protvar_population()` | | `protvar_parse_function()`, `protvar_parse_population()` |
+| AlphaFold | `alphafold_model()` | | `alphafold_parse_model()` |
+| PDBe | `pdbe_structures()` | | `pdbe_parse_structures()` |
+| STRING | `string_partners()`, `string_network()` | `string_map_ids()` | `string_parse_partners()`, `string_parse_network()` |
+
+### Where is it expressed, and what does it do
+
+| Service | Ask about one | Ask about many | Pure parser |
+| --- | --- | --- | --- |
+| GTEx | `gtex_median_expression()`, `gtex_gene_reference()` | | `gtex_parse_expression()`, `gtex_parse_reference()` |
+| Human Protein Atlas | `hpa_gene()` | | `hpa_parse_gene()` |
+| QuickGO | `quickgo_annotations()` | | `quickgo_parse_annotations()` |
+| Reactome | `reactome_pathways()` | | `reactome_parse_pathways()` |
+
+### What phenotype does it cause
+
+| Service | Ask about one | Ask about many | Pure parser |
+| --- | --- | --- | --- |
+| HPO | `hpo_search()`, `hpo_term()`, `hpo_gene_annotation()` | | `hpo_parse_search()`, `hpo_parse_term()`, `hpo_parse_diseases()` |
+| Monarch | `monarch_search()`, `monarch_associations()`, `monarch_gene_phenotypes()` | | `monarch_parse_search()`, `monarch_parse_associations()` |
+| IMPC | `impc_mouse_ortholog()`, `impc_gene_phenotypes()` | | `impc_parse_ortholog()`, `impc_parse_phenotypes()` |
+
+### Who has written about it
+
+| Service | Ask about one | Ask about many | Pure parser |
+| --- | --- | --- | --- |
+| Europe PMC | `europepmc_search()`, `europepmc_count()` | | `europepmc_parse_results()`, `europepmc_parse_count()` |
+| PubTator3 | `pubtator_gene_literature()` | | `pubtator_parse_results()`, `pubtator_parse_count()` |
+
+`pkg-r/_pkgdown.yml` holds the same grouping for the reference index, and
+`NEWS.md` lists the verified behaviour each client pins.
 
 ```r
 res <- mygene_genes(c("TP53", "BRCA1", "EGFR"))
@@ -127,7 +196,8 @@ supports.
 
 ## Dependencies
 
-`Imports` is `biohttp` and `tibble`.
+`Imports` is `biohttp` for transport, `httr2` for the one client that has to
+assemble its own request, and `tibble`.
 
 Everything a single service needs goes in `Suggests`, guarded at the call site
 with `requireNamespace()`. This is an architectural requirement, not a cleanup
@@ -161,16 +231,25 @@ for an existing C or C++ implementation: `yyjsonr` or `RcppSimdJson` for JSON,
 
 ## Installation
 
-Not published anywhere. Both packages install from local source:
+`biohttp` supplies the transport. It is released and public, though not on CRAN:
 
 ```r
-install.packages("path/to/biohttp", repos = NULL, type = "source")
+install.packages("biohttp", repos = "https://samuelbharti.r-universe.dev")
+# or
+pak::pak("samuelbharti/biohttp")
+```
+
+`bioclients` itself is not published yet, so it installs from a local checkout.
+The path ends in `pkg-r`, because the package sits in a subdirectory rather than
+at the repository root:
+
+```r
 install.packages("path/to/bioclients/pkg-r", repos = NULL, type = "source")
 ```
 
-`bioclients` needs `biohttp` installed first. Until `biohttp` is published, the
-`R-CMD-check` and `imports-only` CI jobs cannot resolve it and will fail on a
-runner. Local `R CMD check` is clean.
+`DESCRIPTION` carries a `Remotes:` line pointing at `biohttp` on GitHub, which is
+what lets a clean CI runner resolve it without any credentials. That line has to
+come back out before any CRAN submission.
 
 ## Roadmap
 
@@ -179,14 +258,27 @@ runner. Local `R CMD check` is clean.
 | 0. Scaffold | done |
 | 1. Three pilot clients: MyGene, gnomAD, ClinVar | done |
 | 1b. Batch A, the GraphQL services: Open Targets, DGIdb, Pharos, CIViC | done |
-| 2. Migrate `variant-reviewer` onto `biohttp` and `bioclients` | not started |
-| 3. Expand to the remaining services, three at a time | not started |
+| 2. Expand to every remaining service | done, 29 clients and 125 exports |
+| 3. Confirm the ported behaviour against live services | not started |
+| 4. Migrate `variant-reviewer` onto `biohttp` and `bioclients` | demonstrated, not landed |
+
+Phase 3 is the open one. Every parser is pinned by a stored response, but five
+behaviours have not been seen against a real server since the port: Monarch's two
+hosts, MyGene's `HGNC` field, Ensembl's array versus record shape, Reactome's
+404, and PanelApp's non-filtering `search`.
+
+Phase 4 has a working demonstration. Swapping `variant-reviewer`'s HTTP layer for
+`biohttp` touched one file, left all eleven of its API clients unchanged, and
+passed its full suite at 340 of 340 with live calls confirmed against four
+services. It also surfaced three real bugs in `biohttp`, since fixed in 0.1.1.
 
 ## Testing
 
 Offline. No test touches a real host. The parsers run against stored response
-bodies ported unchanged from `variant-reviewer`, and a fixture that needed
-editing would mean the parser changed behavior during the port.
+bodies ported unchanged from the apps this package replaces, mostly `genescout`
+and `variant-reviewer` with a smaller number from `multi-variant-reviewer` and
+`knowledge-graph-viewer`. A fixture that needed editing would mean the parser
+changed behavior during the port.
 
 ## License
 
