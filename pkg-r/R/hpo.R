@@ -2,7 +2,7 @@
 # phenotypes HPO associates with a gene.
 #
 # Ported from genescout/R/tools/hpo.R (gene annotation) and
-# multi-variant-reviewer/R/api_hpo.R (search and term).
+# a sibling app's api_hpo.R (search and term).
 #
 # Three endpoints, all keyless. JAX takes HP ids in the path directly and
 # answers one term per request, so there is nothing here to batch.
@@ -25,7 +25,7 @@
 # about "adrenocortical carcinoma" is the review's judgement, not a property of
 # HPO's response, so it stays in the app making the judgement.
 #
-# multi-variant-reviewer carries the ontology work built on top of these terms:
+# A sibling app carries the ontology work built on top of these terms:
 # ancestor and descendant walks, Resnik information content, and the propagated
 # per-term gene counts. All of it needs the whole DAG rather than an API
 # response, and none of it is a client concern.

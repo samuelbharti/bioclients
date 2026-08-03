@@ -1,7 +1,7 @@
 # MyVariant.info: dbNSFP predictors and ClinVar significance.
 #
-# Ported from multi-variant-reviewer/R/api_myvariant.R, which is the better of
-# the two copies. variant-reviewer/R/api_myvariant.R is the other.
+# Ported from a sibling app's api_myvariant.R, which is the better of the two
+# copies. variant-reviewer/R/api_myvariant.R is the other.
 #
 # THIS FILE HAS TWO TRAPS THAT FAIL SILENTLY. Both are in the tests.
 #
@@ -22,8 +22,8 @@
 
 MYVARIANT_URL <- "https://myvariant.info/v1"
 
-# The verified batch limit, recorded in multi-variant-reviewer's source registry
-# as a hard limit rather than tuning.
+# The verified batch limit, recorded in a sibling app's source registry as a
+# hard limit rather than tuning.
 MYVARIANT_BATCH <- 1000L
 
 MYVARIANT_FIELDS <- paste(

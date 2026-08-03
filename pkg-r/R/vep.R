@@ -1,6 +1,6 @@
 # Ensembl VEP: consequence prediction.
 #
-# Ported from multi-variant-reviewer/R/api_vep.R.
+# Ported from a sibling app's api_vep.R.
 #
 # FOUR TRAPS, ALL ENCODED AS CODE RATHER THAN LEFT AS COMMENTS TO REDISCOVER.
 #
@@ -26,8 +26,8 @@
 
 VEP_URL <- "https://rest.ensembl.org/vep/homo_sapiens/region"
 
-# The verified hard limit. Recorded in multi-variant-reviewer's source registry
-# as "verified hard limits, not tuning".
+# The verified hard limit. Recorded in a sibling app's source registry as
+# "verified hard limits, not tuning".
 VEP_BATCH <- 200L
 
 #' Build a VEP region string from variant components

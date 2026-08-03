@@ -22,7 +22,7 @@ Pure. Takes an already-parsed response body and never touches the network.
 \details{
 \code{loeuf} is gnomAD's \code{oe_lof_upper}. The two names are the same number, and
 the field is called \code{oe_lof_upper} in the API but LOEUF everywhere else,
-including in gene-list-builder's ranking model. Both names appear here so a
+including in the ranking models that consume it. Both names appear here so a
 reader of either can find it.
 }
 \examples{

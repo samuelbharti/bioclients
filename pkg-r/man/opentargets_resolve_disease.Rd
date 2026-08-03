@@ -23,9 +23,8 @@ looked up directly, which is both exact and cheaper. \code{\link[=opentargets_is
 what decides.
 }
 \details{
-This is the \code{resolve_disease} that exists twice in the family, in
-\code{genescout/R/tools/disease_resolver.R} and
-\code{gene-list-builder/R/disease_resolver.R}.
+This is the \code{resolve_disease} that exists twice in the family, once in
+\code{genescout/R/tools/disease_resolver.R} and once in a sibling app.
 }
 \examples{
 \dontrun{

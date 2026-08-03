@@ -4,13 +4,13 @@
 # they answer different questions:
 #
 #   variant-reviewer/R/api_gnomad.R   variant frequency, by rsID
-#   gene-list-builder/R/source_gnomad.R  gene constraint (LOEUF), batched
-#   multi-variant-reviewer/R/api_gnomad.R  frequency in batch
+#   a second app                      gene constraint (LOEUF), batched
+#   a third app                       frequency in batch
 #
 # BOTH query types are exposed, as separate entry points. One function cannot
 # serve both, and constraint must not be dropped because two of the three
-# callers happen not to use it: gene-list-builder's whole ranking model is built
-# on LOEUF.
+# callers happen not to use it: the second app's whole ranking model is built on
+# LOEUF.
 #
 # Endpoint: https://gnomad.broadinstitute.org/api (GraphQL)
 
@@ -19,8 +19,8 @@ GNOMAD_DATASET <- "gnomad_r4"
 
 # gnomAD's real limit is a query COST cap, not a request count, and the verified
 # ceiling is exactly 25 aliases: a 26th returns "Query is too expensive". That
-# was established against the live API and is recorded in
-# multi-variant-reviewer/R/source_registry.R as a hard limit rather than tuning.
+# was established against the live API and is recorded in the source registry of
+# the app that verified it, as a hard limit rather than tuning.
 #
 # 20 rather than 25 on purpose. Cost is charged per field, not only per alias,
 # and this query asks for eight fields per gene where the client that verified
@@ -51,7 +51,7 @@ GNOMAD_POP_LABELS <- c(
 #'
 #' `loeuf` is gnomAD's `oe_lof_upper`. The two names are the same number, and
 #' the field is called `oe_lof_upper` in the API but LOEUF everywhere else,
-#' including in gene-list-builder's ranking model. Both names appear here so a
+#' including in the ranking models that consume it. Both names appear here so a
 #' reader of either can find it.
 #'
 #' @param body A parsed gnomAD GraphQL response body.

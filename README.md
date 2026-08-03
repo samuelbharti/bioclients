@@ -19,7 +19,7 @@ drifted in ways that are hard to see from inside any one app:
 | --- | --- |
 | gnomAD | Three divergent copies. They do not return the same thing and they do not query the same fields. |
 | MyGene | Two copies, in `variant-reviewer` and `genescout`. |
-| Disease resolution | Two copies, in `genescout` and `gene-list-builder`. |
+| Disease resolution | Two copies, in `genescout` and one other app. |
 
 `genescout/R/tools/` holds 24 client files with one file per service and the
 client kept separate from the parser. That is the best layout in the family and
@@ -40,11 +40,10 @@ no network and no mock server.
 
 ## What it does not do
 
-- **No ranking or scoring.** `gene-list-builder`'s source-weighted model stays
-  there.
-- **No curation.** LLM curation and evidence review stay in `genescout` and
-  `gene-list-builder`.
-- **No disease-to-gene assembly.** That is `gene-list-builder`'s product.
+- **No ranking or scoring.** A source-weighted model belongs to the app that
+  holds it.
+- **No curation.** LLM curation and evidence review stay in the consuming apps.
+- **No disease-to-gene assembly.** That is a consuming app's product.
 - **No Shiny.** Same rule as `biohttp`.
 - **No transport.** Retries, breakers, caching, and error normalization belong to
   `biohttp`.
@@ -171,9 +170,8 @@ after it onto the wrong gene.
 The three copies of this client in the family disagreed because they answer
 different questions: variant frequency, and gene constraint. Both are here, as
 separate entry points. Neither is folded into the other, and constraint is not
-dropped because two of the three callers wanted frequency.
-`gene-list-builder`'s whole ranking model is built on LOEUF, which is
-`gnomad_constraint()`.
+dropped because two of the three callers wanted frequency. One caller's whole
+ranking model is built on LOEUF, which is `gnomad_constraint()`.
 
 ### Where the line sits on scoring
 
@@ -183,8 +181,8 @@ weight; this client returns the category. DGIdb's returned a count the app then
 weighted; this one returns the count.
 
 Turning a value into a weight is ranking, and ranking is the consuming app's
-product. Copying the weights down here would put `gene-list-builder`'s model in
-two places, and a change to it would then need a release of this package.
+product. Copying the weights down here would put that model in two places, and a
+change to it would then need a release of this package.
 
 ### Absence of evidence is not evidence of absence
 
@@ -289,9 +287,9 @@ services. It also surfaced three real bugs in `biohttp`, since fixed in 0.1.1.
 
 Offline by default. The parsers run against stored response bodies ported
 unchanged from the apps this package replaces, mostly `genescout` and
-`variant-reviewer` with a smaller number from `multi-variant-reviewer` and
-`knowledge-graph-viewer`. A fixture that needed editing would mean the parser
-changed behaviour during the port.
+`variant-reviewer` with a smaller number from two other apps in the family. A
+fixture that needed editing would mean the parser changed behaviour during the
+port.
 
 One file is the exception. `pkg-r/tests/testthat/test-live.R` calls real
 services, which is the only way to answer whether a ported claim is still true.

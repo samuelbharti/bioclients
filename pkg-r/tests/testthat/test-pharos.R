@@ -16,7 +16,7 @@ test_that("the ported Pharos fixture parses to the TDL", {
 test_that("no numeric score column is returned", {
   # Both source clients carried a TDL -> 0-1 map. Turning a category into a
   # weight is scoring, and scoring belongs to the consuming app. Adding a score
-  # column here would put gene-list-builder's ranking model in two places.
+  # column here would put that ranking model in two places.
   body <- read_fixture("pharos_nf1.json")
   out <- pharos_parse_targets(body, "NF1")
 

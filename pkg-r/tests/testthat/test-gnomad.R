@@ -17,9 +17,9 @@ test_that("the ported gnomAD constraint fixture parses to the expected values", 
 })
 
 test_that("loeuf is gnomAD's oe_lof_upper", {
-  # gene-list-builder's entire ranking model reads this one number, under the
-  # name LOEUF, from the API field oe_lof_upper. Renaming it silently would
-  # break ranking in a way no test over there would catch.
+  # A consuming app's entire ranking model reads this one number, under the name
+  # LOEUF, from the API field oe_lof_upper. Renaming it silently would break
+  # ranking in a way no test over there would catch.
   body <- read_fixture("gnomad_constraint_braf.json")
   raw <- body$data$gene$gnomad_constraint$oe_lof_upper
   expect_equal(gnomad_parse_constraint(body, "BRAF")$loeuf, raw)
