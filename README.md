@@ -8,10 +8,52 @@
 
 One client per biological database, each with a pure parser that runs offline.
 
-> **Status:** 0.1.0, released. Install from
-> [r-universe](https://samuelbharti.r-universe.dev/bioclients), read the docs at
+> **Status:** 0.1.0, released. Read the docs at
 > <https://www.samuelbharti.com/bioclients/>. The parser output shape is what can
 > still move; a change to an existing column is a breaking change.
+
+## Installation
+
+Neither package is on CRAN. Both are on r-universe, which pulls `biohttp` in as a
+dependency, so one call is enough:
+
+```r
+install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
+```
+
+From GitHub instead, note the `subdir`. The package sits in `pkg-r/` rather than
+at the repository root, and an install that leaves this out fails without saying
+why:
+
+```r
+pak::pak("samuelbharti/bioclients/pkg-r")
+# or
+remotes::install_github("samuelbharti/bioclients", subdir = "pkg-r")
+```
+
+`DESCRIPTION` carries a `Remotes:` line pointing at
+[`biohttp`](https://github.com/samuelbharti/biohttp) on GitHub, which is what
+lets a clean CI runner resolve it without any credentials. That line has to come
+back out before any CRAN submission.
+
+## A first call
+
+```r
+library(bioclients)
+
+res <- mygene_gene("TP53")
+res$status
+#> [1] "ok"
+
+biohttp::body_or_null(res)
+#> # A tibble: 1 x 8
+#>   symbol name              summary entrez ensembl_gene    uniprot hgnc  type_of_gene
+#>   TP53   tumor protein p53 This g. 7157   ENSG00000141510 P04637  11998 protein-cod.
+```
+
+Every client returns an envelope rather than raising, so you branch on
+`res$status` and write no `tryCatch()` of your own. A source that has nothing to
+say answers `no_data`, which is an answer rather than a fault.
 
 ## Why
 
@@ -161,10 +203,6 @@ biohttp::body_or_null(res)
 #>   ...
 ```
 
-Every client returns a `biohttp` envelope rather than raising, so you branch on
-`res$status` and write no `tryCatch()`. Reaching a source that has nothing is
-`no_data`, which is an answer rather than a fault.
-
 The batch entry points return one row per input, **in input order**, so you can
 zip results onto your inputs by position. An unmatched gene gets a row of `NA`
 rather than being dropped, because a shorter table silently shifts every row
@@ -231,29 +269,6 @@ Where the performance actually is, in order:
 All three are I/O, not compute. If a parsing bottleneck ever does appear, reach
 for an existing C or C++ implementation: `yyjsonr` or `RcppSimdJson` for JSON,
 `data.table::fread` or `vroom` for the bulk flat-file sources.
-
-## Installation
-
-Neither package is on CRAN. Both are on r-universe, which pulls `biohttp` in as a
-dependency, so one call is enough:
-
-```r
-install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
-```
-
-From GitHub instead, note the `subdir`. The package sits in `pkg-r/` rather than
-at the repository root, and an install that leaves this out fails without saying
-why:
-
-```r
-pak::pak("samuelbharti/bioclients/pkg-r")
-# or
-remotes::install_github("samuelbharti/bioclients", subdir = "pkg-r")
-```
-
-`DESCRIPTION` carries a `Remotes:` line pointing at `biohttp` on GitHub, which is
-what lets a clean CI runner resolve it without any credentials. That line has to
-come back out before any CRAN submission.
 
 ## Roadmap
 
