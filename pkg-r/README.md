@@ -11,7 +11,8 @@ response with no network.
 
 ## Installation
 
-Neither this package nor `biohttp`, the transport underneath it, is on CRAN.
+Neither this package nor [`biohttp`](https://github.com/samuelbharti/biohttp),
+the transport underneath it, is on CRAN.
 Both are on r-universe, which resolves the dependency for you:
 
 ```r
