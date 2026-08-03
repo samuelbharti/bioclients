@@ -36,6 +36,15 @@ These cost real debugging time to establish in the apps and are easy to lose in
 a port, so each one has a comment at the call site and a test where it is
 testable.
 
+Everything below has now been confirmed against the live service, not only
+against a stored response. `tests/testthat/test-live.R` is where that happens.
+It calls all 29 services once and then makes the specific assertions the claims
+below depend on. It never runs on its own, and no CI job turns it on:
+
+```sh
+BIOCLIENTS_LIVE=true Rscript -e 'devtools::test("pkg-r", filter = "live")'
+```
+
 * **MyVariant silently returns `notfound`** for GRCh38 coordinates when the
   request omits `assembly=hg38`. Silent, not an error, which is exactly why it
   needs a test.
@@ -56,6 +65,9 @@ testable.
 * **PanelApp's index `search` parameter does not filter**, and Reactome answers
   a gene it does not know with a 404 rather than an empty array.
 * **STRING replies with `text/json`**, so the content type check has to be off.
+* **Ensembl takes `content-type` as a query parameter, not a header.** Leave it
+  out and Ensembl serves its HTML browser page with HTTP 200, so the call looks
+  like a success until the JSON parser reaches the first tag.
 * **On the minus strand, Ensembl numbers exons from the highest coordinate**,
   because they are numbered in transcription order rather than by position.
 
@@ -67,10 +79,26 @@ testable.
   error message. It is optional; without it NCBI allows 3 requests a second
   instead of 10.
 
+## What the live run changed
+
+Four of the five behaviours that had never been checked against a real server
+held exactly as the port described them: MyGene's upper case `HGNC`, Reactome's
+404, PanelApp's `search` that does not filter, and Ensembl's array wrapping a
+single record.
+
+The fifth did not, and it was the one with an action already written into it.
+Monarch was being called on two hosts, `api-v3.monarchinitiative.org` for search
+and association and `api.monarchinitiative.org` for the entity route, because
+that was how the apps did it and nobody had checked whether they were
+interchangeable. They are. All three routes answer on both, and the entity
+payload is identical between them down to the order of the ids. So Monarch is
+one host now, which also means one circuit breaker instead of two. A host going
+down used to open only half of them.
+
 ## Known limits
 
-* No live call has been made against Monarch, MyGene's `HGNC` field, Ensembl's
-  array versus record shape, Reactome's 404, or PanelApp's non-filtering
-  `search`. All five are pinned by tests built from stored responses, but none
-  has been seen against a real server since the port.
 * `biohttp` is not on CRAN, so `DESCRIPTION` carries a `Remotes:` line.
+* Pharos was returning HTTP 502 from its own gateway throughout the live run, so
+  its probe is the one service the run could not confirm. That is an outage
+  rather than a finding about the port, and the check is left in place to say so
+  the next time it is run.
