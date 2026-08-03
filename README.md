@@ -3,6 +3,7 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
 [![r-universe](https://samuelbharti.r-universe.dev/badges/bioclients)](https://samuelbharti.r-universe.dev/bioclients)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21770870.svg)](https://doi.org/10.5281/zenodo.21770870)
 <!-- badges: end -->
 
 One client per biological database, each with a pure parser that runs offline.
@@ -23,15 +24,17 @@ drifted in ways that are hard to see from inside any one app:
 | MyGene | Two copies, in `variant-reviewer` and `genescout`. |
 | Disease resolution | Two copies, in `genescout` and one other app. |
 
-`genescout/R/tools/` holds 24 client files with one file per service and the
-client kept separate from the parser. That is the best layout in the family and
-it is the reference this package follows.
+[`genescout`](https://github.com/samuelbharti/genescout)`/R/tools/` holds 24
+client files with one file per service and the client kept separate from the
+parser. That is the best layout in the family and it is the reference this
+package follows.
 
 ## The shape of a client
 
 Every service module ships two halves:
 
-1. **The client** builds a request, calls into `biohttp`, and returns the
+1. **The client** builds a request, calls into
+   [`biohttp`](https://github.com/samuelbharti/biohttp), and returns the
    envelope. It knows URLs, parameters, and rate limits. It touches the network.
 2. **The parser** takes an already-parsed body and returns a canonical structure.
    It is pure and never touches the network.
@@ -298,6 +301,20 @@ One file is the exception. `pkg-r/tests/testthat/test-live.R` calls real
 services, which is the only way to answer whether a ported claim is still true.
 It is gated three ways, on `BIOCLIENTS_LIVE`, on not being CRAN, and on having a
 network, so it skips unless it is asked for by name. No CI job sets the variable.
+
+## Citing bioclients
+
+Each release is archived on Zenodo. Use the concept DOI, which always resolves to
+the newest release:
+
+> Bharti, S. (2026). *bioclients: Clients for Biological Database Web Services*.
+> Zenodo. <https://doi.org/10.5281/zenodo.21770870>
+
+To pin the exact version you used, cite its own DOI instead. Version 0.1.0 is
+[10.5281/zenodo.21770871](https://doi.org/10.5281/zenodo.21770871).
+
+`CITATION.cff` carries the same metadata, so `citation("bioclients")` in R and
+the "Cite this repository" button on GitHub both work.
 
 ## License
 
