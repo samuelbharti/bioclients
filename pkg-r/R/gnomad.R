@@ -326,22 +326,27 @@ gnomad_constraints <- function(
 #'
 #' @export
 gnomad_parse_populations <- function(exome_pops, genome_pops) {
-  acc <- list()
-  add <- function(pops) {
+  # Exome and genome counts for the same ancestry group add together, so both
+  # lists fold into one accumulator. The accumulator is passed in and returned
+  # rather than reached for with `<<-`, because a closure quietly reassigning a
+  # variable in its parent is the kind of thing that reads fine and then
+  # surprises whoever moves the function.
+  add <- function(acc, pops) {
     for (pop in pops) {
       id <- biohttp::pluck_at(pop, "id")
       if (biohttp::is_blank(id) || !(id %in% names(GNOMAD_POP_LABELS))) {
         next
       }
       previous <- acc[[id]] %||% c(0, 0)
-      acc[[id]] <<- c(
+      acc[[id]] <- c(
         previous[[1]] + num_at(pop, "ac", default = 0),
         previous[[2]] + num_at(pop, "an", default = 0)
       )
     }
+    acc
   }
-  add(exome_pops)
-  add(genome_pops)
+  acc <- add(list(), exome_pops)
+  acc <- add(acc, genome_pops)
   if (length(acc) == 0) {
     return(NULL)
   }
