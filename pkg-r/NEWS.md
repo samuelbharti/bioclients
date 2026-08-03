@@ -1,12 +1,14 @@
-# bioclients 0.0.0.9000
+# bioclients 0.1.0
 
-First working version, still in development. Nothing is published, so anything
-here can still change.
+First release. 29 clients, 125 exported functions, and the behaviour they depend
+on checked against the live services rather than only against stored responses.
+28 of the 29 confirmed; see "Known limits" for the one that did not, which was
+down at the time rather than wrong.
 
-The heading carries the real version rather than the usual
-"(development version)" wording, because `R CMD check` parses `NEWS.md` for a
-package name followed by a version and reports "no news entries found" when it
-finds prose there instead.
+The envelope contract comes from `biohttp` and is fixed. What can still move is
+the shape of a parser's output, since a service adding a field is a reason to
+carry it. Anything that changes an existing column is a breaking change and gets
+a version to say so.
 
 ## What it covers
 
