@@ -2,7 +2,7 @@
 #
 # Ported from genescout/R/tools/uniprot.R (curated diseases) and the two copies
 # of the features client in variant-reviewer/R/api_proteins.R and
-# multi-variant-reviewer/R/api_proteins.R.
+# a sibling app's api_proteins.R.
 #
 # TWO HOSTS, ON PURPOSE.
 #

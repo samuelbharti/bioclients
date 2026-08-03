@@ -19,11 +19,11 @@ bioclients is one client per service and nothing else. Before opening a pull
 request, check that the change fits inside these lines:
 
 - **No ranking or scoring.** Anything that weights, scores, or orders genes
-  belongs to `gene-list-builder`. Its source-weighted model is the intellectual
-  core of that app.
+  belongs to the consuming app. A source-weighted model is the intellectual core
+  of the app that holds it, not a detail of a client.
 - **No curation.** LLM curation, citation gating, and evidence review stay in
-  `genescout` and `gene-list-builder`.
-- **No disease-to-gene assembly.** That is `gene-list-builder`'s product.
+  `genescout` and the other consuming apps.
+- **No disease-to-gene assembly.** That is a consuming app's product.
 - **No Shiny**, in Imports, in Suggests, or in tests.
 - **No transport.** Retries, breakers, caching, and error normalization belong
   to `biohttp`.

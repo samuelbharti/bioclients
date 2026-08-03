@@ -1,7 +1,7 @@
 # Monarch Initiative: entity search and the associations between entities.
 #
-# Ported from knowledge-graph-viewer/R/tools/monarch.R (search and association)
-# and variant-reviewer/R/api_monarch.R (gene to phenotype).
+# Ported from a sibling app's monarch.R (search and association) and
+# variant-reviewer/R/api_monarch.R (gene to phenotype).
 #
 # A SEARCH RESULT DOES NOT DISAMBIGUATE ITSELF.
 #
@@ -34,11 +34,11 @@
 #
 # WHAT IS DELIBERATELY NOT HERE.
 #
-# knowledge-graph-viewer turns these associations into its graph model: it drops
-# edges with no primary_knowledge_source, merges duplicates, and prunes nodes
-# left stranded. That is the app's model, not Monarch's response, so it stays
-# there. See the note on monarch_associations() about what that means for a
-# caller fetching both directions.
+# One consuming app turns these associations into a graph model: it drops edges
+# with no primary_knowledge_source, merges duplicates, and prunes nodes left
+# stranded. That is the app's model, not Monarch's response, so it stays there.
+# See the note on monarch_associations() about what that means for a caller
+# fetching both directions.
 #
 # Endpoint: https://api-v3.monarchinitiative.org/v3/api
 

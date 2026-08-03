@@ -6,6 +6,8 @@
 \alias{bioclients-package}
 \title{bioclients: Clients for Biological Database Web Services}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 One client per biological database, each split into a request half that calls the service and a parser half that turns a response body into a canonical structure. The parser is pure, so it is tested against a stored response with no network. Transport, retries, caching, and error handling are left to the 'biohttp' package. Per-service dependencies are optional, so a caller that wants one service does not install the requirements of the rest.
 }
 \details{
@@ -47,6 +49,7 @@ zip results onto its inputs by position.
 Useful links:
 \itemize{
   \item \url{https://github.com/samuelbharti/bioclients}
+  \item \url{https://www.samuelbharti.com/bioclients/}
   \item Report bugs at \url{https://github.com/samuelbharti/bioclients/issues}
 }
 

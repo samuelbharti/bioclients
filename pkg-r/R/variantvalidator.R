@@ -1,6 +1,6 @@
 # VariantValidator: HGVS validation and normalization.
 #
-# Ported from multi-variant-reviewer/R/api_variantvalidator.R.
+# Ported from a sibling app's api_variantvalidator.R.
 #
 # Used as an independent second opinion on an HGVS string. Its validation
 # warnings are the real rejection reasons, so they are returned rather than
