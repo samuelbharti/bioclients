@@ -9,7 +9,8 @@ abstract: >-
   biohttp package. Per-service dependencies are optional, so a caller that wants
   one service does not install the requirements of the rest.
 type: software
-version: 0.0.0.9000
+version: 0.1.0
+date-released: "2026-08-03"
 authors:
   - family-names: Bharti
     given-names: Samuel

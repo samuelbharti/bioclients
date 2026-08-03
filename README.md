@@ -2,13 +2,15 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
+[![r-universe](https://samuelbharti.r-universe.dev/badges/bioclients)](https://samuelbharti.r-universe.dev/bioclients)
 <!-- badges: end -->
 
 One client per biological database, each with a pure parser that runs offline.
 
-> **Status:** 29 clients, 125 exported functions, working. Installs from local
-> source today; not published anywhere yet. `biohttp`, the transport underneath
-> it, is released and public.
+> **Status:** 0.1.0, released. Install from
+> [r-universe](https://samuelbharti.r-universe.dev/bioclients), read the docs at
+> <https://www.samuelbharti.com/bioclients/>. The parser output shape is what can
+> still move; a change to an existing column is a breaking change.
 
 ## Why
 
@@ -229,20 +231,21 @@ for an existing C or C++ implementation: `yyjsonr` or `RcppSimdJson` for JSON,
 
 ## Installation
 
-`biohttp` supplies the transport. It is released and public, though not on CRAN:
+Neither package is on CRAN. Both are on r-universe, which pulls `biohttp` in as a
+dependency, so one call is enough:
 
 ```r
-install.packages("biohttp", repos = "https://samuelbharti.r-universe.dev")
-# or
-pak::pak("samuelbharti/biohttp")
+install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
 ```
 
-`bioclients` itself is not published yet, so it installs from a local checkout.
-The path ends in `pkg-r`, because the package sits in a subdirectory rather than
-at the repository root:
+From GitHub instead, note the `subdir`. The package sits in `pkg-r/` rather than
+at the repository root, and an install that leaves this out fails without saying
+why:
 
 ```r
-install.packages("path/to/bioclients/pkg-r", repos = NULL, type = "source")
+pak::pak("samuelbharti/bioclients/pkg-r")
+# or
+remotes::install_github("samuelbharti/bioclients", subdir = "pkg-r")
 ```
 
 `DESCRIPTION` carries a `Remotes:` line pointing at `biohttp` on GitHub, which is

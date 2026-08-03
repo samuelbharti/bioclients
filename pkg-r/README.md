@@ -11,11 +11,18 @@ response with no network.
 
 ## Installation
 
-`biohttp` supplies the transport and is not on CRAN:
+Neither this package nor `biohttp`, the transport underneath it, is on CRAN.
+Both are on r-universe, which resolves the dependency for you:
 
 ```r
-install.packages("biohttp", repos = "https://samuelbharti.r-universe.dev")
-install.packages("path/to/bioclients/pkg-r", repos = NULL, type = "source")
+install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
+```
+
+From GitHub instead, the package sits in `pkg-r/` rather than at the repository
+root, so the `subdir` is not optional:
+
+```r
+pak::pak("samuelbharti/bioclients/pkg-r")
 ```
 
 ## Usage
