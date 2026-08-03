@@ -11,6 +11,13 @@ abstract: >-
 type: software
 version: 0.1.0
 date-released: "2026-08-03"
+# The concept DOI, which always resolves to the newest release. Cite this one
+# unless you specifically need to pin the version you used.
+doi: 10.5281/zenodo.21770870
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.21770871
+    description: Version 0.1.0
 authors:
   - family-names: Bharti
     given-names: Samuel
