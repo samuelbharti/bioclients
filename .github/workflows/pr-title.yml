@@ -1,7 +1,10 @@
 name: pr-title
 
+# Only a pull request into main runs this. The same rule is enforced on every
+# commit message locally by conventional-pre-commit.
 on:
   pull_request:
+    branches: [main]
     types: [opened, edited, reopened, synchronize]
 
 permissions:

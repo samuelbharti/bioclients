@@ -8,7 +8,10 @@ template:
   bootstrap: 5
   light-switch: true
   bslib:
-    primary: "#1a6b54"
+    # Taken from the logo, so the site and the hex are the same object. The
+    # darker oxblood rather than the amber, because this drives link text and
+    # the amber does not have the contrast for it on a light background.
+    primary: "#8a3a30"
     base_font: {google: "Source Sans 3"}
     heading_font: {google: "Bricolage Grotesque"}
     code_font: {google: "JetBrains Mono"}
@@ -29,9 +32,14 @@ navbar:
       icon: fab fa-github
       href: https://github.com/samuelbharti/bioclients
 
+# One section per service, grouped by the question being asked rather than
+# alphabetically, because a caller arrives knowing what they want to look up and
+# not which service answers it.
 reference:
-  - title: MyGene
-    desc: Gene identity and annotation.
+  - title: Gene identity
+    desc: >
+      Where nearly every other lookup starts, because the rest are keyed on an
+      Entrez, Ensembl, UniProt, or HGNC id rather than a symbol.
     contents:
       - mygene_gene
       - mygene_genes
@@ -60,17 +68,69 @@ reference:
       - clinvar_category
       - clinvar_conditions
 
+  - title: MyVariant
+    desc: >
+      Precomputed variant annotation, 1000 per batch. The request always carries
+      `assembly = "hg38"`; without it GRCh38 coordinates come back `notfound`.
+    contents:
+      - myvariant_variants
+      - myvariant_parse_record
+      - myvariant_parse_batch
+      - myvariant_id
+
+  - title: Ensembl VEP
+    desc: >
+      Predicted consequence for genomic coordinates, exactly 200 per POST.
+      Results are matched back by identity, because VEP does not promise order.
+    contents:
+      - vep_variants
+      - vep_parse_element
+      - vep_parse_batch
+      - vep_pick_transcript
+      - vep_key
+      - vep_region
+
+  - title: Ensembl REST
+    desc: >
+      VEP by variant id, and the exon model. Exons are numbered in transcription
+      order, so on the minus strand exon 1 has the highest coordinate.
+    contents:
+      - ensembl_vep_id
+      - ensembl_gene_model
+      - ensembl_parse_vep
+      - ensembl_parse_consequences
+      - ensembl_parse_gene_model
+
+  - title: VariantValidator
+    desc: >
+      HGVS normalisation. The response is keyed by the normalised variant, which
+      is not known before the call.
+    contents:
+      - variantvalidator_normalize
+      - variantvalidator_parse
+
+  - title: ClinGen Allele Registry
+    desc: Canonical allele identifiers, as a keyless batch POST.
+    contents:
+      - clingen_alleles
+      - clingen_parse_allele
+      - clingen_parse_batch
+
   - title: Open Targets
     desc: >
-      Gene and disease association, both directions, plus the disease resolver
-      that existed twice in the family.
+      Gene and disease association in both directions, the disease resolver that
+      existed twice in the family, known drugs, and pharmacogenomics.
     contents:
       - opentargets_gene_diseases
       - opentargets_disease_targets
       - opentargets_resolve_disease
+      - opentargets_drugs
+      - opentargets_pgx
       - opentargets_parse_diseases
       - opentargets_parse_targets
       - opentargets_parse_matches
+      - opentargets_parse_drugs
+      - opentargets_parse_pgx
       - opentargets_is_id
 
   - title: DGIdb
@@ -96,6 +156,172 @@ reference:
     contents:
       - civic_gene
       - civic_parse_gene
+
+  - title: JensenLab DISEASES
+    desc: >
+      Disease-to-gene associations scored 0 to 5, in a curated and a text-mined
+      channel. Combining them is a convention, not the source's own answer.
+    contents:
+      - diseases_channel
+      - diseases_gene_associations
+      - diseases_parse_channel
+      - diseases_merge_channels
+
+  - title: PanelApp
+    desc: >
+      Diagnostic gene panels. The traffic-light level is returned as published,
+      red included, rather than as a weight.
+    contents:
+      - panelapp_panels
+      - panelapp_all_panels
+      - panelapp_panel
+      - panelapp_parse_index
+      - panelapp_parse_panel
+
+  - title: ClinGen gene validity
+    desc: >
+      Curated gene-disease validity. There is no per-gene endpoint, so the bulk
+      file is fetched once and filtered in memory.
+    contents:
+      - clingen_gene_validity
+      - clingen_parse_validity
+      - clingen_validity_for
+
+  - title: UniProt
+    desc: >
+      Disease annotation and sequence features. Two hosts, kept apart so each
+      gets its own circuit breaker.
+    contents:
+      - uniprot_diseases
+      - uniprot_features
+      - uniprot_parse_diseases
+      - uniprot_parse_features
+      - uniprot_features_at
+
+  - title: ProtVar
+    desc: Residue-level function and population observations for a protein position.
+    contents:
+      - protvar_function
+      - protvar_population
+      - protvar_parse_function
+      - protvar_parse_population
+      - protvar_position
+      - protvar_strip_citations
+
+  - title: AlphaFold
+    desc: Predicted structure and its per-residue confidence.
+    contents:
+      - alphafold_model
+      - alphafold_parse_model
+
+  - title: PDBe
+    desc: >
+      Experimental structures covering a protein, collapsed to one row per
+      structure rather than one per chain.
+    contents:
+      - pdbe_structures
+      - pdbe_parse_structures
+
+  - title: STRING
+    desc: >
+      Interaction partners and networks. Returned names are translated back to
+      the symbols that were queried.
+    contents:
+      - string_partners
+      - string_network
+      - string_map_ids
+      - string_parse_partners
+      - string_parse_network
+      - string_parse_ids
+      - string_reconcile_edges
+
+  - title: GTEx
+    desc: >
+      Median expression across tissues, which needs GTEx's own versioned GENCODE
+      id first. An Ensembl id from elsewhere will not work.
+    contents:
+      - gtex_gene_reference
+      - gtex_median_expression
+      - gtex_parse_reference
+      - gtex_parse_expression
+
+  - title: Human Protein Atlas
+    desc: Curated per-gene annotation, returned as the tags HPA publishes.
+    contents:
+      - hpa_gene
+      - hpa_parse_gene
+
+  - title: QuickGO
+    desc: >
+      Gene Ontology annotations, collapsed to one row per term rather than one
+      per evidence line.
+    contents:
+      - quickgo_annotations
+      - quickgo_parse_annotations
+
+  - title: Reactome
+    desc: >
+      Pathway membership, keyed by gene symbol. The response is a bare JSON
+      array rather than an object.
+    contents:
+      - reactome_pathways
+      - reactome_parse_pathways
+
+  - title: Human Phenotype Ontology
+    desc: >
+      Term search, term lookup, and the diseases and phenotypes HPO associates
+      with a gene. The gene lookup is keyed on an NCBI Gene id.
+    contents:
+      - hpo_search
+      - hpo_term
+      - hpo_gene_annotation
+      - hpo_parse_search
+      - hpo_parse_term
+      - hpo_parse_diseases
+      - hpo_parse_phenotypes
+
+  - title: Monarch Initiative
+    desc: >
+      Entity search and the associations between entities. A gene symbol is not
+      unique across species, so every search row carries its taxon.
+    contents:
+      - monarch_search
+      - monarch_associations
+      - monarch_gene_phenotypes
+      - monarch_parse_search
+      - monarch_parse_associations
+      - monarch_hgnc_id
+
+  - title: IMPC
+    desc: >
+      Mouse knockout phenotypes. A gene never phenotyped and one phenotyped with
+      no significant result are indistinguishable, so neither is reported as 0.
+    contents:
+      - impc_mouse_ortholog
+      - impc_gene_phenotypes
+      - impc_parse_ortholog
+      - impc_parse_phenotypes
+
+  - title: Europe PMC
+    desc: >
+      Literature search and hit counts. A count of 0 is an answer and comes back
+      `ok`, because a gene with no literature is not an outage.
+    contents:
+      - europepmc_search
+      - europepmc_count
+      - europepmc_query
+      - europepmc_parse_results
+      - europepmc_parse_count
+
+  - title: PubTator3
+    desc: >
+      Articles where a gene is tagged as an entity rather than matched as text,
+      so an ambiguous symbol stops inflating its own count.
+    contents:
+      - pubtator_gene_literature
+      - pubtator_entity
+      - pubtator_parse_count
+      - pubtator_parse_results
 
   - title: Package
     contents:

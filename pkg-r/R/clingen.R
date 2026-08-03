@@ -1,6 +1,6 @@
 # ClinGen Allele Registry: canonical allele identity.
 #
-# Ported from multi-variant-reviewer/R/api_clingen_registry.R.
+# Ported from a sibling app's api_clingen_registry.R.
 #
 # One batch POST of newline-delimited HGVS returns a JSON array in input order,
 # each element carrying the Canonical Allele id (CAid) plus the cross-references

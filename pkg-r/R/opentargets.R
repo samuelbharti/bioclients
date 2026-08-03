@@ -6,8 +6,8 @@
 #   genescout/R/tools/opentargets.R         target -> diseases, plus disease -> targets
 #   genescout/R/tools/disease_resolver.R    free-text and ontology-id disease lookup
 #
-# gene-list-builder/R/source_opentargets.R and its own disease_resolver.R query
-# the same API again. The disease resolver in particular is the last obvious
+# A sibling app queries the same API again, through its own source client and its
+# own disease resolver. The disease resolver in particular is the last obvious
 # duplication in the family after the clients themselves, which is why it is here
 # rather than left in two apps.
 #
@@ -491,9 +491,8 @@ opentargets_disease_targets <- function(disease_id, size = 1000, ...) {
 #' looked up directly, which is both exact and cheaper. [opentargets_is_id()] is
 #' what decides.
 #'
-#' This is the `resolve_disease` that exists twice in the family, in
-#' `genescout/R/tools/disease_resolver.R` and
-#' `gene-list-builder/R/disease_resolver.R`.
+#' This is the `resolve_disease` that exists twice in the family, once in
+#' `genescout/R/tools/disease_resolver.R` and once in a sibling app.
 #'
 #' @param term Free text, or an EFO/MONDO/HP/Orphanet id.
 #' @param limit How many candidates to return for a free-text search.

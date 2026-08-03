@@ -218,6 +218,10 @@ ensembl_vep_id <- function(rsid, ...) {
   }
   res <- biohttp::get_json(
     ENSEMBL_URL,
+    # `content-type` is a query parameter here, not a header. Drop it and
+    # Ensembl serves its HTML browser page with HTTP 200, so the call looks like
+    # a success right up to the point the JSON parser hits the first tag.
+    # Confirmed live, see test-live.R.
     path = paste0("vep/human/id/", id),
     query = list(`content-type` = "application/json"),
     source = "Ensembl VEP",

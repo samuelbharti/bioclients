@@ -1,6 +1,6 @@
 # DGIdb: curated drug-gene interactions.
 #
-# Ported from genescout/R/tools/dgidb.R and gene-list-builder/R/source_dgidb.R.
+# Ported from genescout/R/tools/dgidb.R and a sibling app's source_dgidb.R.
 #
 # The count of curated interactions is a druggability SIGNAL for prioritization,
 # never a clinical call. This package reports the count; what an app does with it
@@ -11,9 +11,9 @@
 DGIDB_URL <- "https://dgidb.org/api/graphql"
 DGIDB_WEB <- "https://dgidb.org/genes"
 
-# The query is already batch-shaped: `names` takes a list. genescout and
-# gene-list-builder both pass a single symbol, which spends one round trip per
-# gene for no reason. dgidb_genes() passes the whole list.
+# The query is already batch-shaped: `names` takes a list. Both apps this came
+# from pass a single symbol, which spends one round trip per gene for no reason.
+# dgidb_genes() passes the whole list.
 DGIDB_QUERY <- paste(
   "query($names: [String!]) {",
   "  genes(names: $names) {",

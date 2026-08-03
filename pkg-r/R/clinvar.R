@@ -13,10 +13,11 @@
 # a header one does not: it would land in the cache key, it would print with the
 # request, and it would ride along in the URL inside a transport error message.
 #
-# biohttp::secret_query handles all three. It attaches the key at dispatch, so
-# nothing built from the request beforehand carries it, and redacts its value
-# from any message built from a failure. Ported from genescout's
-# fix/secret-redaction-and-ncbi-key.
+# The `secret_query` argument biohttp's wrappers take handles all three. It
+# attaches the key at dispatch, so nothing built from the request beforehand
+# carries it, and redacts its value from any message built from a failure, in
+# both the raw and the percent-encoded form a URL carries. Ported from
+# genescout's fix/secret-redaction-and-ncbi-key.
 #
 # Docs: https://www.ncbi.nlm.nih.gov/books/NBK25500/
 

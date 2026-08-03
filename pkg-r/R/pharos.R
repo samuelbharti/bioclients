@@ -1,6 +1,6 @@
 # Pharos / IDG: Target Development Level.
 #
-# Ported from genescout/R/tools/pharos.R and gene-list-builder/R/source_pharos.R.
+# Ported from genescout/R/tools/pharos.R and a sibling app's source_pharos.R.
 #
 # TDL is IDG's tractability classification, ordered Tclin > Tchem > Tbio > Tdark.
 # It is a druggability SIGNAL for prioritization, never a clinical call.
@@ -10,7 +10,7 @@
 # Both source clients also carry a TDL -> 0-1 numeric map (Tclin = 1.0,
 # Tchem = 0.75, Tbio = 0.5, Tdark = 0.25). That map is not ported, because
 # turning a category into a weight is scoring, and scoring is the consuming app's
-# job: gene-list-builder's ranking model is the intellectual core of that app and
+# job: a ranking model is the intellectual core of the app that holds it, and
 # section 3.2 of the build plan keeps it there. This client reports the TDL that
 # Pharos assigned. An app that wants a number applies its own.
 #

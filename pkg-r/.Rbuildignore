@@ -2,6 +2,8 @@
 ^\.Rbuildignore$
 ^_pkgdown\.yml$
 ^docs$
+^_site$
+^\.git$
 ^pkgdown$
 ^vignettes/articles$
 ^cran-comments\.md$

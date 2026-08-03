@@ -1,11 +1,12 @@
 name: R-CMD-check
 
+# Only a pull request into main runs this, matching biohttp. Work on a feature
+# branch and into dev is verified locally instead: `prek run --all-files` and
+# `rcmdcheck::rcmdcheck('pkg-r', args = c('--no-manual', '--as-cran'))`. See
+# CONTRIBUTING.md. workflow_dispatch stays so a run can be asked for by hand.
 on:
-  push:
-    branches: [main, dev]
-    paths: ["pkg-r/**", ".github/workflows/r.yml"]
   pull_request:
-    paths: ["pkg-r/**", ".github/workflows/r.yml"]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

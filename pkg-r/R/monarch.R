@@ -1,7 +1,7 @@
 # Monarch Initiative: entity search and the associations between entities.
 #
-# Ported from knowledge-graph-viewer/R/tools/monarch.R (search and association)
-# and variant-reviewer/R/api_monarch.R (gene to phenotype).
+# Ported from a sibling app's monarch.R (search and association) and
+# variant-reviewer/R/api_monarch.R (gene to phenotype).
 #
 # A SEARCH RESULT DOES NOT DISAMBIGUATE ITSELF.
 #
@@ -19,28 +19,30 @@
 # they are rather than percent-encoded. biohttp's path builder leaves them
 # alone, which is what makes this work, so a test pins it.
 #
-# TWO HOSTS, ON PURPOSE.
+# ONE HOST, AFTER A LIVE CHECK.
 #
-# `api-v3.monarchinitiative.org` serves search and association;
-# `api.monarchinitiative.org` serves the entity route. Each is the host the
-# client this was ported from actually ran against, and they are kept apart
-# rather than assumed interchangeable. The cost is that biohttp sees two hosts
-# and gives Monarch two circuit breakers. Collapse them to one once a live check
-# confirms both routes answer on the same host.
+# This used to be two. The apps this was ported from called search and
+# association on `api-v3.monarchinitiative.org` and the entity route on
+# `api.monarchinitiative.org`, and the ported client kept them apart rather than
+# assume they were interchangeable. The cost was that biohttp saw two hosts and
+# gave Monarch two circuit breakers, so one host going down only opened half of
+# them.
+#
+# A live check settled it. All three routes answer on both hosts, and the entity
+# payload is identical between them, the same total and the same ids in the same
+# order. So they collapse to one, and `test-live.R` pins that.
 #
 # WHAT IS DELIBERATELY NOT HERE.
 #
-# knowledge-graph-viewer turns these associations into its graph model: it drops
-# edges with no primary_knowledge_source, merges duplicates, and prunes nodes
-# left stranded. That is the app's model, not Monarch's response, so it stays
-# there. See the note on monarch_associations() about what that means for a
-# caller fetching both directions.
+# One consuming app turns these associations into a graph model: it drops edges
+# with no primary_knowledge_source, merges duplicates, and prunes nodes left
+# stranded. That is the app's model, not Monarch's response, so it stays there.
+# See the note on monarch_associations() about what that means for a caller
+# fetching both directions.
 #
-# Endpoints: https://api-v3.monarchinitiative.org/v3/api
-#            https://api.monarchinitiative.org/v3/api
+# Endpoint: https://api-v3.monarchinitiative.org/v3/api
 
 MONARCH_URL <- "https://api-v3.monarchinitiative.org/v3/api"
-MONARCH_ENTITY_URL <- "https://api.monarchinitiative.org/v3/api"
 MONARCH_WEB <- "https://monarchinitiative.org"
 
 # The association category for gene to phenotype, which the entity route takes
@@ -314,7 +316,7 @@ monarch_gene_phenotypes <- function(hgnc, limit = 50, ...) {
     ))
   }
   res <- biohttp::get_json(
-    MONARCH_ENTITY_URL,
+    MONARCH_URL,
     path = paste("entity", id, MONARCH_GENE_PHENOTYPE, sep = "/"),
     query = list(limit = as.integer(limit)),
     source = "Monarch",
