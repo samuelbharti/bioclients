@@ -8,7 +8,10 @@ template:
   bootstrap: 5
   light-switch: true
   bslib:
-    primary: "#1a6b54"
+    # Taken from the logo, so the site and the hex are the same object. The
+    # darker oxblood rather than the amber, because this drives link text and
+    # the amber does not have the contrast for it on a light background.
+    primary: "#8a3a30"
     base_font: {google: "Source Sans 3"}
     heading_font: {google: "Bricolage Grotesque"}
     code_font: {google: "JetBrains Mono"}
