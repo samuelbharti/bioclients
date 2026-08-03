@@ -259,13 +259,26 @@ come back out before any CRAN submission.
 | 1. Three pilot clients: MyGene, gnomAD, ClinVar | done |
 | 1b. Batch A, the GraphQL services: Open Targets, DGIdb, Pharos, CIViC | done |
 | 2. Expand to every remaining service | done, 29 clients and 125 exports |
-| 3. Confirm the ported behaviour against live services | not started |
+| 3. Confirm the ported behaviour against live services | done, 28 of 29 confirmed |
 | 4. Migrate `variant-reviewer` onto `biohttp` and `bioclients` | demonstrated, not landed |
 
-Phase 3 is the open one. Every parser is pinned by a stored response, but five
-behaviours have not been seen against a real server since the port: Monarch's two
-hosts, MyGene's `HGNC` field, Ensembl's array versus record shape, Reactome's
-404, and PanelApp's non-filtering `search`.
+Phase 3 called every service once and then made the specific assertions the five
+unchecked claims depended on. Four held: MyGene's upper case `HGNC`, Reactome's
+404, PanelApp's `search` that does not filter, and Ensembl's array wrapping a
+single record. The fifth did not, and usefully so. Monarch's two hosts turned out
+to serve all three routes with identical payloads, so they collapsed to one, and
+Monarch now has one circuit breaker rather than two.
+
+Pharos is the one service the run could not confirm, because it was answering
+HTTP 502 from its own gateway at the time. That is an outage rather than a
+finding.
+
+The checks live in `pkg-r/tests/testthat/test-live.R` and never run on their own.
+No CI job sets the variable that turns them on.
+
+```sh
+BIOCLIENTS_LIVE=true Rscript -e 'devtools::test("pkg-r", filter = "live")'
+```
 
 Phase 4 has a working demonstration. Swapping `variant-reviewer`'s HTTP layer for
 `biohttp` touched one file, left all eleven of its API clients unchanged, and
@@ -274,11 +287,16 @@ services. It also surfaced three real bugs in `biohttp`, since fixed in 0.1.1.
 
 ## Testing
 
-Offline. No test touches a real host. The parsers run against stored response
-bodies ported unchanged from the apps this package replaces, mostly `genescout`
-and `variant-reviewer` with a smaller number from `multi-variant-reviewer` and
+Offline by default. The parsers run against stored response bodies ported
+unchanged from the apps this package replaces, mostly `genescout` and
+`variant-reviewer` with a smaller number from `multi-variant-reviewer` and
 `knowledge-graph-viewer`. A fixture that needed editing would mean the parser
-changed behavior during the port.
+changed behaviour during the port.
+
+One file is the exception. `pkg-r/tests/testthat/test-live.R` calls real
+services, which is the only way to answer whether a ported claim is still true.
+It is gated three ways, on `BIOCLIENTS_LIVE`, on not being CRAN, and on having a
+network, so it skips unless it is asked for by name. No CI job sets the variable.
 
 ## License
 
