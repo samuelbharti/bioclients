@@ -90,7 +90,7 @@ hpa_parse_gene <- function(body, ensembl = NA_character_) {
 #'   [hpa_parse_gene()].
 #'
 #' @references
-#' Uhlen et al. (2015). Tissue-based map of the human proteome.
+#' \enc{Uhlén}{Uhlen} et al. (2015). Tissue-based map of the human proteome.
 #' Science 347(6220), 1260419. \doi{10.1126/science.1260419}
 #'
 #' Service documentation: <https://www.proteinatlas.org/>
