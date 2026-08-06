@@ -11,7 +11,13 @@ Description: One client per biological database, each split into a request half
     response with no network. Transport, retries, caching, and error handling
     are left to the 'biohttp' package. Per-service dependencies are optional, so
     a caller that wants one service does not install the requirements of the
-    rest.
+    rest. Twenty-nine services are covered, among them 'Ensembl', described in
+    Dyer et al. (2025) <doi:10.1093/nar/gkae1071>, 'UniProt', in The UniProt
+    Consortium (2025) <doi:10.1093/nar/gkae1010>, 'gnomAD', in Chen et al.
+    (2024) <doi:10.1038/s41586-023-06045-0>, 'Open Targets', in Buniello et al.
+    (2025) <doi:10.1093/nar/gkae1128>, and the 'AlphaFold' Protein Structure
+    Database, in Varadi et al. (2024) <doi:10.1093/nar/gkad1011>. Each client's
+    help page cites the service it calls.
 License: MIT + file LICENSE
 URL: https://github.com/samuelbharti/bioclients,
     https://www.samuelbharti.com/bioclients/
