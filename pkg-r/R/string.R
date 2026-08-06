@@ -38,6 +38,8 @@ STRING_MAX_NODES <- 500L
 #'   `experimental`, `database`, `coexpression`, and `textmining`. `NULL` when
 #'   there are no partners.
 #'
+#' @inherit string_partners references
+#'
 #' @examples
 #' body <- list(list(
 #'   preferredName_B = "SFN", score = 0.999,
@@ -71,6 +73,8 @@ string_parse_partners <- function(body) {
 #' @return A tibble of `gene_a`, `gene_b`, and `score`, upper-cased. A zero-row
 #'   tibble when there are no edges, because "no high-confidence edges" is a real
 #'   answer about a set rather than an absence of one.
+#'
+#' @inherit string_partners references
 #'
 #' @examples
 #' body <- list(list(
@@ -107,6 +111,8 @@ string_parse_network <- function(body) {
 #'
 #' @return A tibble of `query`, `preferred`, and `string_id`, with `query` and
 #'   `preferred` upper-cased.
+#'
+#' @inherit string_partners references
 #'
 #' @examples
 #' body <- list(list(
@@ -156,6 +162,8 @@ string_parse_ids <- function(body) {
 #'
 #' @return The edge tibble, with endpoints translated where a mapping existed.
 #'
+#' @inherit string_partners references
+#'
 #' @examples
 #' edges <- tibble::tibble(gene_a = "SEPT9", gene_b = "TP53", score = 0.9)
 #' map <- tibble::tibble(
@@ -201,6 +209,14 @@ string_symbols <- function(symbols) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [string_parse_partners()].
+#'
+#' @references
+#' Szklarczyk et al. (2023). The STRING database in 2023: protein-protein
+#' association networks and functional enrichment analyses for any sequenced
+#' genome of interest. Nucleic Acids Research 51(D1), D638-D646.
+#' \doi{10.1093/nar/gkac1000}
+#'
+#' Service documentation: <https://string-db.org/>
 #'
 #' @examples
 #' \donttest{
@@ -252,6 +268,8 @@ string_partners <- function(
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [string_parse_ids()].
+#'
+#' @inherit string_partners references
 #'
 #' @examples
 #' \donttest{
@@ -310,6 +328,8 @@ string_map_ids <- function(symbols, species = STRING_HUMAN, ...) {
 #' @return A biohttp envelope whose `data` is a list of `edges` (see
 #'   [string_parse_network()]), `queried`, `n_query`, `truncated`, and
 #'   `n_dropped`.
+#'
+#' @inherit string_partners references
 #'
 #' @examples
 #' \donttest{

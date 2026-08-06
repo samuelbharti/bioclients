@@ -73,6 +73,8 @@ mygene_first <- function(x) {
 #'
 #' @return One hit record, or `NULL` when `hits` is empty.
 #'
+#' @inherit mygene_gene references
+#'
 #' @examples
 #' hits <- list(
 #'   list(symbol = "TTR", entrezgene = "7276"),
@@ -107,6 +109,8 @@ mygene_pick_hit <- function(hits, token) {
 #' @return A one-row tibble with `symbol`, `name`, `summary`, `entrez`,
 #'   `ensembl_gene`, `uniprot`, `hgnc`, and `type_of_gene`. `NULL` when the body
 #'   carries no usable hit.
+#'
+#' @inherit mygene_gene references
 #'
 #' @examples
 #' body <- list(hits = list(list(
@@ -170,6 +174,8 @@ mygene_row <- function(hit, fallback_symbol = NA_character_) {
 #'
 #' @return A tibble with one row per entry in `symbols`, same order.
 #'
+#' @inherit mygene_gene references
+#'
 #' @examples
 #' body <- list(
 #'   list(query = "TP53", symbol = "TP53", entrezgene = "7157"),
@@ -223,6 +229,13 @@ mygene_empty_row <- function(symbol) {
 #'
 #' @return A biohttp envelope whose `data` is a one-row tibble. See
 #'   [mygene_parse_hits()] for the columns.
+#'
+#' @references
+#' Xin et al. (2016). High-performance web services for querying gene and
+#' variant annotation. Genome Biology 17, 91.
+#' \doi{10.1186/s13059-016-0953-9}
+#'
+#' Service documentation: <https://mygene.info/>
 #'
 #' @examples
 #' \donttest{
@@ -279,6 +292,8 @@ mygene_gene <- function(symbol, species = "human", ...) {
 #'
 #' @return A biohttp envelope whose `data` is a tibble with one row per entry in
 #'   `symbols`, in the same order.
+#'
+#' @inherit mygene_gene references
 #'
 #' @examples
 #' \donttest{

@@ -28,3 +28,9 @@ biohttp::body_or_null(europepmc_search(europepmc_query("BRAF", "V600E")))
 }
 
 }
+\references{
+Ferguson et al. (2021). Europe PMC in 2020. Nucleic Acids Research
+49(D1), D1507-D1514. \doi{10.1093/nar/gkaa994}
+
+Service documentation: \url{https://europepmc.org/}
+}

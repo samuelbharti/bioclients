@@ -109,6 +109,8 @@ OPENTARGETS_PGX_QUERY <- paste(
 #'
 #' @return A single logical.
 #'
+#' @inherit opentargets_gene_diseases references
+#'
 #' @examples
 #' opentargets_is_id("MONDO:0018975")
 #' opentargets_is_id("neurofibromatosis type 1")
@@ -135,6 +137,8 @@ opentargets_normalize_id <- function(id) {
 #'
 #' @return A tibble of `disease`, `disease_id`, `score`, and `source_url`, or
 #'   `NULL` when the target is absent or has no associations.
+#'
+#' @inherit opentargets_gene_diseases references
 #'
 #' @examples
 #' body <- list(data = list(target = list(
@@ -182,6 +186,8 @@ opentargets_parse_diseases <- function(body, ensembl_id = NA_character_) {
 #'
 #' @return A tibble of `symbol`, `ensembl_id`, `score`, and `source_url`, or
 #'   `NULL` when the disease is absent or has no associations.
+#'
+#' @inherit opentargets_gene_diseases references
 #'
 #' @examples
 #' body <- list(data = list(disease = list(
@@ -231,6 +237,8 @@ opentargets_parse_targets <- function(body, disease_id = NA_character_) {
 #' @return A tibble of `id`, `name`, `score`, `description`, and `source_url`,
 #'   best match first, or `NULL` when nothing matched. `score` is `NA` for a
 #'   direct lookup, which has no relevance score to report.
+#'
+#' @inherit opentargets_gene_diseases references
 #'
 #' @examples
 #' hits <- list(data = list(search = list(hits = list(
@@ -283,6 +291,8 @@ opentargets_parse_matches <- function(body) {
 #'
 #' @return A tibble of `drug`, `drug_id`, `drug_type`, `max_phase`, `diseases`,
 #'   `disease_ids`, and `source_url`. `NULL` when the target has no known drugs.
+#'
+#' @inherit opentargets_gene_diseases references
 #'
 #' @examples
 #' body <- list(data = list(target = list(
@@ -347,6 +357,8 @@ opentargets_parse_drugs <- function(body) {
 #'   `annotation`, and `evidence_level`. `NULL` when the target has none, which
 #'   is the normal case for most genes.
 #'
+#' @inherit opentargets_gene_diseases references
+#'
 #' @examples
 #' body <- list(data = list(target = list(pharmacogenomics = list(
 #'   list(
@@ -407,6 +419,13 @@ opentargets_post <- function(query, variables, ...) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [opentargets_parse_diseases()].
 #'
+#' @references
+#' Buniello et al. (2025). Open Targets Platform: facilitating therapeutic
+#' hypotheses building in drug discovery. Nucleic Acids Research 53(D1),
+#' D1467-D1475. \doi{10.1093/nar/gkae1128}
+#'
+#' Service documentation: <https://platform.opentargets.org/>
+#'
 #' @examples
 #' \donttest{
 #' biohttp::body_or_null(opentargets_gene_diseases("ENSG00000141510"))
@@ -451,6 +470,8 @@ opentargets_gene_diseases <- function(ensembl_id, size = 20, ...) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [opentargets_parse_targets()].
+#'
+#' @inherit opentargets_gene_diseases references
 #'
 #' @examples
 #' \donttest{
@@ -500,6 +521,8 @@ opentargets_disease_targets <- function(disease_id, size = 1000, ...) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [opentargets_parse_matches()], best match first.
+#'
+#' @inherit opentargets_gene_diseases references
 #'
 #' @examples
 #' \donttest{
@@ -552,6 +575,8 @@ opentargets_resolve_disease <- function(term, limit = 5, ...) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [opentargets_parse_drugs()].
 #'
+#' @inherit opentargets_gene_diseases references
+#'
 #' @examples
 #' \donttest{
 #' biohttp::body_or_null(opentargets_drugs("ENSG00000157764"))
@@ -592,6 +617,8 @@ opentargets_drugs <- function(ensembl_id, ...) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [opentargets_parse_pgx()].
+#'
+#' @inherit opentargets_gene_diseases references
 #'
 #' @examples
 #' \donttest{

@@ -20,6 +20,8 @@ PROTVAR_URL <- "https://www.ebi.ac.uk/ProtVar/api"
 #'
 #' @return An integer position, or `NULL` when there is no number in it.
 #'
+#' @inherit protvar_function references
+#'
 #' @examples
 #' protvar_position("p.Arg175His")
 #' protvar_position("R175H")
@@ -53,6 +55,8 @@ protvar_position <- function(variant) {
 #' @param text A function comment.
 #'
 #' @return The text with citation groups removed.
+#'
+#' @inherit protvar_function references
 #'
 #' @examples
 #' protvar_strip_citations("Induces arrest (PubMed:11025664, PubMed:12524540).")
@@ -88,6 +92,8 @@ protvar_strip_citations <- function(text) {
 #' @param body A parsed ProtVar `/function` response.
 #'
 #' @return A single string, or `NA_character_` when there is no function comment.
+#'
+#' @inherit protvar_function references
 #'
 #' @examples
 #' body <- list(comments = list(list(
@@ -129,6 +135,8 @@ protvar_parse_function <- function(body) {
 #' @return A tibble of `change` and `sources`, where `sources` is a
 #'   comma-separated list of distinct source names. `NULL` when there are no
 #'   variants.
+#'
+#' @inherit protvar_function references
 #'
 #' @examples
 #' body <- list(variants = list(list(
@@ -199,6 +207,13 @@ protvar_get <- function(endpoint, accession, position, ...) {
 #' @return A biohttp envelope whose `data` is a single string. See
 #'   [protvar_parse_function()].
 #'
+#' @references
+#' Stephenson et al. (2024). ProtVar: mapping and contextualizing human
+#' missense variation. Nucleic Acids Research 52(W1), W140-W147.
+#' \doi{10.1093/nar/gkae413}
+#'
+#' Service documentation: <https://www.ebi.ac.uk/ProtVar/>
+#'
 #' @examples
 #' \donttest{
 #' biohttp::body_or_null(protvar_function("P04637", 175))
@@ -227,6 +242,8 @@ protvar_function <- function(accession, position, ...) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [protvar_parse_population()].
+#'
+#' @inherit protvar_function references
 #'
 #' @examples
 #' \donttest{

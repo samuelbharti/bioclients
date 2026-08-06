@@ -49,6 +49,8 @@ DISEASES_HUMAN_TAXON <- 9606L
 #'   associated gene. `NULL` when the channel has no associations. Rows with no
 #'   symbol or a non-finite score are dropped, because neither is usable.
 #'
+#' @inherit diseases_channel references
+#'
 #' @examples
 #' body <- list(
 #'   list(ENSP00000351015 = list(name = "NF1", score = 5)),
@@ -103,6 +105,8 @@ diseases_parse_channel <- function(body, channel = NA_character_) {
 #'   highest first. `channel` names the channel the winning score came from.
 #'   `NULL` when there is nothing to combine.
 #'
+#' @inherit diseases_channel references
+#'
 #' @examples
 #' diseases_merge_channels(list(
 #'   tibble::tibble(symbol = "NF1", protein = NA, score = 5, channel = "Knowledge"),
@@ -143,6 +147,13 @@ diseases_merge_channels <- function(tables) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [diseases_parse_channel()].
+#'
+#' @references
+#' Pletscher-Frankild et al. (2015). DISEASES: text mining and data
+#' integration of disease-gene associations. Methods 74, 83-89.
+#' \doi{10.1016/j.ymeth.2014.11.020}
+#'
+#' Service documentation: <https://diseases.jensenlab.org/>
 #'
 #' @examples
 #' \donttest{
@@ -211,6 +222,8 @@ diseases_query <- function(doid, limit) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [diseases_merge_channels()], with `source_url` added.
+#'
+#' @inherit diseases_channel references
 #'
 #' @examples
 #' \donttest{

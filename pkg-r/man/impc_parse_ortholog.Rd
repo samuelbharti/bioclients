@@ -24,3 +24,11 @@ body <- list(response = list(docs = list(
 impc_parse_ortholog(body)
 
 }
+\references{
+Groza et al. (2023). The International Mouse Phenotyping Consortium:
+comprehensive knockout phenotyping underpinning the study of human
+disease. Nucleic Acids Research 51(D1), D1038-D1045.
+\doi{10.1093/nar/gkac972}
+
+Service documentation: \url{https://www.mousephenotype.org/}
+}

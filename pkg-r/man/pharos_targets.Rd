@@ -25,3 +25,10 @@ biohttp::body_or_null(pharos_targets(c("NF1", "EGFR")))
 }
 
 }
+\references{
+Kelleher et al. (2023). Pharos 2023: an integrated resource for the
+understudied human proteome. Nucleic Acids Research 51(D1), D1405-D1416.
+\doi{10.1093/nar/gkac1033}
+
+Service documentation: \url{https://pharos.nih.gov/}
+}

@@ -27,6 +27,8 @@ ALPHAFOLD_WEB <- "https://alphafold.ebi.ac.uk/entry"
 #' @return A one-row tibble of `accession`, `pdb_url`, `cif_url`, `version`,
 #'   `mean_plddt`, and `source_url`. `NULL` when there is no model.
 #'
+#' @inherit alphafold_model references
+#'
 #' @examples
 #' body <- list(list(
 #'   pdbUrl = "https://alphafold.ebi.ac.uk/files/AF-P15056-F1-model_v6.pdb",
@@ -67,6 +69,13 @@ alphafold_parse_model <- function(body, accession = NA_character_) {
 #'
 #' @return A biohttp envelope whose `data` is a one-row tibble. See
 #'   [alphafold_parse_model()].
+#'
+#' @references
+#' Varadi et al. (2024). AlphaFold Protein Structure Database in 2024:
+#' providing structure coverage for over 214 million protein sequences.
+#' Nucleic Acids Research 52(D1), D368-D375. \doi{10.1093/nar/gkad1011}
+#'
+#' Service documentation: <https://alphafold.ebi.ac.uk/>
 #'
 #' @examples
 #' \donttest{

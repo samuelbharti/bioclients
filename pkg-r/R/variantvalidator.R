@@ -33,6 +33,8 @@ VARIANTVALIDATOR_THROTTLE <- list(capacity = 4, fill_time_s = 1)
 #'   `protein`, `chrom`, `pos`, `ref`, `alt`, and `warnings`, where `warnings` is
 #'   a list column. `NULL` when there is no record at all.
 #'
+#' @inherit variantvalidator_normalize references
+#'
 #' @examples
 #' body <- list(
 #'   flag = "gene_variant",
@@ -96,6 +98,13 @@ variantvalidator_parse <- function(body, submitted = NA_character_) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [variantvalidator_parse()].
+#'
+#' @references
+#' Freeman et al. (2018). VariantValidator: accurate validation, mapping,
+#' and formatting of sequence variation descriptions. Human Mutation 39(1),
+#' 61-68. \doi{10.1002/humu.23348}
+#'
+#' Service documentation: <https://variantvalidator.org/>
 #'
 #' @examples
 #' \donttest{

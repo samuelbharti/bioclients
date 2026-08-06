@@ -25,3 +25,10 @@ biohttp::body_or_null(alphafold_model("P15056"))
 }
 
 }
+\references{
+Varadi et al. (2024). AlphaFold Protein Structure Database in 2024:
+providing structure coverage for over 214 million protein sequences.
+Nucleic Acids Research 52(D1), D368-D375. \doi{10.1093/nar/gkad1011}
+
+Service documentation: \url{https://alphafold.ebi.ac.uk/}
+}

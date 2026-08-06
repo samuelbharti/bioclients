@@ -36,6 +36,8 @@ EUROPEPMC_WEB <- "https://europepmc.org"
 #'
 #' @return A single query string, or `NULL` when nothing usable was given.
 #'
+#' @inherit europepmc_search references
+#'
 #' @examples
 #' europepmc_query("BRAF")
 #' europepmc_query("BRAF", "V600E")
@@ -65,6 +67,8 @@ europepmc_query <- function(...) {
 #' @return A tibble of `title`, `authors`, `year`, `journal`, `pmid`, `doi`,
 #'   `cited_by`, `source`, `source_id`, and `source_url`, newest first, which is
 #'   the order Europe PMC returns. `NULL` when nothing matched.
+#'
+#' @inherit europepmc_search references
 #'
 #' @examples
 #' body <- list(resultList = list(result = list(list(
@@ -114,6 +118,8 @@ europepmc_parse_results <- function(body) {
 #'
 #' @return A single integer, or `NA_integer_`.
 #'
+#' @inherit europepmc_search references
+#'
 #' @examples
 #' europepmc_parse_count(list(hitCount = 2530))
 #' europepmc_parse_count(list(hitCount = 0))
@@ -137,6 +143,12 @@ europepmc_parse_count <- function(body) {
 #' @return A biohttp envelope whose `data` is a list of `results` (the tibble
 #'   from [europepmc_parse_results()]), `count` (Europe PMC's total, not the
 #'   page size), and `query`.
+#'
+#' @references
+#' Ferguson et al. (2021). Europe PMC in 2020. Nucleic Acids Research
+#' 49(D1), D1507-D1514. \doi{10.1093/nar/gkaa994}
+#'
+#' Service documentation: <https://europepmc.org/>
 #'
 #' @examples
 #' \donttest{
@@ -195,6 +207,8 @@ europepmc_search <- function(query, limit = 15, ...) {
 #'
 #' @return A biohttp envelope whose `data` is a list of `count`, `query`, and
 #'   `source_url`.
+#'
+#' @inherit europepmc_search references
 #'
 #' @examples
 #' \donttest{

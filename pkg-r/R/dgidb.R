@@ -43,6 +43,8 @@ DGIDB_QUERY <- paste(
 #' @return A tibble of `symbol`, `concept_id`, `interaction_count`, and
 #'   `source_url`, one row per entry in `symbols`.
 #'
+#' @inherit dgidb_genes references
+#'
 #' @examples
 #' body <- list(data = list(genes = list(nodes = list(
 #'   list(name = "NF1", conceptId = "hgnc:7765", interactions = list(list(), list()))
@@ -93,6 +95,13 @@ dgidb_parse_genes <- function(body, symbols) {
 #'   `symbols`, in the same order. See [dgidb_parse_genes()] for the columns and
 #'   for why an unknown gene is `NA` rather than `0`.
 #'
+#' @references
+#' Cannon et al. (2024). DGIdb 5.0: rebuilding the drug-gene interaction
+#' database for precision medicine and drug discovery platforms.
+#' Nucleic Acids Research 52(D1), D1227-D1235. \doi{10.1093/nar/gkad1040}
+#'
+#' Service documentation: <https://dgidb.org/>
+#'
 #' @examples
 #' \donttest{
 #' biohttp::body_or_null(dgidb_genes(c("NF1", "BRAF")))
@@ -138,6 +147,8 @@ dgidb_genes <- function(symbols, ...) {
 #' @inheritParams dgidb_genes
 #'
 #' @return A biohttp envelope whose `data` is a one-row tibble.
+#'
+#' @inherit dgidb_genes references
 #'
 #' @examples
 #' \donttest{

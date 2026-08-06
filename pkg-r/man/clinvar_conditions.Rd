@@ -19,3 +19,10 @@ Pure.
 clinvar_conditions(list(trait_set = list(list(trait_name = "RASopathy"))))
 
 }
+\references{
+Landrum et al. (2018). ClinVar: improving access to variant
+interpretations and supporting evidence. Nucleic Acids Research 46(D1),
+D1062-D1067. \doi{10.1093/nar/gkx1153}
+
+Service documentation: \url{https://www.ncbi.nlm.nih.gov/clinvar/}
+}

@@ -20,6 +20,8 @@ GTEX_DATASET <- "gtex_v8"
 #' @return A tibble of `symbol`, `gencode_id`, `entrez`, `chromosome`, and
 #'   `gene_type`. `NULL` when the gene is not in the reference.
 #'
+#' @inherit gtex_gene_reference references
+#'
 #' @examples
 #' body <- list(data = list(list(
 #'   geneSymbol = "TP53", gencodeId = "ENSG00000141510.16", entrezGeneId = 7157
@@ -50,6 +52,8 @@ gtex_parse_reference <- function(body) {
 #'
 #' @return A tibble of `tissue_id`, `tissue`, `median_tpm`, and `gencode_id`.
 #'   Rows with no median are dropped. `NULL` when there is nothing usable.
+#'
+#' @inherit gtex_gene_reference references
 #'
 #' @examples
 #' body <- list(data = list(list(
@@ -93,6 +97,13 @@ gtex_parse_expression <- function(body) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [gtex_parse_reference()].
+#'
+#' @references
+#' The GTEx Consortium (2020). The GTEx Consortium atlas of genetic
+#' regulatory effects across human tissues. Science 369(6509), 1318-1330.
+#' \doi{10.1126/science.aaz1776}
+#'
+#' Service documentation: <https://gtexportal.org/>
 #'
 #' @examples
 #' \donttest{
@@ -145,6 +156,8 @@ gtex_gene_reference <- function(gene, ...) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [gtex_parse_expression()].
+#'
+#' @inherit gtex_gene_reference references
 #'
 #' @examples
 #' \donttest{

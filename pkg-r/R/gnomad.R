@@ -61,6 +61,8 @@ GNOMAD_POP_LABELS <- c(
 #'   `mis_z`, `syn_z`, and `lof_z`. `NULL` when the gene has no constraint
 #'   block, which is common and is an answer rather than a fault.
 #'
+#' @inherit gnomad_constraint references
+#'
 #' @examples
 #' body <- list(data = list(gene = list(
 #'   gnomad_constraint = list(pli = 1, oe_lof_upper = 0.23)
@@ -102,6 +104,13 @@ gnomad_constraint_row <- function(constraint, symbol) {
 #'
 #' @return A biohttp envelope whose `data` is a one-row tibble. See
 #'   [gnomad_parse_constraint()].
+#'
+#' @references
+#' Chen et al. (2024). A genomic mutational constraint map using variation
+#' in 76,156 human genomes. Nature 625(7993), 92-100.
+#' \doi{10.1038/s41586-023-06045-0}
+#'
+#' Service documentation: <https://gnomad.broadinstitute.org/>
 #'
 #' @examples
 #' \donttest{
@@ -192,6 +201,8 @@ gnomad_alias_query <- function(symbols, reference_genome) {
 #' @return A tibble with one row per entry in `symbols`, same order. A gene with
 #'   no constraint block gets a row of `NA` rather than being dropped.
 #'
+#' @inherit gnomad_constraint references
+#'
 #' @examples
 #' body <- list(data = list(
 #'   g1 = list(symbol = "BRAF", gnomad_constraint = list(oe_lof_upper = 0.23)),
@@ -238,6 +249,8 @@ gnomad_empty_constraint_row <- function(symbol) {
 #'
 #' @return A biohttp envelope whose `data` is a tibble with one row per entry in
 #'   `symbols`, in the same order.
+#'
+#' @inherit gnomad_constraint references
 #'
 #' @examples
 #' \donttest{
@@ -318,6 +331,8 @@ gnomad_constraints <- function(
 #' @return A tibble of `pop`, `label`, `ac`, `an`, `af`, sorted by frequency
 #'   descending. `NULL` when there is nothing to report.
 #'
+#' @inherit gnomad_constraint references
+#'
 #' @examples
 #' gnomad_parse_populations(
 #'   list(list(id = "nfe", ac = 3, an = 1000)),
@@ -390,6 +405,8 @@ gnomad_freq_part <- function(x) {
 #' @return A list of `variant_id`, `dataset`, `exome`, `genome`, and
 #'   `populations`, or `NULL` when the body carries no variant.
 #'
+#' @inherit gnomad_constraint references
+#'
 #' @examples
 #' body <- list(data = list(variant = list(
 #'   variant_id = "7-140753336-A-T",
@@ -435,6 +452,8 @@ gnomad_parse_frequency <- function(body, dataset = GNOMAD_DATASET) {
 #'
 #' @return A biohttp envelope whose `data` is the list described in
 #'   [gnomad_parse_frequency()].
+#'
+#' @inherit gnomad_constraint references
 #'
 #' @examples
 #' \donttest{

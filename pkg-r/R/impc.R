@@ -40,6 +40,8 @@ IMPC_MAX_ROWS <- 500L
 #'   has no IMPC mouse ortholog, which includes a document carrying no usable
 #'   accession.
 #'
+#' @inherit impc_mouse_ortholog references
+#'
 #' @examples
 #' body <- list(response = list(docs = list(
 #'   list(mgi_accession_id = "MGI:97306", marker_symbol = "Nf1")
@@ -84,6 +86,8 @@ impc_parse_ortholog <- function(body) {
 #'   `zygosity`, and `source_url`, one row per distinct phenotype term. `NULL`
 #'   when there are none.
 #'
+#' @inherit impc_mouse_ortholog references
+#'
 #' @examples
 #' body <- list(response = list(docs = list(
 #'   list(
@@ -123,6 +127,14 @@ impc_parse_phenotypes <- function(body, mgi = NA_character_) {
 #'
 #' @return A biohttp envelope whose `data` is the one-row tibble described in
 #'   [impc_parse_ortholog()].
+#'
+#' @references
+#' Groza et al. (2023). The International Mouse Phenotyping Consortium:
+#' comprehensive knockout phenotyping underpinning the study of human
+#' disease. Nucleic Acids Research 51(D1), D1038-D1045.
+#' \doi{10.1093/nar/gkac972}
+#'
+#' Service documentation: <https://www.mousephenotype.org/>
 #'
 #' @examples
 #' \donttest{
@@ -178,6 +190,8 @@ impc_mouse_ortholog <- function(symbol, ...) {
 #'
 #' @return A biohttp envelope whose `data` is a list of `mgi`, `marker_symbol`,
 #'   `phenotypes` (the tibble from [impc_parse_phenotypes()]), and `source_url`.
+#'
+#' @inherit impc_mouse_ortholog references
 #'
 #' @examples
 #' \donttest{

@@ -34,3 +34,10 @@ biohttp::body_or_null(gtex_gene_reference("TP53"))$gencode_id
 }
 
 }
+\references{
+The GTEx Consortium (2020). The GTEx Consortium atlas of genetic
+regulatory effects across human tissues. Science 369(6509), 1318-1330.
+\doi{10.1126/science.aaz1776}
+
+Service documentation: \url{https://gtexportal.org/}
+}

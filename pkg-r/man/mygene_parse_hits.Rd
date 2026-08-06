@@ -31,3 +31,10 @@ body <- list(hits = list(list(
 mygene_parse_hits(body, "TP53")
 
 }
+\references{
+Xin et al. (2016). High-performance web services for querying gene and
+variant annotation. Genome Biology 17, 91.
+\doi{10.1186/s13059-016-0953-9}
+
+Service documentation: \url{https://mygene.info/}
+}

@@ -23,3 +23,10 @@ biohttp::body_or_null(dgidb_gene("NF1"))
 }
 
 }
+\references{
+Cannon et al. (2024). DGIdb 5.0: rebuilding the drug-gene interaction
+database for precision medicine and drug discovery platforms.
+Nucleic Acids Research 52(D1), D1227-D1235. \doi{10.1093/nar/gkad1040}
+
+Service documentation: \url{https://dgidb.org/}
+}

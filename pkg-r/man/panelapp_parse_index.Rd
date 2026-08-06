@@ -25,3 +25,10 @@ body <- list(results = list(
 panelapp_parse_index(body)
 
 }
+\references{
+Martin et al. (2019). PanelApp crowdsources expert knowledge to establish
+consensus diagnostic gene panels. Nature Genetics 51(11), 1560-1565.
+\doi{10.1038/s41588-019-0528-2}
+
+Service documentation: \url{https://panelapp.genomicsengland.co.uk/}
+}

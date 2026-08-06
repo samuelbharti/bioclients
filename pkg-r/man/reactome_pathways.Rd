@@ -26,3 +26,9 @@ biohttp::body_or_null(reactome_pathways("NF1"))
 }
 
 }
+\references{
+Milacic et al. (2024). The Reactome Pathway Knowledgebase 2024.
+Nucleic Acids Research 52(D1), D672-D678. \doi{10.1093/nar/gkad1025}
+
+Service documentation: \url{https://reactome.org/}
+}

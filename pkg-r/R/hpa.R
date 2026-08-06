@@ -41,6 +41,8 @@ hpa_as_character <- function(x) {
 #' @return A one-row tibble of `symbol`, `ensembl`, `uniprot`, `protein_class`,
 #'   `disease_involvement`, and `source_url`. `NULL` when the record is empty.
 #'
+#' @inherit hpa_gene references
+#'
 #' @examples
 #' body <- list(
 #'   Gene = "TP53",
@@ -86,6 +88,12 @@ hpa_parse_gene <- function(body, ensembl = NA_character_) {
 #'
 #' @return A biohttp envelope whose `data` is a one-row tibble. See
 #'   [hpa_parse_gene()].
+#'
+#' @references
+#' Uhlen et al. (2015). Tissue-based map of the human proteome.
+#' Science 347(6220), 1260419. \doi{10.1126/science.1260419}
+#'
+#' Service documentation: <https://www.proteinatlas.org/>
 #'
 #' @examples
 #' \donttest{

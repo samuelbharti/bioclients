@@ -53,6 +53,8 @@ MYVARIANT_FIELDS <- paste(
 #'
 #' @return A single string.
 #'
+#' @inherit myvariant_variants references
+#'
 #' @examples
 #' myvariant_id("17", 7676154, "G", "C")
 #' myvariant_id("chr1", 100, "AT", "A")
@@ -122,6 +124,8 @@ myvariant_gene <- function(record) {
 #' @return A one-row tibble of `gene`, `revel`, `cadd`, `clinpred`,
 #'   `alphamissense`, and `clinvar_sig`.
 #'
+#' @inherit myvariant_variants references
+#'
 #' @examples
 #' record <- list(dbnsfp = list(
 #'   genename = list("TP53"),
@@ -166,6 +170,8 @@ myvariant_parse_record <- function(record) {
 #' @param ids The MyVariant ids that were requested, in order.
 #'
 #' @return A tibble with one row per entry in `ids`, plus an `id` column.
+#'
+#' @inherit myvariant_variants references
 #'
 #' @examples
 #' body <- list(list(query = "chr17:g.7676154G>C", dbnsfp = list(
@@ -224,6 +230,13 @@ myvariant_empty_row <- function() {
 #'
 #' @return A biohttp envelope whose `data` is a tibble with one row per entry in
 #'   `ids`, in the same order. See [myvariant_parse_batch()].
+#'
+#' @references
+#' Xin et al. (2016). High-performance web services for querying gene and
+#' variant annotation. Genome Biology 17, 91.
+#' \doi{10.1186/s13059-016-0953-9}
+#'
+#' Service documentation: <https://myvariant.info/>
 #'
 #' @examples
 #' \donttest{

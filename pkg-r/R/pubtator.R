@@ -41,6 +41,8 @@ PUBTATOR_WEB <- "https://www.ncbi.nlm.nih.gov/research/pubtator3"
 #' @return A single string such as `"@GENE_7157"`, or `NULL` when neither
 #'   argument is usable.
 #'
+#' @inherit pubtator_gene_literature references
+#'
 #' @examples
 #' pubtator_entity("TP53", 7157)
 #' pubtator_entity("TP53")
@@ -67,6 +69,8 @@ pubtator_entity <- function(symbol = NULL, entrez = NULL) {
 #'
 #' @return A single integer, or `NA_integer_`.
 #'
+#' @inherit pubtator_gene_literature references
+#'
 #' @examples
 #' pubtator_parse_count(list(count = 4180))
 #' pubtator_parse_count(list(count = 0))
@@ -89,6 +93,8 @@ pubtator_parse_count <- function(body) {
 #' @return A tibble of `pmid`, `title`, `journal`, `authors` (a list column, as
 #'   an article has any number), `year`, and `source_url`. `NULL` when there are
 #'   no results.
+#'
+#' @inherit pubtator_gene_literature references
 #'
 #' @examples
 #' body <- list(results = list(list(
@@ -130,6 +136,13 @@ pubtator_parse_results <- function(body) {
 #' @return A biohttp envelope whose `data` is a list of `count`, `entity`,
 #'   `results` (the tibble from [pubtator_parse_results()], which may be
 #'   `NULL`), and `source_url`. A count of 0 is `ok`, not `no_data`.
+#'
+#' @references
+#' Wei et al. (2024). PubTator 3.0: an AI-powered literature resource for
+#' unlocking biomedical knowledge. Nucleic Acids Research 52(W1), W540-W546.
+#' \doi{10.1093/nar/gkae235}
+#'
+#' Service documentation: <https://www.ncbi.nlm.nih.gov/research/pubtator3/>
 #'
 #' @examples
 #' \donttest{

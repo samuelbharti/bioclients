@@ -43,6 +43,8 @@ PANELAPP_LEVELS <- c("3" = "green", "2" = "amber", "1" = "red")
 #'   panel carries any number), and `source_url`, one row per panel. `NULL` when
 #'   the page is empty.
 #'
+#' @inherit panelapp_panels references
+#'
 #' @examples
 #' body <- list(results = list(
 #'   list(id = 255, name = "Neurofibromatosis Type 1",
@@ -91,6 +93,8 @@ panelapp_parse_index <- function(body) {
 #'   `level` (`"green"`, `"amber"`, `"red"`, or `NA` for anything else),
 #'   `hgnc_id`, and `source_url`. `NULL` when the panel has no genes.
 #'
+#' @inherit panelapp_panels references
+#'
 #' @examples
 #' body <- list(id = 255, genes = list(
 #'   list(
@@ -136,6 +140,13 @@ panelapp_parse_panel <- function(body) {
 #' @return A biohttp envelope whose `data` is a list of `panels` (the tibble
 #'   from [panelapp_parse_index()]) and `has_more`, which is `TRUE` when
 #'   PanelApp sent a `next` link.
+#'
+#' @references
+#' Martin et al. (2019). PanelApp crowdsources expert knowledge to establish
+#' consensus diagnostic gene panels. Nature Genetics 51(11), 1560-1565.
+#' \doi{10.1038/s41588-019-0528-2}
+#'
+#' Service documentation: <https://panelapp.genomicsengland.co.uk/>
 #'
 #' @examples
 #' \donttest{
@@ -188,6 +199,8 @@ panelapp_panels <- function(page = 1, page_size = 100, ...) {
 #'   first is where the walk stops, keeping what was already collected; a
 #'   failure on the first page is returned as-is.
 #'
+#' @inherit panelapp_panels references
+#'
 #' @examples
 #' \donttest{
 #' biohttp::body_or_null(panelapp_all_panels(max_pages = 2))
@@ -235,6 +248,8 @@ panelapp_all_panels <- function(max_pages = 6, page_size = 100, ...) {
 #'
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [panelapp_parse_panel()].
+#'
+#' @inherit panelapp_panels references
 #'
 #' @examples
 #' \donttest{
