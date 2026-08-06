@@ -1,0 +1,85 @@
+name: cran
+
+# The check as CRAN actually runs it, which is not what r.yml runs.
+#
+# r-lib/actions/check-r-package sets _R_CHECK_CRAN_INCOMING_=false, so the
+# checks that only CRAN performs never happen there: the URL check, the DOI
+# check, and incoming feasibility. That is a sensible default for a per-commit
+# gate and a bad one for a package being prepared for CRAN, because the first
+# time those run would then be the submission itself.
+#
+# It also runs weekly, and that is the point rather than a bonus. Every example
+# that calls a service runs under \donttest{}, so what breaks them is a service
+# changing, not this repository changing. No pull-request trigger can catch
+# that. A weekly run can, and it is how a dead endpoint or a moved URL gets
+# found before CRAN's daily checks find it.
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    # Mondays, 06:00 UTC. Nothing depends on the exact time.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cran:
+    runs-on: ubuntu-latest
+    name: cran
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # The whole reason this job exists.
+      _R_CHECK_CRAN_INCOMING_: true
+      _R_CHECK_CRAN_INCOMING_REMOTE_: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+          working-directory: pkg-r
+
+      # error_on = "error" rather than the usual "warning", because incoming
+      # feasibility warns on the Remotes: line and on biohttp not being on CRAN
+      # for as long as that is true, and a job that is red for a known reason
+      # stops being read. Everything is printed, and anything that is not one of
+      # those two known warnings is failed for explicitly below.
+      - name: Check as CRAN
+        id: check
+        run: |
+          res <- rcmdcheck::rcmdcheck(
+            args = c("--no-manual", "--as-cran", "--run-donttest"),
+            build_args = "--no-manual",
+            error_on = "error",
+            check_dir = "check"
+          )
+          print(res)
+
+          known <- c("Remotes", "not in the CRAN or BioC", "New submission")
+          unexpected <- Filter(
+            function(w) !any(vapply(known, grepl, logical(1), x = w, fixed = TRUE)),
+            res$warnings
+          )
+          if (length(unexpected)) {
+            cat("\nUnexpected warnings:\n", paste(unexpected, collapse = "\n"))
+            stop("R CMD check reported a warning that is not the known biohttp one")
+          }
+        shell: Rscript {0}
+        working-directory: pkg-r
+
+      - name: Upload check results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cran-check-results
+          path: pkg-r/check
+          retention-days: 14
