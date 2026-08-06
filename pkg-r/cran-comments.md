@@ -53,12 +53,12 @@ Two further points about how the examples are structured.
 ## R CMD check results
 
 `R CMD check --as-cran --run-donttest`, with incoming and remote checks
-enabled: 0 errors | 1 warning | 1 note.
+enabled: 0 errors | 1 warning | 0 or 1 note depending on the run.
 
 The warning is the `Remotes:` field and the unavailable `biohttp` dependency
 described at the top. It goes away when that line does.
 
-The note is the same two examples over 5 seconds on every run:
+The note, when it appears, is two examples over 5 seconds:
 
 ```
                       user system elapsed
@@ -66,15 +66,16 @@ ensembl_gene_model   0.026  0.003   5.536
 vep_variants         0.028  0.003   8.328
 ```
 
-Both are single requests to Ensembl, and the elapsed time is entirely Ensembl's
-own latency; the CPU time is a rounding error. `ensembl_gene_model()` fetches
-one gene model and `vep_variants()` posts one variant, so there is nothing left
-to make smaller. Repeated timing puts them anywhere between 5 and 20 seconds
-depending on how Ensembl is answering that hour, and a run that exceeds
-biohttp's timeout returns a `timeout` envelope rather than failing the example.
-Both are in `\donttest{}`, which is the wrapper the CRAN Cookbook prescribes
-for an example over 5 seconds, so the note is reporting that they are correctly
-wrapped.
+It is not reproducible, and that is the useful part. Both are single requests
+to Ensembl, so the elapsed time is entirely Ensembl's latency and the CPU time
+is a rounding error. Across repeated runs the pair has measured anywhere from
+5 to 20 seconds, and one run produced no note at all because Ensembl happened
+to be quick. `ensembl_gene_model()` fetches one gene model and `vep_variants()`
+posts one variant, so there is nothing left to make smaller. A run slow enough
+to exceed biohttp's timeout returns a `timeout` envelope rather than failing
+the example. Both are in `\donttest{}`, which is the wrapper the CRAN Cookbook
+prescribes for an example over 5 seconds, so the note reports that they are
+correctly wrapped.
 
 Every DOI resolves: the five in the `Description` field and the 29 distinct
 ones across the help pages. MyGene and MyVariant share a citation, and
