@@ -8,9 +8,12 @@
 
 One client per biological database, each with a pure parser that runs offline.
 
-> **Status:** 0.1.0, released. Read the docs at
-> <https://www.samuelbharti.com/bioclients/>. The parser output shape is what can
-> still move; a change to an existing column is a breaking change.
+> **Status:** 0.1.0 is the current release. 0.1.1 is prepared for CRAN and
+> waiting on [`biohttp`](https://github.com/samuelbharti/biohttp) getting there
+> first, since CRAN will not take a package whose dependency it does not have.
+> Read the docs at <https://www.samuelbharti.com/bioclients/>. The parser output
+> shape is what can still move; a change to an existing column is a breaking
+> change.
 
 ## Installation
 
