@@ -21,7 +21,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 Reactome pathways for a gene symbol
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(reactome_pathways("NF1"))
 }
 

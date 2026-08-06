@@ -19,7 +19,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 The genes on one PanelApp panel
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(panelapp_panel(255))
 }
 

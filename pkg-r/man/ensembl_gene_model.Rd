@@ -19,7 +19,7 @@ A biohttp envelope whose \code{data} is the list described in
 The exon model for a gene
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(ensembl_gene_model("ENSG00000157764"))$exons
 }
 

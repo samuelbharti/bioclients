@@ -32,7 +32,7 @@ deliberate.
 }
 
 \examples{
-\dontrun{
+\donttest{
 ids <- myvariant_id("17", 7676154, "G", "C")
 biohttp::body_or_null(myvariant_variants(ids))
 }

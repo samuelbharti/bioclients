@@ -18,7 +18,7 @@ A biohttp envelope whose \code{data} is a one-row tibble.
 A thin wrapper over \code{\link[=pharos_targets]{pharos_targets()}}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(pharos_target("NF1"))
 }
 

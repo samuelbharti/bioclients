@@ -132,7 +132,7 @@ pubtator_parse_results <- function(body) {
 #'   `NULL`), and `source_url`. A count of 0 is `ok`, not `no_data`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(pubtator_gene_literature("TP53", 7157))$count
 #' }
 #'

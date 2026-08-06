@@ -252,7 +252,7 @@ vep_parse_batch <- function(body, keys) {
 #'   in the order asked. See [vep_parse_batch()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(vep_variants("7", 140753336, "A", "T"))
 #' }
 #'

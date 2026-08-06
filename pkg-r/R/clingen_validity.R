@@ -161,7 +161,7 @@ clingen_validity_for <- function(table, symbols) {
 #'   [clingen_parse_validity()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' table <- biohttp::body_or_null(clingen_gene_validity())
 #' clingen_validity_for(table, c("NF1", "TP53"))
 #' }

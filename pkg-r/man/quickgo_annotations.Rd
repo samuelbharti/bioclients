@@ -30,7 +30,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 GO annotations for a UniProt accession
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(quickgo_annotations("P21359"))
 }
 

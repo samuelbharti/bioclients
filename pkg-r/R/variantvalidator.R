@@ -98,7 +98,7 @@ variantvalidator_parse <- function(body, submitted = NA_character_) {
 #'   [variantvalidator_parse()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(variantvalidator_normalize("NM_000546.6:c.215C>G"))
 #' }
 #'

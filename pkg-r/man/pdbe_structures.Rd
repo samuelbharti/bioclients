@@ -19,7 +19,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 Experimental structures for a UniProt accession
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(pdbe_structures("P21359"))
 }
 

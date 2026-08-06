@@ -145,7 +145,7 @@ diseases_merge_channels <- function(tables) {
 #'   [diseases_parse_channel()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(diseases_channel("DOID:0060293", "Knowledge"))
 #' }
 #'
@@ -213,7 +213,7 @@ diseases_query <- function(doid, limit) {
 #'   [diseases_merge_channels()], with `source_url` added.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(diseases_gene_associations("DOID:0060293"))
 #' }
 #'

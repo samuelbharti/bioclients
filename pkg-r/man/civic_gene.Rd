@@ -29,7 +29,7 @@ switch to \code{paste0()} without it.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(civic_gene("NF1"))
 }
 

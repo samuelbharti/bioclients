@@ -29,7 +29,7 @@ This is the reason a GTEx expression lookup costs two requests.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(gtex_gene_reference("TP53"))$gencode_id
 }
 

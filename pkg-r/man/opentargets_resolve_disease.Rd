@@ -27,7 +27,7 @@ This is the \code{resolve_disease} that exists twice in the family, once in
 \code{genescout/R/tools/disease_resolver.R} and once in a sibling app.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_resolve_disease("neurofibromatosis type 1"))
 biohttp::body_or_null(opentargets_resolve_disease("MONDO:0018975"))
 }

@@ -24,7 +24,7 @@ Walks the paginated index and stacks the pages. Stops at \code{max_pages}, which
 is a guard against an unbounded walk rather than a tuned number.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(panelapp_all_panels(max_pages = 2))
 }
 

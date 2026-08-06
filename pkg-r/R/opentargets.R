@@ -408,7 +408,7 @@ opentargets_post <- function(query, variables, ...) {
 #'   [opentargets_parse_diseases()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(opentargets_gene_diseases("ENSG00000141510"))
 #' }
 #'
@@ -453,7 +453,7 @@ opentargets_gene_diseases <- function(ensembl_id, size = 20, ...) {
 #'   [opentargets_parse_targets()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(opentargets_disease_targets("MONDO_0018975"))
 #' }
 #'
@@ -502,7 +502,7 @@ opentargets_disease_targets <- function(disease_id, size = 1000, ...) {
 #'   [opentargets_parse_matches()], best match first.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(opentargets_resolve_disease("neurofibromatosis type 1"))
 #' biohttp::body_or_null(opentargets_resolve_disease("MONDO:0018975"))
 #' }
@@ -553,7 +553,7 @@ opentargets_resolve_disease <- function(term, limit = 5, ...) {
 #'   [opentargets_parse_drugs()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(opentargets_drugs("ENSG00000157764"))
 #' }
 #'
@@ -594,7 +594,7 @@ opentargets_drugs <- function(ensembl_id, ...) {
 #'   [opentargets_parse_pgx()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(opentargets_pgx("ENSG00000165841"))
 #' }
 #'

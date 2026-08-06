@@ -72,7 +72,7 @@ pdbe_parse_structures <- function(body, accession = NA_character_) {
 #'   [pdbe_parse_structures()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(pdbe_structures("P21359"))
 #' }
 #'

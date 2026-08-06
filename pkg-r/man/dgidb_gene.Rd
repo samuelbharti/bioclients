@@ -18,7 +18,7 @@ A biohttp envelope whose \code{data} is a one-row tibble.
 A thin wrapper over \code{\link[=dgidb_genes]{dgidb_genes()}}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(dgidb_gene("NF1"))
 }
 

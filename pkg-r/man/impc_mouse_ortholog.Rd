@@ -19,7 +19,7 @@ A biohttp envelope whose \code{data} is the one-row tibble described in
 The mouse ortholog IMPC holds for a human gene
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(impc_mouse_ortholog("NF1"))
 }
 

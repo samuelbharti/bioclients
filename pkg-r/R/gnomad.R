@@ -104,7 +104,7 @@ gnomad_constraint_row <- function(constraint, symbol) {
 #'   [gnomad_parse_constraint()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(gnomad_constraint("BRAF"))
 #' }
 #'
@@ -240,7 +240,7 @@ gnomad_empty_constraint_row <- function(symbol) {
 #'   `symbols`, in the same order.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(gnomad_constraints(c("BRAF", "TP53", "EGFR")))
 #' }
 #'
@@ -437,7 +437,7 @@ gnomad_parse_frequency <- function(body, dataset = GNOMAD_DATASET) {
 #'   [gnomad_parse_frequency()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(gnomad_frequency("rs113488022"))
 #' }
 #'

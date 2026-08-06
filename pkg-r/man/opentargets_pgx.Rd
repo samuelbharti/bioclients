@@ -23,7 +23,7 @@ Most genes have none, so \code{no_data} here is the ordinary answer rather than 
 sign anything went wrong.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_pgx("ENSG00000165841"))
 }
 

@@ -19,7 +19,7 @@ A biohttp envelope whose \code{data} is the one-row tibble described in
 Resolve one HP id to its term
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(hpo_term("HP:0001250"))
 }
 

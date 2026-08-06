@@ -21,7 +21,7 @@ accession. See the note in the file header on why the second query cannot be
 made from the human symbol.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(impc_gene_phenotypes("NF1"))$phenotypes
 }
 

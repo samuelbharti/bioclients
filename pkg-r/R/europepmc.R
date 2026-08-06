@@ -139,7 +139,7 @@ europepmc_parse_count <- function(body) {
 #'   page size), and `query`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(europepmc_search(europepmc_query("BRAF", "V600E")))
 #' }
 #'
@@ -197,7 +197,7 @@ europepmc_search <- function(query, limit = 15, ...) {
 #'   `source_url`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(europepmc_count(europepmc_query("NF1")))$count
 #' }
 #'

@@ -20,7 +20,7 @@ Metadata only. No coordinates are downloaded; use \code{pdb_url} from the result
 for that, and only when something is actually going to render it.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(alphafold_model("P15056"))
 }
 

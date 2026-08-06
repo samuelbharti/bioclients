@@ -23,7 +23,7 @@ A biohttp envelope whose \code{data} is a list of \code{count}, \code{entity},
 Articles PubTator3 has tagged with a gene
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(pubtator_gene_literature("TP53", 7157))$count
 }
 

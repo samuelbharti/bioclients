@@ -22,7 +22,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 From the EBI Proteins API, which is a different host to \code{\link[=uniprot_diseases]{uniprot_diseases()}}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(uniprot_features("P15056"))
 }
 

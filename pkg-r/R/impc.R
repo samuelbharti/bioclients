@@ -125,7 +125,7 @@ impc_parse_phenotypes <- function(body, mgi = NA_character_) {
 #'   [impc_parse_ortholog()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(impc_mouse_ortholog("NF1"))
 #' }
 #'
@@ -180,7 +180,7 @@ impc_mouse_ortholog <- function(symbol, ...) {
 #'   `phenotypes` (the tibble from [impc_parse_phenotypes()]), and `source_url`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(impc_gene_phenotypes("NF1"))$phenotypes
 #' }
 #'

@@ -19,7 +19,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 Diseases UniProt curates for an accession
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(uniprot_diseases("P04637"))
 }
 

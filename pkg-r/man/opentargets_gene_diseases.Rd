@@ -28,7 +28,7 @@ silently made a second call to a different service would make one failure look
 like the other's, and a MyGene outage would read as an Open Targets outage.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_gene_diseases("ENSG00000141510"))
 }
 

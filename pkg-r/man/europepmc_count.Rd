@@ -22,7 +22,7 @@ wanted. Read the note in the file header: a count of 0 comes back as \code{ok},
 not as \code{no_data}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(europepmc_count(europepmc_query("NF1")))$count
 }
 

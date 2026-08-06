@@ -73,7 +73,7 @@ civic_parse_gene <- function(body) {
 #'   [civic_parse_gene()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(civic_gene("NF1"))
 #' }
 #'

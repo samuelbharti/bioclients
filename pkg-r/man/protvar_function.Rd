@@ -22,7 +22,7 @@ A biohttp envelope whose \code{data} is a single string. See
 Functional context for a residue
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(protvar_function("P04637", 175))
 }
 

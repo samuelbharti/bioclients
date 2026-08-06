@@ -179,7 +179,7 @@ hpo_parse_term <- function(body) {
 #'   [hpo_parse_search()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(hpo_search("seizure"))
 #' }
 #'
@@ -221,7 +221,7 @@ hpo_search <- function(query, limit = 10, ...) {
 #'   [hpo_parse_term()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(hpo_term("HP:0001250"))
 #' }
 #'
@@ -270,7 +270,7 @@ hpo_term <- function(id, ...) {
 #'   [hpo_parse_phenotypes()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(hpo_gene_annotation(7157))$diseases
 #' }
 #'

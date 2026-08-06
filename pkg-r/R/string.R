@@ -203,7 +203,7 @@ string_symbols <- function(symbols) {
 #'   [string_parse_partners()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(string_partners("TP53"))
 #' }
 #'
@@ -254,7 +254,7 @@ string_partners <- function(
 #'   [string_parse_ids()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(string_map_ids(c("SEPTIN9", "TP53")))
 #' }
 #'
@@ -312,7 +312,7 @@ string_map_ids <- function(symbols, species = STRING_HUMAN, ...) {
 #'   `n_dropped`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' res <- string_network(c("TP53", "NF1", "EGFR"))
 #' biohttp::body_or_null(res)$edges
 #' }

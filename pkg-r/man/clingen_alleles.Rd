@@ -21,7 +21,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 One batched POST. The response comes back in input order.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(clingen_alleles("NM_000546.6:c.215C>G"))
 }
 

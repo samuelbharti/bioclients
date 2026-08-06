@@ -22,7 +22,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 Known variants at a residue
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(protvar_population("P04637", 175))
 }
 

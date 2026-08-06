@@ -83,7 +83,7 @@ quickgo_parse_annotations <- function(body) {
 #'   [quickgo_parse_annotations()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(quickgo_annotations("P21359"))
 #' }
 #'

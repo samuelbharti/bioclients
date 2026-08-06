@@ -21,7 +21,7 @@ One request for the whole list, because DGIdb's \code{genes} query already takes
 array.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(dgidb_genes(c("NF1", "BRAF")))
 }
 

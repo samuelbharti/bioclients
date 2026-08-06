@@ -28,7 +28,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 Validate and normalize one HGVS variant
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(variantvalidator_normalize("NM_000546.6:c.215C>G"))
 }
 

@@ -187,7 +187,7 @@ monarch_hgnc_id <- function(hgnc) {
 #'   presenting the first few as everything.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(monarch_search("Marfan syndrome"))$matches
 #' }
 #'
@@ -247,7 +247,7 @@ monarch_search <- function(text, limit = 10, ...) {
 #'   [monarch_parse_associations()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(monarch_associations("MONDO:0007947"))
 #' }
 #'
@@ -302,7 +302,7 @@ monarch_associations <- function(
 #'   tibble) and `total`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(monarch_gene_phenotypes("11998"))$associations
 #' }
 #'

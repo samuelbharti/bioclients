@@ -20,7 +20,7 @@ One request for the whole list, because Pharos's \code{targets} query already ta
 an array.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(pharos_targets(c("NF1", "EGFR")))
 }
 

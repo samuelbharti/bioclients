@@ -21,7 +21,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 Search HPO terms by free text
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(hpo_search("seizure"))
 }
 

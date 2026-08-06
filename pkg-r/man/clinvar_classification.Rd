@@ -36,7 +36,7 @@ at the lower limit.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(clinvar_classification("rs113488022"))
 }
 

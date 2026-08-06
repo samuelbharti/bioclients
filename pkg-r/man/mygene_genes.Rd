@@ -23,7 +23,7 @@ N-symbol list is one round trip rather than N, and the round trip is where
 essentially all the time goes.
 }
 \examples{
-\dontrun{
+\donttest{
 res <- mygene_genes(c("TP53", "BRCA1", "EGFR"))
 biohttp::body_or_null(res)
 }

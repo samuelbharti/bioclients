@@ -200,7 +200,7 @@ protvar_get <- function(endpoint, accession, position, ...) {
 #'   [protvar_parse_function()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(protvar_function("P04637", 175))
 #' }
 #'
@@ -229,7 +229,7 @@ protvar_function <- function(accession, position, ...) {
 #'   [protvar_parse_population()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(protvar_population("P04637", 175))
 #' }
 #'

@@ -69,7 +69,7 @@ alphafold_parse_model <- function(body, accession = NA_character_) {
 #'   [alphafold_parse_model()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(alphafold_model("P15056"))
 #' }
 #'

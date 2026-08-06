@@ -23,7 +23,7 @@ page size), and \code{query}.
 Search Europe PMC
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(europepmc_search(europepmc_query("BRAF", "V600E")))
 }
 

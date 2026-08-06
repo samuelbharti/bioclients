@@ -95,7 +95,7 @@ gtex_parse_expression <- function(body) {
 #'   [gtex_parse_reference()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(gtex_gene_reference("TP53"))$gencode_id
 #' }
 #'
@@ -147,7 +147,7 @@ gtex_gene_reference <- function(gene, ...) {
 #'   [gtex_parse_expression()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(gtex_median_expression("TP53"))
 #' }
 #'

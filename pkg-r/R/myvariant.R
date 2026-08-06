@@ -226,7 +226,7 @@ myvariant_empty_row <- function() {
 #'   `ids`, in the same order. See [myvariant_parse_batch()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ids <- myvariant_id("17", 7676154, "G", "C")
 #' biohttp::body_or_null(myvariant_variants(ids))
 #' }

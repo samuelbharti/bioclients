@@ -201,7 +201,7 @@ ensembl_parse_gene_model <- function(record) {
 #'   [ensembl_parse_vep()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(ensembl_vep_id("rs113488022"))$consequences
 #' }
 #'
@@ -250,7 +250,7 @@ ensembl_vep_id <- function(rsid, ...) {
 #'   [ensembl_parse_gene_model()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(ensembl_gene_model("ENSG00000157764"))$exons
 #' }
 #'

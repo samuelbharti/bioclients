@@ -31,7 +31,7 @@ parses with \code{check_type = FALSE}, so this works, but it is the reason not t
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(string_partners("TP53"))
 }
 

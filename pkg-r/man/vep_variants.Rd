@@ -19,7 +19,7 @@ in the order asked. See \code{\link[=vep_parse_batch]{vep_parse_batch()}}.
 Consequence predictions for many variants
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(vep_variants("7", 140753336, "A", "T"))
 }
 

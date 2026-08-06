@@ -33,7 +33,7 @@ rely on the answer for a multi-allelic site.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(gnomad_frequency("rs113488022"))
 }
 

@@ -32,7 +32,7 @@ answer, so this function does neither.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(monarch_associations("MONDO:0007947"))
 }
 

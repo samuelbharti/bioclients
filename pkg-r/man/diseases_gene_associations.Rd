@@ -32,7 +32,7 @@ and the envelope has no status that says "half of this is missing". Call
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(diseases_gene_associations("DOID:0060293"))
 }
 

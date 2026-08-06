@@ -226,7 +226,7 @@ uniprot_features_at <- function(features, position) {
 #'   [uniprot_parse_diseases()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(uniprot_diseases("P04637"))
 #' }
 #'
@@ -273,7 +273,7 @@ uniprot_diseases <- function(accession, ...) {
 #'   [uniprot_parse_features()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(uniprot_features("P15056"))
 #' }
 #'

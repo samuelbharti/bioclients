@@ -22,7 +22,7 @@ The discovery direction. \code{disease_id} is an Open Targets id in either
 separator form; \code{MONDO:0018975} and \code{MONDO_0018975} both work.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_disease_targets("MONDO_0018975"))
 }
 

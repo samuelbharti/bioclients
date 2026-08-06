@@ -225,7 +225,7 @@ mygene_empty_row <- function(symbol) {
 #'   [mygene_parse_hits()] for the columns.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' res <- mygene_gene("TP53")
 #' biohttp::body_or_null(res)
 #' }
@@ -281,7 +281,7 @@ mygene_gene <- function(symbol, species = "human", ...) {
 #'   `symbols`, in the same order.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' res <- mygene_genes(c("TP53", "BRCA1", "EGFR"))
 #' biohttp::body_or_null(res)
 #' }

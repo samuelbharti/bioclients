@@ -19,7 +19,7 @@ is one download rather than a request per gene, and use
 \code{\link[=clingen_validity_for]{clingen_validity_for()}} to narrow the result.
 }
 \examples{
-\dontrun{
+\donttest{
 table <- biohttp::body_or_null(clingen_gene_validity())
 clingen_validity_for(table, c("NF1", "TP53"))
 }

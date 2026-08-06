@@ -94,7 +94,7 @@ dgidb_parse_genes <- function(body, symbols) {
 #'   for why an unknown gene is `NA` rather than `0`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(dgidb_genes(c("NF1", "BRAF")))
 #' }
 #'
@@ -140,7 +140,7 @@ dgidb_genes <- function(symbols, ...) {
 #' @return A biohttp envelope whose `data` is a one-row tibble.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(dgidb_gene("NF1"))
 #' }
 #'

@@ -152,7 +152,7 @@ clingen_parse_batch <- function(body) {
 #'   [clingen_parse_allele()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(clingen_alleles("NM_000546.6:c.215C>G"))
 #' }
 #'

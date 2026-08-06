@@ -44,7 +44,7 @@ result.
 }
 
 \examples{
-\dontrun{
+\donttest{
 res <- string_network(c("TP53", "NF1", "EGFR"))
 biohttp::body_or_null(res)$edges
 }

@@ -151,7 +151,7 @@ clinvar_category <- function(significance) {
 #'   [clinvar_parse_record()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(clinvar_classification("rs113488022"))
 #' }
 #'

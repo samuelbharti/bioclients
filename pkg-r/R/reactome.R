@@ -79,7 +79,7 @@ reactome_parse_pathways <- function(body) {
 #'   [reactome_parse_pathways()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(reactome_pathways("NF1"))
 #' }
 #'

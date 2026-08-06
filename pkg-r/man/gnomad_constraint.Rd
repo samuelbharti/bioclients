@@ -23,7 +23,7 @@ loss-of-function intolerance; the Z-scores summarize missense and synonymous
 depletion.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(gnomad_constraint("BRAF"))
 }
 

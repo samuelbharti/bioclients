@@ -34,7 +34,7 @@ Pass \code{gencode_id} directly to skip the lookup when you already have a
 versioned id.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(gtex_median_expression("TP53"))
 }
 

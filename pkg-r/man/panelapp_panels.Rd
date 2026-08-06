@@ -22,7 +22,7 @@ PanelApp sent a \code{next} link.
 One page of the PanelApp panel index
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(panelapp_panels())$panels
 }
 

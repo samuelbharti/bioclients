@@ -27,7 +27,7 @@ with \code{\link[=vep_variants]{vep_variants()}} when the allele matters.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(ensembl_vep_id("rs113488022"))$consequences
 }
 

@@ -24,7 +24,7 @@ carries \code{source_url}. See \code{\link[=hpo_parse_diseases]{hpo_parse_diseas
 HPO's annotation for a gene
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(hpo_gene_annotation(7157))$diseases
 }
 

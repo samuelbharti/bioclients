@@ -30,7 +30,7 @@ rather than one per gene. Chunked at \code{chunk_size} to stay under gnomAD's
 query cost cap of 25. See \code{GNOMAD_CHUNK}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(gnomad_constraints(c("BRAF", "TP53", "EGFR")))
 }
 

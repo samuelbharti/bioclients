@@ -88,7 +88,7 @@ hpa_parse_gene <- function(body, ensembl = NA_character_) {
 #'   [hpa_parse_gene()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(hpa_gene("ENSG00000141510"))
 #' }
 #'

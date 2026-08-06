@@ -29,7 +29,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 Genes DISEASES associates with a disease, from one channel
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(diseases_channel("DOID:0060293", "Knowledge"))
 }
 

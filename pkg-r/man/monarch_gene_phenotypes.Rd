@@ -23,7 +23,7 @@ back in the shape \code{\link[=monarch_parse_associations]{monarch_parse_associa
 term is \code{object} and its label is \code{object_label}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(monarch_gene_phenotypes("11998"))$associations
 }
 

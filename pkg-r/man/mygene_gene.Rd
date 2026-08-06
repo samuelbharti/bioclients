@@ -21,7 +21,7 @@ A biohttp envelope whose \code{data} is a one-row tibble. See
 Look up one gene
 }
 \examples{
-\dontrun{
+\donttest{
 res <- mygene_gene("TP53")
 biohttp::body_or_null(res)
 }

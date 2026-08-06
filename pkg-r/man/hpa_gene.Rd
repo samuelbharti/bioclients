@@ -20,7 +20,7 @@ Keyed by Ensembl gene id, which is what HPA's per-gene JSON path takes.
 Resolve a symbol first with \code{\link[=mygene_gene]{mygene_gene()}}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(hpa_gene("ENSG00000141510"))
 }
 

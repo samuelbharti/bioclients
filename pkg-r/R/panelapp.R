@@ -138,7 +138,7 @@ panelapp_parse_panel <- function(body) {
 #'   PanelApp sent a `next` link.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(panelapp_panels())$panels
 #' }
 #'
@@ -189,7 +189,7 @@ panelapp_panels <- function(page = 1, page_size = 100, ...) {
 #'   failure on the first page is returned as-is.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(panelapp_all_panels(max_pages = 2))
 #' }
 #'
@@ -237,7 +237,7 @@ panelapp_all_panels <- function(max_pages = 6, page_size = 100, ...) {
 #'   [panelapp_parse_panel()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(panelapp_panel(255))
 #' }
 #'

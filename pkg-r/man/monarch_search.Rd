@@ -23,7 +23,7 @@ presenting the first few as everything.
 Turns typed text into the entity id the other calls need.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(monarch_search("Marfan syndrome"))$matches
 }
 

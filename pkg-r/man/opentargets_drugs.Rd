@@ -19,7 +19,7 @@ A biohttp envelope whose \code{data} is the tibble described in
 Takes an Ensembl gene id, the same as \code{\link[=opentargets_gene_diseases]{opentargets_gene_diseases()}}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_drugs("ENSG00000157764"))
 }
 

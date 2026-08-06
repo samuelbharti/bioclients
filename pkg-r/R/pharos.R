@@ -94,7 +94,7 @@ pharos_parse_targets <- function(body, symbols) {
 #'   `symbols`, in the same order. See [pharos_parse_targets()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(pharos_targets(c("NF1", "EGFR")))
 #' }
 #'
@@ -140,7 +140,7 @@ pharos_targets <- function(symbols, ...) {
 #' @return A biohttp envelope whose `data` is a one-row tibble.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(pharos_target("NF1"))
 #' }
 #'
