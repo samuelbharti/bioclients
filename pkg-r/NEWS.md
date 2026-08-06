@@ -1,3 +1,28 @@
+# bioclients 0.1.1
+
+Documentation and packaging for a CRAN submission. There is no change to
+behaviour, and no exported function's arguments or output shape moved.
+
+* Every example that calls a service now runs under `\donttest{}` rather than
+  `\dontrun{}`, 53 of them. `\dontrun{}` is for an example that genuinely
+  cannot be executed, which none of these are: they are keyless public
+  requests, a client returns an envelope rather than raising, and biohttp's
+  disk cache is off unless a caller turns it on. So an example run with no
+  network prints `NULL` and writes nothing.
+
+* Every help page now cites the service behind it. The 29 service files each
+  carry the canonical publication with a DOI and the service's own
+  documentation URL, and the other topics in the file inherit it, so all 125
+  exported topics have a `References` section. Each DOI was resolved through
+  CrossRef and checked against the title, author and pagination written here.
+
+* The `Description` field cites five of those references, for Ensembl, UniProt,
+  gnomAD, Open Targets and AlphaFold DB, in the form CRAN asks for.
+
+* `cran-comments.md` records the submission notes, including the one thing
+  still outstanding: `biohttp` is not on CRAN, so `DESCRIPTION` carries a
+  `Remotes:` line and this package cannot be submitted before that one is.
+
 # bioclients 0.1.0
 
 First release. 29 clients, 125 exported functions, and the behaviour they depend
