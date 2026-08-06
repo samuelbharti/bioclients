@@ -58,25 +58,28 @@ enabled: 0 errors | 1 warning | 1 note.
 The warning is the `Remotes:` field and the unavailable `biohttp` dependency
 described at the top. It goes away when that line does.
 
-The note is two examples over 5 seconds:
+The note is the same two examples over 5 seconds on every run:
 
 ```
                       user system elapsed
-ensembl_gene_model   0.036  0.003  15.031
-vep_variants         0.019  0.002  20.017
+ensembl_gene_model   0.026  0.003   5.536
+vep_variants         0.028  0.003   8.328
 ```
 
 Both are single requests to Ensembl, and the elapsed time is entirely Ensembl's
 own latency; the CPU time is a rounding error. `ensembl_gene_model()` fetches
 one gene model and `vep_variants()` posts one variant, so there is nothing left
-to make smaller. Repeated timing puts them at 10 to 20 seconds depending on how
-Ensembl is feeling, and a run that exceeds biohttp's timeout returns a `timeout`
-envelope rather than failing the example. Both are in `\donttest{}`, which is
-the wrapper the CRAN Cookbook prescribes for an example over 5 seconds, so the
-note is reporting that they are correctly wrapped.
+to make smaller. Repeated timing puts them anywhere between 5 and 20 seconds
+depending on how Ensembl is answering that hour, and a run that exceeds
+biohttp's timeout returns a `timeout` envelope rather than failing the example.
+Both are in `\donttest{}`, which is the wrapper the CRAN Cookbook prescribes
+for an example over 5 seconds, so the note is reporting that they are correctly
+wrapped.
 
-All five DOIs in the `Description` field resolve, as do the 29 on the help
-pages.
+Every DOI resolves: the five in the `Description` field and the 29 distinct
+ones across the help pages. MyGene and MyVariant share a citation, and
+`uniprot_features()` carries two, because it calls the EBI Proteins API rather
+than UniProt's own REST service and both deserve naming.
 
 ## Test environments
 

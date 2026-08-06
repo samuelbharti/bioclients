@@ -15,6 +15,8 @@ behaviour, and no exported function's arguments or output shape moved.
   documentation URL, and the other topics in the file inherit it, so all 125
   exported topics have a `References` section. Each DOI was resolved through
   CrossRef and checked against the title, author and pagination written here.
+  `uniprot_features()` carries two, because it calls the EBI Proteins API on a
+  different host to the rest of the file and both are worth naming.
 
 * The `Description` field cites five of those references, for Ensembl, UniProt,
   gnomAD, Open Targets and AlphaFold DB, in the form CRAN asks for.
