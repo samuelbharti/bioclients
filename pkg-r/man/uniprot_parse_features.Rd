@@ -25,9 +25,13 @@ uniprot_parse_features(body)
 
 }
 \references{
-The UniProt Consortium (2025). UniProt: the Universal Protein
-Knowledgebase in 2025. Nucleic Acids Research 53(D1), D609-D617.
-\doi{10.1093/nar/gkae1010}
+Nightingale et al. (2017). The Proteins API: accessing key integrated
+protein and genome information. Nucleic Acids Research 45(W1), W539-W544.
+\doi{10.1093/nar/gkx237}
 
-Service documentation: \url{https://www.uniprot.org/}
+The data it serves is UniProt's. The UniProt Consortium (2025). UniProt:
+the Universal Protein Knowledgebase in 2025. Nucleic Acids Research 53(D1),
+D609-D617. \doi{10.1093/nar/gkae1010}
+
+Service documentation: \url{https://www.ebi.ac.uk/proteins/api/doc/}
 }

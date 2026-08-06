@@ -149,7 +149,7 @@ uniprot_parse_diseases <- function(body) {
 #'   zero-row tibble when the entry has no features of the requested types,
 #'   because "this protein has no annotated domains" is a real answer.
 #'
-#' @inherit uniprot_diseases references
+#' @inherit uniprot_features references
 #'
 #' @examples
 #' body <- list(features = list(
@@ -195,7 +195,7 @@ uniprot_parse_features <- function(body) {
 #'
 #' @return The rows of `features` whose `begin`/`end` span `position`.
 #'
-#' @inherit uniprot_diseases references
+#' @inherit uniprot_features references
 #'
 #' @examples
 #' features <- uniprot_parse_features(list(features = list(
@@ -285,7 +285,16 @@ uniprot_diseases <- function(accession, ...) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [uniprot_parse_features()].
 #'
-#' @inherit uniprot_diseases references
+#' @references
+#' Nightingale et al. (2017). The Proteins API: accessing key integrated
+#' protein and genome information. Nucleic Acids Research 45(W1), W539-W544.
+#' \doi{10.1093/nar/gkx237}
+#'
+#' The data it serves is UniProt's. The UniProt Consortium (2025). UniProt:
+#' the Universal Protein Knowledgebase in 2025. Nucleic Acids Research 53(D1),
+#' D609-D617. \doi{10.1093/nar/gkae1010}
+#'
+#' Service documentation: <https://www.ebi.ac.uk/proteins/api/doc/>
 #'
 #' @examples
 #' \donttest{
