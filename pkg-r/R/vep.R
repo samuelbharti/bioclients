@@ -41,10 +41,10 @@ VEP_BATCH <- 200L
 
 #' The request flags VEP is asked for by default
 #'
-#' Pure. The default for the `options` argument of [vep_variants()]. Start
-#' from this and add to it rather than replacing it, because `vcf_string` is
-#' one of the identities results are matched on and `mane` is what
-#' [vep_pick_transcript()] chooses by.
+#' Pure. The default for the `options` argument of [vep_variants()] and
+#' [vep_variants_all()]. Start from this and add to it rather than replacing
+#' it, because `vcf_string` is one of the identities results are matched on
+#' and `mane` is what [vep_pick_transcript()] chooses by.
 #'
 #' @section Supported flags:
 #' Every entry is a VEP request parameter, sent as `name=value` on the query
@@ -669,5 +669,104 @@ vep_variants <- function(
     data = vep_parse_batch(res$data, keys),
     source = "VEP",
     http = res$http
+  )
+}
+
+#' Consequence predictions for any number of variants
+#'
+#' [vep_variants()] refuses more than the 200 VEP accepts per POST. This
+#' chunks the input at `chunk_size` and dispatches the chunks through
+#' [biohttp::post_json_many()], so a variant table of any length is a handful
+#' of requests rather than a loop written at every call site.
+#'
+#' @section A failed chunk is rows of NA, not a failed call:
+#' Following [gnomad_constraints()]. Each chunk's envelope is inspected on its
+#' own; a chunk that failed yields a row of `NA` per variant carrying the
+#' envelope status in `status`, while the chunks that succeeded are parsed as
+#' usual. Partial failure is the normal case across many requests, and taking
+#' the whole call down would throw away the answers that did arrive. Only
+#' when every chunk failed is the first failing envelope returned, so an
+#' outage still reads as one.
+#'
+#' @inheritParams vep_variants
+#' @param chunk_size Variants per request, at most `VEP_BATCH` (200).
+#' @param ... Passed to [biohttp::post_json_many()], for example `throttle` or
+#'   `max_active`.
+#'
+#' @return A biohttp envelope whose `data` is a tibble with one row per
+#'   variant, in the order asked: the columns of [vep_parse_batch()] plus
+#'   `status`, which is `"ok"` for a row whose chunk was answered and the
+#'   failing envelope's status otherwise.
+#'
+#' @examples
+#' \dontrun{
+#' biohttp::body_or_null(vep_variants_all(
+#'   c("7", "17"),
+#'   c(140753336, 7676154),
+#'   c("A", "G"),
+#'   c("T", "C")
+#' ))
+#' }
+#'
+#' @export
+vep_variants_all <- function(
+  chrom,
+  pos,
+  ref,
+  alt,
+  chunk_size = VEP_BATCH,
+  options = vep_default_options(),
+  ...
+) {
+  n <- length(chrom)
+  if (n == 0) {
+    return(biohttp::status_no_data(
+      source = "VEP",
+      detail = "no variants were supplied"
+    ))
+  }
+  if (chunk_size < 1 || chunk_size > VEP_BATCH) {
+    stop(
+      "chunk_size must be between 1 and ",
+      VEP_BATCH,
+      ", the verified VEP limit per request",
+      call. = FALSE
+    )
+  }
+  # The query string is built once, before any request, so a refused option
+  # such as dbNSFP stops the call before anything goes over the wire.
+  url <- paste0(VEP_URL, "?", vep_query_string(options))
+  regions <- vep_region(chrom, pos, ref, alt)
+  keys <- vep_key(chrom, pos, ref, alt)
+  chunks <- split(seq_len(n), ceiling(seq_len(n) / chunk_size))
+  bodies <- lapply(chunks, function(rows) {
+    # unname() is load-bearing here too. See vep_variants().
+    list(variants = unname(as.list(regions[rows])))
+  })
+  results <- biohttp::post_json_many(
+    url,
+    bodies = bodies,
+    source = "VEP",
+    ...
+  )
+  failed <- Filter(function(res) !isTRUE(res$ok), results)
+  if (length(failed) == length(results)) {
+    return(failed[[1]])
+  }
+  parsed <- lapply(seq_along(chunks), function(i) {
+    res <- results[[i]]
+    chunk_keys <- keys[chunks[[i]]]
+    if (!isTRUE(res$ok)) {
+      rows <- vep_parse_batch(list(), chunk_keys)
+      rows$status <- as.character(res$status %||% "error")
+      return(rows)
+    }
+    rows <- vep_parse_batch(res$data, chunk_keys)
+    rows$status <- "ok"
+    rows
+  })
+  biohttp::status_ok(
+    data = tibble::as_tibble(do.call(rbind, parsed)),
+    source = "VEP"
   )
 }

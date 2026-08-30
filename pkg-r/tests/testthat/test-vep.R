@@ -570,3 +570,136 @@ test_that("no variants is no_data and never reaches the network", {
     "no_data"
   )
 })
+
+# --- Chunking through post_json_many -----------------------------------------
+
+# A mock that answers each chunk with one element per variant it was sent,
+# echoing the input line the way VEP does, so the match-back has something to
+# match. `fail_when` makes a chunk fail when it returns TRUE for its inputs.
+vep_chunk_mock <- function(seen, fail_when = function(inputs) FALSE) {
+  function(req) {
+    inputs <- unlist(req$body$data$variants, use.names = FALSE)
+    seen$calls <- c(seen$calls, list(inputs))
+    if (isTRUE(fail_when(inputs))) {
+      return(httr2::response(status_code = 500))
+    }
+    elements <- lapply(inputs, function(input) {
+      parts <- strsplit(input, " ", fixed = TRUE)[[1]]
+      list(
+        input = input,
+        most_severe_consequence = "missense_variant",
+        transcript_consequences = list(list(
+          gene_symbol = paste0("GENE", parts[2]),
+          consequence_terms = list("missense_variant")
+        ))
+      )
+    })
+    mock_json(jsonlite::toJSON(elements, auto_unbox = TRUE))
+  }
+}
+
+test_that("vep_variants_all chunks the input and keeps input order", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(vep_chunk_mock(seen))
+
+  res <- vep_variants_all(
+    rep("1", 5),
+    1:5,
+    rep("A", 5),
+    rep("T", 5),
+    chunk_size = 2
+  )
+
+  expect_true(res$ok)
+  expect_length(seen$calls, 3)
+  expect_identical(lengths(seen$calls), c(2L, 2L, 1L))
+  out <- biohttp::body_or_null(res)
+  expect_identical(nrow(out), 5L)
+  expect_identical(out$key, vep_key("1", 1:5, "A", "T"))
+  expect_identical(out$gene, paste0("GENE", 1:5))
+  expect_identical(out$status, rep("ok", 5))
+})
+
+test_that("a failed chunk degrades to NA rows with its status", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(vep_chunk_mock(
+    seen,
+    fail_when = function(inputs) any(grepl("^1 3 ", inputs))
+  ))
+
+  res <- vep_variants_all(
+    rep("1", 5),
+    1:5,
+    rep("A", 5),
+    rep("T", 5),
+    chunk_size = 2
+  )
+
+  expect_true(res$ok)
+  out <- biohttp::body_or_null(res)
+  expect_identical(nrow(out), 5L)
+  # Rows 3 and 4 were the failed chunk. They keep their place.
+  expect_identical(out$gene, c("GENE1", "GENE2", NA, NA, "GENE5"))
+  expect_identical(out$status, c("ok", "ok", "error", "error", "ok"))
+  reset_transport()
+})
+
+test_that("when every chunk fails the failing envelope comes back", {
+  reset_transport()
+  httr2::local_mocked_responses(function(req) {
+    httr2::response(status_code = 503)
+  })
+
+  res <- vep_variants_all("1", 1, "A", "T")
+
+  expect_false(res$ok)
+  expect_identical(res$status, "error")
+  expect_identical(res$source, "VEP")
+  reset_transport()
+})
+
+test_that("the chunk size may not exceed the verified limit", {
+  reset_transport()
+  expect_error(
+    vep_variants_all("1", 1, "A", "T", chunk_size = VEP_BATCH + 1),
+    "chunk_size"
+  )
+  expect_error(vep_variants_all("1", 1, "A", "T", chunk_size = 0), "chunk_size")
+})
+
+test_that("vep_variants_all sends the options and refuses dbNSFP", {
+  reset_transport()
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json("[]")
+  })
+
+  vep_variants_all(
+    "1",
+    1,
+    "A",
+    "T",
+    options = c(vep_default_options(), list(REVEL = 1))
+  )
+  expect_match(url, "REVEL=1", fixed = TRUE)
+
+  expect_error(
+    vep_variants_all("1", 1, "A", "T", options = list(dbNSFP = "x")),
+    "dbNSFP"
+  )
+})
+
+test_that("no variants is no_data without a request", {
+  reset_transport()
+  expect_identical(
+    vep_variants_all(character(), integer(), character(), character())$status,
+    "no_data"
+  )
+})

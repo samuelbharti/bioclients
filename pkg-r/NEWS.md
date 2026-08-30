@@ -15,6 +15,10 @@
   gnomAD genome and exome frequencies with their per-population maximum, and
   the clinical significance of the allele asked. `vep_parse_batch()` carries
   these columns.
+* New `vep_variants_all()` takes any number of variants, chunks them at the
+  200 VEP accepts per POST and dispatches the chunks through
+  `biohttp::post_json_many()`. One row per input in input order; a failed
+  chunk becomes rows of `NA` carrying the envelope status in `status`.
 
 # bioclients 0.1.0
 

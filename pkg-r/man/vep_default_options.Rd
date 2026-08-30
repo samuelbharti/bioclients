@@ -10,10 +10,10 @@ vep_default_options()
 A named list of flags.
 }
 \description{
-Pure. The default for the \code{options} argument of \code{\link[=vep_variants]{vep_variants()}}. Start
-from this and add to it rather than replacing it, because \code{vcf_string} is
-one of the identities results are matched on and \code{mane} is what
-\code{\link[=vep_pick_transcript]{vep_pick_transcript()}} chooses by.
+Pure. The default for the \code{options} argument of \code{\link[=vep_variants]{vep_variants()}} and
+\code{\link[=vep_variants_all]{vep_variants_all()}}. Start from this and add to it rather than replacing
+it, because \code{vcf_string} is one of the identities results are matched on
+and \code{mane} is what \code{\link[=vep_pick_transcript]{vep_pick_transcript()}} chooses by.
 }
 \section{Supported flags}{
 
