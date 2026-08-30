@@ -55,9 +55,14 @@ reference:
       - gnomad_constraint
       - gnomad_constraints
       - gnomad_frequency
+      - gnomad_frequency_by_id
+      - gnomad_frequencies
+      - gnomad_variant_id
       - gnomad_parse_constraint
       - gnomad_parse_constraints
       - gnomad_parse_frequency
+      - gnomad_parse_variant
+      - gnomad_parse_variants
       - gnomad_parse_populations
 
   - title: ClinVar

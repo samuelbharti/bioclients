@@ -20,6 +20,17 @@
   `biohttp::post_json_many()`. One row per input in input order; a failed
   chunk becomes rows of `NA` carrying the envelope status in `status`.
 
+## gnomAD
+
+* New `gnomad_frequency_by_id()` looks a variant up by `chrom-pos-ref-alt`,
+  which names one allele where an rsID names a site, and `gnomad_frequencies()`
+  does the same for many ids, alias-batched and chunked like
+  `gnomad_constraints()`. `gnomad_variant_id()` builds the id. The flat row
+  from `gnomad_parse_variant()` carries exome and genome `af`, `ac`, `an` and
+  `nhomalt`, a derived `grpmax`, `faf95` and `filters`.
+* The 25-alias cost cap was re-verified against the live API for the variant
+  query. The cost is one per alias whatever the selection set.
+
 # bioclients 0.1.0
 
 First release. 29 clients, 125 exported functions, and the behaviour they depend
