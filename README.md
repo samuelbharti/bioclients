@@ -140,7 +140,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 | gnomAD frequency | `gnomad_frequency()` | | `gnomad_parse_frequency()`, `gnomad_parse_populations()` |
 | ClinVar | `clinvar_classification()` | | `clinvar_parse_record()`, `clinvar_category()` |
 | MyVariant | | `myvariant_variants()` | `myvariant_parse_record()`, `myvariant_parse_batch()` |
-| Ensembl VEP | | `vep_variants()` | `vep_parse_element()`, `vep_parse_batch()` |
+| Ensembl VEP | | `vep_variants()` | `vep_parse_element()`, `vep_parse_colocated()`, `vep_parse_batch()` |
 | Ensembl REST | `ensembl_vep_id()`, `ensembl_gene_model()` | | `ensembl_parse_vep()`, `ensembl_parse_gene_model()` |
 | VariantValidator | `variantvalidator_normalize()` | | `variantvalidator_parse()` |
 | ClinGen Allele Registry | | `clingen_alleles()` | `clingen_parse_allele()`, `clingen_parse_batch()` |

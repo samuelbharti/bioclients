@@ -172,6 +172,301 @@ test_that("vcf_string is requested so the second identity is present", {
   expect_match(url, "vcf_string=1", fixed = TRUE)
 })
 
+# --- Request options ---------------------------------------------------------
+
+test_that("the default options are the four flags the parsers rely on", {
+  expect_identical(
+    vep_default_options(),
+    list(AlphaMissense = 1, mane = 1, numbers = 1, vcf_string = 1)
+  )
+})
+
+test_that("options become a query string, with off flags omitted", {
+  options <- c(
+    vep_default_options(),
+    list(CADD = TRUE, REVEL = FALSE, af = 0, hgvs = NULL, SpliceAI = 1)
+  )
+  expect_identical(
+    vep_query_string(options),
+    "AlphaMissense=1&mane=1&numbers=1&vcf_string=1&CADD=1&SpliceAI=1"
+  )
+  expect_identical(vep_query_string(list()), "")
+  expect_identical(vep_query_string(NULL), "")
+})
+
+test_that("a valued option is carried through and encoded", {
+  expect_identical(
+    vep_query_string(list(pick_order = "mane_select,canonical")),
+    "pick_order=mane_select%2Ccanonical"
+  )
+})
+
+test_that("dbNSFP is refused", {
+  # Trap 4 in the file header. dbNSFP values come back in dbNSFP's own
+  # transcript order, not aligned to the transcript VEP reports, so they
+  # silently describe a different transcript than the rest of the row.
+  expect_error(vep_query_string(list(dbNSFP = "REVEL_score")), "dbNSFP")
+  reset_transport()
+  expect_error(
+    vep_variants("7", 140753336, "A", "T", options = list(dbNSFP = "x")),
+    "dbNSFP"
+  )
+})
+
+test_that("unnamed options are refused rather than sent as garbage", {
+  expect_error(vep_query_string(list(1, 2)), "named")
+})
+
+test_that("vep_variants sends the options on the query string", {
+  reset_transport()
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json("[]")
+  })
+
+  vep_variants(
+    "7",
+    140753336,
+    "A",
+    "T",
+    options = c(vep_default_options(), list(af_gnomadg = 1, CADD = 1))
+  )
+
+  expect_match(url, "AlphaMissense=1", fixed = TRUE)
+  expect_match(url, "af_gnomadg=1", fixed = TRUE)
+  expect_match(url, "CADD=1", fixed = TRUE)
+})
+
+test_that("the default request asks for exactly the default flags", {
+  reset_transport()
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json("[]")
+  })
+
+  vep_variants("7", 140753336, "A", "T")
+
+  expect_identical(
+    sub("^.*\\?", "", url),
+    "AlphaMissense=1&mane=1&numbers=1&vcf_string=1"
+  )
+})
+
+# --- The transcript columns the optional flags add ---------------------------
+
+test_that("the recorded frequency batch fills the predictor columns", {
+  # Recorded live with the defaults plus af_gnomadg=1&af_gnomade=1&CADD=1&
+  # SpliceAI=1&REVEL=1&hgvs=1 for the same four sites as vep_region_indels.
+  body <- read_fixture("vep_region_indels_freq.json")
+  keys <- c(
+    vep_key("17", 7676154, "G", "C"),
+    vep_key("1", 55516888, "T", "TA"),
+    vep_key("7", 117559590, "ATCT", "A"),
+    vep_key("17", 7675088, "CGC", "TA")
+  )
+  out <- vep_parse_batch(body, keys)
+
+  expect_identical(out$key, keys)
+  expect_identical(
+    out$transcript,
+    c(
+      "ENST00000269305",
+      "ENST00000643167",
+      "ENST00000003084",
+      "ENST00000269305"
+    )
+  )
+  expect_identical(out$gene_id[1], "ENSG00000141510")
+  expect_identical(out$biotype[2], "lncRNA")
+  expect_identical(out$hgvsc[1], "ENST00000269305.9:c.215C>G")
+  expect_identical(out$hgvsp[1], "ENSP00000269305.4:p.Pro72Arg")
+  expect_identical(out$hgvsp[3], "ENSP00000003084.6:p.Phe508del")
+  expect_identical(out$hgvsp[4], "ENSP00000269305.4:p.Arg174SerfsTer73")
+  expect_identical(out$codons[1], "cCc/cGc")
+  expect_identical(out$amino_acids[1], "P/R")
+  expect_equal(out$cadd_phred[1], 12.91)
+  expect_equal(out$cadd_raw[1], 1.299883)
+  expect_equal(out$revel[1], 0.368)
+  expect_equal(out$cadd_phred[3], 17.55)
+  # SpliceAI reports four delta scores per transcript. All zero here, which is
+  # an answer rather than an absence.
+  expect_equal(out$spliceai_ds_ag[1], 0)
+  expect_equal(out$spliceai_max[1], 0)
+  expect_true(is.na(out$spliceai_max[2]))
+  # An intronic lncRNA insertion has no protein annotation and no scores.
+  expect_true(is.na(out$hgvsp[2]))
+  expect_true(is.na(out$cadd_phred[2]))
+})
+
+test_that("spliceai_max is the largest of the four delta scores", {
+  element <- list(
+    most_severe_consequence = "splice_region_variant",
+    transcript_consequences = list(list(
+      consequence_terms = list("splice_region_variant"),
+      spliceai = list(DS_AG = 0.01, DS_AL = 0.62, DS_DG = 0, DS_DL = 0.2)
+    ))
+  )
+  out <- vep_parse_element(element)
+
+  expect_equal(out$spliceai_ds_al, 0.62)
+  expect_equal(out$spliceai_max, 0.62)
+})
+
+test_that("canonical is TRUE on the marked transcript and NA elsewhere", {
+  marked <- list(
+    most_severe_consequence = "missense_variant",
+    transcript_consequences = list(list(
+      consequence_terms = list("missense_variant"),
+      canonical = 1L
+    ))
+  )
+  unmarked <- list(
+    most_severe_consequence = "missense_variant",
+    transcript_consequences = list(list(
+      consequence_terms = list("missense_variant")
+    ))
+  )
+  expect_true(vep_parse_element(marked)$canonical)
+  expect_true(is.na(vep_parse_element(unmarked)$canonical))
+})
+
+test_that("the optional columns are NA when the flags were not asked", {
+  body <- read_fixture("vep_region.json")
+  out <- vep_parse_element(body[[1]])
+
+  expect_identical(out$transcript, "ENST00000269305")
+  expect_true(is.na(out$hgvsc))
+  expect_true(is.na(out$cadd_phred))
+  expect_true(is.na(out$revel))
+  expect_true(is.na(out$spliceai_max))
+  expect_true(is.na(out$lof))
+})
+
+test_that("the LOFTEE call is read into lof", {
+  element <- list(
+    most_severe_consequence = "stop_gained",
+    transcript_consequences = list(list(
+      consequence_terms = list("stop_gained"),
+      lof = "HC"
+    ))
+  )
+  expect_identical(vep_parse_element(element)$lof, "HC")
+})
+
+# --- Colocated variants ------------------------------------------------------
+
+test_that("the recorded frequency batch fills the colocated columns", {
+  body <- read_fixture("vep_region_indels_freq.json")
+  keys <- c(
+    vep_key("17", 7676154, "G", "C"),
+    vep_key("1", 55516888, "T", "TA"),
+    vep_key("7", 117559590, "ATCT", "A"),
+    vep_key("17", 7675088, "CGC", "TA")
+  )
+  out <- vep_parse_batch(body, keys)
+
+  expect_identical(out$rsid, c("rs1042522", NA, "rs113993960", NA))
+  expect_equal(out$gnomadg_af[1], 0.6268)
+  expect_equal(out$gnomade_af[1], 0.7163)
+  # The largest per-population value, not the overall one.
+  expect_equal(out$gnomadg_af_max[1], 0.745)
+  expect_equal(out$gnomade_af_max[1], 0.7477)
+  expect_gt(out$gnomadg_af_max[1], out$gnomadg_af[1])
+  expect_equal(out$gnomadg_af[3], 0.007884)
+  expect_identical(
+    out$clin_sig[3],
+    "risk_factor;pathogenic;drug_response;likely_pathogenic"
+  )
+  expect_true(all(is.na(out$gnomadg_af[c(2, 4)])))
+})
+
+test_that("clin_sig is the significance of the element's own allele", {
+  # rs1042522 is multi-allelic. The C allele is what was asked, and VEP lists
+  # the significance of every allele in clin_sig, so reading that would hand
+  # the T allele's conflicting call to the C allele.
+  body <- read_fixture("vep_region_indels_freq.json")
+  out <- vep_parse_colocated(body[[1]])
+
+  expect_identical(out$clin_sig, "pathogenic;benign")
+  expect_false(grepl("conflicting", out$clin_sig, fixed = TRUE))
+})
+
+test_that("frequencies are read for the element's allele", {
+  element <- list(
+    allele_string = "G/T",
+    colocated_variants = list(list(
+      id = "rs1",
+      frequencies = list(
+        C = list(gnomadg = 0.6),
+        T = list(gnomadg = 0.01, gnomadg_afr = 0.02)
+      )
+    ))
+  )
+  out <- vep_parse_colocated(element)
+
+  expect_equal(out$gnomadg_af, 0.01)
+  expect_equal(out$gnomadg_af_max, 0.02)
+})
+
+test_that("a deletion's frequencies are keyed by the dash allele", {
+  body <- read_fixture("vep_region_indels_freq.json")
+  deletion <- body[[3]]
+
+  expect_identical(deletion$allele_string, "TCT/-")
+  expect_identical(names(deletion$colocated_variants[[1]]$frequencies), "-")
+  expect_equal(vep_parse_colocated(deletion)$gnomadg_af, 0.007884)
+})
+
+test_that("the dbSNP record is read, not the COSMIC or HGMD entry beside it", {
+  body <- read_fixture("vep_region_indels_freq.json")
+  ids <- vapply(body[[1]]$colocated_variants, function(co) co$id, character(1))
+
+  expect_true(any(grepl("^COSV", ids)))
+  expect_identical(vep_parse_colocated(body[[1]])$rsid, "rs1042522")
+})
+
+test_that("an element with only somatic entries has no rsid", {
+  element <- list(
+    allele_string = "G/C",
+    colocated_variants = list(list(id = "COSV123", somatic = 1))
+  )
+  out <- vep_parse_colocated(element)
+
+  expect_true(is.na(out$rsid))
+  expect_true(is.na(out$gnomadg_af))
+})
+
+test_that("no colocated variants is a row of NA", {
+  out <- vep_parse_colocated(list(allele_string = "G/C"))
+  expect_identical(nrow(out), 1L)
+  expect_true(all(is.na(out)))
+})
+
+test_that("clin_sig falls back to the union when there is no per-allele form", {
+  element <- list(
+    allele_string = "G/C",
+    colocated_variants = list(list(
+      id = "rs1",
+      clin_sig = list("benign", "likely_benign")
+    ))
+  )
+  expect_identical(
+    vep_parse_colocated(element)$clin_sig,
+    "benign;likely_benign"
+  )
+})
+
+test_that("the batch row carries both halves and the empty row matches", {
+  body <- read_fixture("vep_region_indels_freq.json")
+  out <- vep_parse_batch(body, c(vep_key("17", 7676154, "G", "C"), "9-1-A-T"))
+
+  expect_true(all(c("hgvsc", "rsid", "gnomadg_af") %in% names(out)))
+  expect_identical(nrow(out), 2L)
+  expect_true(is.na(out$rsid[2]))
+})
+
 # --- Trap: order is not promised ---------------------------------------------
 
 test_that("results are matched by identity, not by array position", {

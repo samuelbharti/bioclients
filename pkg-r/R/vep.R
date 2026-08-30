@@ -39,6 +39,84 @@ VEP_URL <- "https://rest.ensembl.org/vep/homo_sapiens/region"
 # "verified hard limits, not tuning".
 VEP_BATCH <- 200L
 
+#' The request flags VEP is asked for by default
+#'
+#' Pure. The default for the `options` argument of [vep_variants()]. Start
+#' from this and add to it rather than replacing it, because `vcf_string` is
+#' one of the identities results are matched on and `mane` is what
+#' [vep_pick_transcript()] chooses by.
+#'
+#' @section Supported flags:
+#' Every entry is a VEP request parameter, sent as `name=value` on the query
+#' string. `TRUE` and `1` send `name=1`; `FALSE`, `0` and `NULL` omit the flag.
+#' Names are case sensitive, exactly as VEP spells them. The flags this package
+#' parses are:
+#'
+#' * `AlphaMissense`, `mane`, `numbers`, `vcf_string`: the defaults.
+#' * `af`, `af_gnomade`, `af_gnomadg`: colocated variant frequencies, read by
+#'   [vep_parse_colocated()].
+#' * `CADD`, `SpliceAI`, `REVEL`: per-transcript predictor scores, read by
+#'   [vep_parse_element()].
+#' * `hgvs`: `hgvsc` and `hgvsp` notation per transcript.
+#' * `canonical`: marks the canonical transcript.
+#' * `pick`, `pick_allele_gene`: ask VEP to return one transcript per variant
+#'   or per allele and gene, rather than all of them.
+#' * `protein`, `domains`, `variant_class`: extra transcript annotation, carried
+#'   through untouched in the response for a caller parsing it directly.
+#' * `LoF`: LOFTEE, read into the `lof` column.
+#'
+#' `dbNSFP` is refused. It returns comma-joined multi-transcript strings in
+#' dbNSFP's own order, not aligned to the transcript being reported, so the
+#' values silently belong to a different transcript than the rest of the row.
+#'
+#' @return A named list of flags.
+#'
+#' @examples
+#' vep_default_options()
+#' c(vep_default_options(), list(CADD = 1, REVEL = 1))
+#'
+#' @export
+vep_default_options <- function() {
+  list(AlphaMissense = 1, mane = 1, numbers = 1, vcf_string = 1)
+}
+
+# Turn the options list into the query string VEP takes. Pure.
+vep_query_string <- function(options) {
+  if (is.null(options) || length(options) == 0) {
+    return("")
+  }
+  labels <- names(options)
+  if (is.null(labels) || any(is.na(labels) | !nzchar(labels))) {
+    stop("VEP options must be a named list of flags", call. = FALSE)
+  }
+  if ("dbNSFP" %in% labels) {
+    stop(
+      "dbNSFP is not supported: it returns values in dbNSFP's own transcript ",
+      "order, not aligned to the transcript VEP reports. See the note at the ",
+      "top of R/vep.R.",
+      call. = FALSE
+    )
+  }
+  parts <- character()
+  for (label in labels) {
+    value <- options[[label]]
+    off <- is.null(value) ||
+      isFALSE(value) ||
+      identical(as.character(value), "0")
+    if (off) {
+      next
+    }
+    if (isTRUE(value)) {
+      value <- 1
+    }
+    parts <- c(
+      parts,
+      paste0(label, "=", utils::URLencode(as.character(value), reserved = TRUE))
+    )
+  }
+  paste(parts, collapse = "&")
+}
+
 #' Build a VEP region string from variant components
 #'
 #' Pure. VEP's region endpoint takes a VCF-like string.
@@ -196,6 +274,14 @@ vep_pick_transcript <- function(element) {
 #' transcript is the single easiest way to get `NA` everywhere and conclude the
 #' API does not serve it.
 #'
+#' @section Optional columns:
+#' `hgvsc`, `hgvsp`, `canonical`, `cadd_phred`, `cadd_raw`, `revel`, the
+#' `spliceai_*` scores and `lof` are only populated when the matching flag was
+#' requested, see [vep_default_options()]. Otherwise they are `NA`. VEP marks
+#' only the canonical transcript, so `canonical` is `TRUE` on that transcript
+#' and `NA` everywhere else, including when the flag was never asked.
+#' `spliceai_max` is the largest of the four SpliceAI delta scores.
+#'
 #' @param element One parsed VEP result element.
 #'
 #' @return A one-row tibble.
@@ -212,37 +298,71 @@ vep_pick_transcript <- function(element) {
 #'
 #' @export
 vep_parse_element <- function(element) {
-  transcript <- vep_pick_transcript(element)
-  if (is.null(transcript)) {
+  # Named `picked` rather than `transcript` because tibble() exposes each
+  # column to the arguments after it, and a `transcript` column is defined
+  # below. A local of the same name would be shadowed by the column halfway
+  # through the call and every later field would read off a string.
+  picked <- vep_pick_transcript(element)
+  if (is.null(picked)) {
     out <- vep_empty_row()
     out$consequence <- chr_at(element, "most_severe_consequence")
     return(out)
   }
+  spliceai <- biohttp::pluck_at(picked, "spliceai")
+  spliceai_scores <- c(
+    num_at(spliceai, "DS_AG"),
+    num_at(spliceai, "DS_AL"),
+    num_at(spliceai, "DS_DG"),
+    num_at(spliceai, "DS_DL")
+  )
   tibble::tibble(
-    gene = chr_at(transcript, "gene_symbol"),
+    gene = chr_at(picked, "gene_symbol"),
     consequence = as.character(
-      (transcript$consequence_terms %||%
+      (picked$consequence_terms %||%
         list(biohttp::pluck_at(element, "most_severe_consequence")))[[1]]
     ),
-    mane = chr_at(transcript, "mane_select"),
-    impact = chr_at(transcript, "impact"),
-    exon = chr_at(transcript, "exon"),
+    mane = chr_at(picked, "mane_select"),
+    impact = chr_at(picked, "impact"),
+    exon = chr_at(picked, "exon"),
     # protein_start can be a range for an indel; the start is what positions a
     # residue marker.
     protein_pos = suppressWarnings(
-      as.integer(biohttp::pluck_at(transcript, "protein_start", default = NA))
+      as.integer(biohttp::pluck_at(picked, "protein_start", default = NA))
     ),
-    sift = chr_at(transcript, "sift_prediction"),
-    polyphen = chr_at(transcript, "polyphen_prediction"),
+    sift = chr_at(picked, "sift_prediction"),
+    polyphen = chr_at(picked, "polyphen_prediction"),
     # Nested, per transcript. Do not hoist this.
     alphamissense = num_at(
-      biohttp::pluck_at(transcript, "alphamissense"),
+      biohttp::pluck_at(picked, "alphamissense"),
       "am_pathogenicity"
     ),
     alphamissense_class = chr_at(
-      biohttp::pluck_at(transcript, "alphamissense"),
+      biohttp::pluck_at(picked, "alphamissense"),
       "am_class"
-    )
+    ),
+    transcript = chr_at(picked, "transcript_id"),
+    gene_id = chr_at(picked, "gene_id"),
+    biotype = chr_at(picked, "biotype"),
+    hgvsc = chr_at(picked, "hgvsc"),
+    hgvsp = chr_at(picked, "hgvsp"),
+    # VEP sends canonical: 1 on the canonical transcript and nothing on the
+    # others, so absence cannot tell "not canonical" from "not asked".
+    canonical = if (identical(num_at(picked, "canonical"), 1)) TRUE else NA,
+    codons = chr_at(picked, "codons"),
+    amino_acids = chr_at(picked, "amino_acids"),
+    cadd_phred = num_at(picked, "cadd_phred"),
+    cadd_raw = num_at(picked, "cadd_raw"),
+    revel = num_at(picked, "revel"),
+    spliceai_ds_ag = spliceai_scores[[1]],
+    spliceai_ds_al = spliceai_scores[[2]],
+    spliceai_ds_dg = spliceai_scores[[3]],
+    spliceai_ds_dl = spliceai_scores[[4]],
+    spliceai_max = if (all(is.na(spliceai_scores))) {
+      NA_real_
+    } else {
+      max(spliceai_scores, na.rm = TRUE)
+    },
+    lof = chr_at(picked, "lof")
   )
 }
 
@@ -257,7 +377,186 @@ vep_empty_row <- function() {
     sift = NA_character_,
     polyphen = NA_character_,
     alphamissense = NA_real_,
-    alphamissense_class = NA_character_
+    alphamissense_class = NA_character_,
+    transcript = NA_character_,
+    gene_id = NA_character_,
+    biotype = NA_character_,
+    hgvsc = NA_character_,
+    hgvsp = NA_character_,
+    canonical = NA,
+    codons = NA_character_,
+    amino_acids = NA_character_,
+    cadd_phred = NA_real_,
+    cadd_raw = NA_real_,
+    revel = NA_real_,
+    spliceai_ds_ag = NA_real_,
+    spliceai_ds_al = NA_real_,
+    spliceai_ds_dg = NA_real_,
+    spliceai_ds_dl = NA_real_,
+    spliceai_max = NA_real_,
+    lof = NA_character_
+  )
+}
+
+# The alternate allele as VEP reports it after trimming: "C" for an SNV, "A"
+# for an insertion sent as T>TA, "-" for a deletion. This is the key VEP uses
+# for the per-allele frequencies and clinical significance on a colocated
+# variant, so it is read from the element rather than rebuilt from the input.
+vep_element_allele <- function(element) {
+  alleles <- strsplit(
+    biohttp::pluck_at(element, "allele_string", default = ""),
+    "/",
+    fixed = TRUE
+  )[[1]]
+  if (length(alleles) < 2) NA_character_ else alleles[[length(alleles)]]
+}
+
+# The frequency block for the element's allele. VEP keys `frequencies` by
+# allele, and a multi-allelic dbSNP record carries one block per allele it
+# has frequencies for.
+vep_allele_frequencies <- function(record, element) {
+  frequencies <- biohttp::pluck_at(record, "frequencies")
+  if (is.null(frequencies) || length(frequencies) == 0) {
+    return(NULL)
+  }
+  allele <- vep_element_allele(element)
+  if (!is.na(allele) && !is.null(frequencies[[allele]])) {
+    return(frequencies[[allele]])
+  }
+  if (length(frequencies) == 1) {
+    return(frequencies[[1]])
+  }
+  NULL
+}
+
+# The largest frequency among the per-population entries of one source, which
+# are the keys carrying the source prefix: gnomadg_afr, gnomadg_nfe and so on.
+# The bare gnomadg key is the overall frequency and is left out.
+vep_max_population_af <- function(frequencies, prefix) {
+  if (is.null(frequencies)) {
+    return(NA_real_)
+  }
+  keys <- names(frequencies)
+  keys <- keys[startsWith(keys, prefix)]
+  values <- suppressWarnings(as.numeric(unlist(frequencies[keys])))
+  values <- values[!is.na(values)]
+  if (length(values) == 0) NA_real_ else max(values)
+}
+
+# Clinical significance for the element's allele. `clin_sig_allele` is the
+# per-allele form, "C:pathogenic;T:benign", and is what tells the alleles of a
+# multi-allelic site apart. A deletion's allele is "-" and its prefix in that
+# string is empty. `clin_sig` is the union over all alleles and is the fallback
+# when the per-allele form is absent.
+vep_clin_sig <- function(record, element) {
+  per_allele <- chr_at(record, "clin_sig_allele")
+  if (!is.na(per_allele) && nzchar(per_allele)) {
+    allele <- vep_element_allele(element)
+    if (!is.na(allele)) {
+      prefix <- if (identical(allele, "-")) "" else allele
+      entries <- strsplit(per_allele, ";", fixed = TRUE)[[1]]
+      mine <- vapply(
+        entries,
+        function(entry) {
+          pair <- regmatches(
+            entry,
+            regexpr(":", entry, fixed = TRUE),
+            invert = TRUE
+          )[[1]]
+          if (length(pair) == 2 && identical(pair[[1]], prefix)) {
+            pair[[2]]
+          } else {
+            NA_character_
+          }
+        },
+        character(1),
+        USE.NAMES = FALSE
+      )
+      mine <- unique(mine[!is.na(mine)])
+      if (length(mine) > 0) {
+        return(paste(mine, collapse = ";"))
+      }
+    }
+  }
+  all <- unique(as.character(unlist(
+    biohttp::pluck_at(record, "clin_sig", default = list()),
+    use.names = FALSE
+  )))
+  if (length(all) == 0) NA_character_ else paste(all, collapse = ";")
+}
+
+#' Turn the colocated variants of a VEP element into a table row
+#'
+#' Pure. A VEP element lists the known variants at the same site under
+#' `colocated_variants`: the dbSNP record, and COSMIC and HGMD entries beside
+#' it. The dbSNP record is the one carrying population frequencies and
+#' clinical significance, so that is the record read. When several dbSNP
+#' records are listed, the one with frequencies wins.
+#'
+#' Frequencies are only present when `af`, `af_gnomade` or `af_gnomadg` was
+#' requested, see [vep_default_options()]. `gnomadg_af_max` and
+#' `gnomade_af_max` are the largest per-population frequency of that source,
+#' which is what a rarity filter wants rather than the overall frequency.
+#' `clin_sig` is the significance of the element's own allele where VEP
+#' reports it per allele, so the alleles of a multi-allelic site do not share
+#' one answer.
+#'
+#' @param element One parsed VEP result element.
+#'
+#' @return A one-row tibble of `rsid`, `gnomadg_af`, `gnomade_af`,
+#'   `gnomadg_af_max`, `gnomade_af_max`, and `clin_sig`, all `NA` when the
+#'   element has no dbSNP record.
+#'
+#' @examples
+#' element <- list(
+#'   allele_string = "G/C",
+#'   colocated_variants = list(list(
+#'     id = "rs1042522",
+#'     frequencies = list(C = list(gnomadg = 0.62, gnomadg_afr = 0.38)),
+#'     clin_sig = list("benign")
+#'   ))
+#' )
+#' vep_parse_colocated(element)
+#'
+#' @export
+vep_parse_colocated <- function(element) {
+  colocated <- biohttp::pluck_at(element, "colocated_variants")
+  if (is.null(colocated) || length(colocated) == 0) {
+    return(vep_empty_colocated())
+  }
+  ids <- vapply(colocated, function(record) chr_at(record, "id"), character(1))
+  dbsnp <- colocated[!is.na(ids) & grepl("^rs[0-9]+$", ids)]
+  if (length(dbsnp) == 0) {
+    return(vep_empty_colocated())
+  }
+  with_frequencies <- Filter(
+    function(record) !is.null(record$frequencies),
+    dbsnp
+  )
+  record <- if (length(with_frequencies) > 0) {
+    with_frequencies[[1]]
+  } else {
+    dbsnp[[1]]
+  }
+  frequencies <- vep_allele_frequencies(record, element)
+  tibble::tibble(
+    rsid = chr_at(record, "id"),
+    gnomadg_af = num_at(frequencies, "gnomadg"),
+    gnomade_af = num_at(frequencies, "gnomade"),
+    gnomadg_af_max = vep_max_population_af(frequencies, "gnomadg_"),
+    gnomade_af_max = vep_max_population_af(frequencies, "gnomade_"),
+    clin_sig = vep_clin_sig(record, element)
+  )
+}
+
+vep_empty_colocated <- function() {
+  tibble::tibble(
+    rsid = NA_character_,
+    gnomadg_af = NA_real_,
+    gnomade_af = NA_real_,
+    gnomadg_af_max = NA_real_,
+    gnomade_af_max = NA_real_,
+    clin_sig = NA_character_
   )
 }
 
@@ -282,13 +581,14 @@ vep_empty_row <- function() {
 #' @param body A parsed VEP response, an array of elements.
 #' @param keys Variant keys from [vep_key()], in the order asked.
 #'
-#' @return A tibble with one row per entry in `keys`, plus a `key` column.
+#' @return A tibble with one row per entry in `keys`: a `key` column, the
+#'   columns of [vep_parse_element()], then those of [vep_parse_colocated()].
 #'
 #' @export
 vep_parse_batch <- function(body, keys) {
   by_key <- list()
   for (element in body) {
-    row <- vep_parse_element(element)
+    row <- cbind(vep_parse_element(element), vep_parse_colocated(element))
     for (key in vep_element_keys(element)) {
       # First identity wins. The rebuilt key of an indel is a different string
       # from any real input, so it never shadows a correct match.
@@ -298,7 +598,7 @@ vep_parse_batch <- function(body, keys) {
     }
   }
   rows <- lapply(keys, function(key) {
-    row <- by_key[[key]] %||% vep_empty_row()
+    row <- by_key[[key]] %||% cbind(vep_empty_row(), vep_empty_colocated())
     cbind(tibble::tibble(key = as.character(key)), row)
   })
   tibble::as_tibble(do.call(rbind, rows))
@@ -307,6 +607,9 @@ vep_parse_batch <- function(body, keys) {
 #' Consequence predictions for many variants
 #'
 #' @param chrom,pos,ref,alt Variant components, all the same length.
+#' @param options A named list of VEP request flags. See
+#'   [vep_default_options()] for the supported flags and what each one adds to
+#'   the result.
 #' @param ... Passed to [biohttp::post_json()], for example `throttle`.
 #'
 #' @return A biohttp envelope whose `data` is a tibble with one row per variant,
@@ -315,10 +618,21 @@ vep_parse_batch <- function(body, keys) {
 #' @examples
 #' \dontrun{
 #' biohttp::body_or_null(vep_variants("7", 140753336, "A", "T"))
+#' biohttp::body_or_null(vep_variants(
+#'   "7", 140753336, "A", "T",
+#'   options = c(vep_default_options(), list(af_gnomadg = 1, CADD = 1))
+#' ))
 #' }
 #'
 #' @export
-vep_variants <- function(chrom, pos, ref, alt, ...) {
+vep_variants <- function(
+  chrom,
+  pos,
+  ref,
+  alt,
+  options = vep_default_options(),
+  ...
+) {
   n <- length(chrom)
   if (n == 0) {
     return(biohttp::status_no_data(
@@ -338,9 +652,10 @@ vep_variants <- function(chrom, pos, ref, alt, ...) {
   regions <- vep_region(chrom, pos, ref, alt)
   keys <- vep_key(chrom, pos, ref, alt)
   res <- biohttp::post_json(
-    # vcf_string=1 makes VEP report the normalised variant alongside the echoed
-    # input, which is the second of the identities results are matched on.
-    paste0(VEP_URL, "?AlphaMissense=1&mane=1&numbers=1&vcf_string=1"),
+    # The defaults include vcf_string=1, which makes VEP report the normalised
+    # variant alongside the echoed input, the second identity results are
+    # matched on.
+    paste0(VEP_URL, "?", vep_query_string(options)),
     # unname() is load-bearing: a named list serialises as a JSON object and VEP
     # answers 500. The value must be a JSON array.
     body = list(variants = unname(as.list(regions))),

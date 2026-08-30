@@ -12,7 +12,8 @@ vep_parse_batch(body, keys)
 \item{keys}{Variant keys from \code{\link[=vep_key]{vep_key()}}, in the order asked.}
 }
 \value{
-A tibble with one row per entry in \code{keys}, plus a \code{key} column.
+A tibble with one row per entry in \code{keys}: a \code{key} column, the
+columns of \code{\link[=vep_parse_element]{vep_parse_element()}}, then those of \code{\link[=vep_parse_colocated]{vep_parse_colocated()}}.
 }
 \description{
 Pure. One row per requested variant, in the order asked.

@@ -1,3 +1,21 @@
+# bioclients (development version)
+
+## Ensembl VEP
+
+* Results are matched back on the echoed `input` line and on `vcf_string`
+  rather than on a key rebuilt from the reported coordinates. VEP left-trims
+  and renumbers indels, so the rebuilt key matched only SNVs and every indel
+  came back as an empty row.
+* `vep_variants()` takes an `options` list of request flags, defaulting to
+  `vep_default_options()`. `dbNSFP` is refused.
+* `vep_parse_element()` adds `transcript`, `gene_id`, `biotype`, `hgvsc`,
+  `hgvsp`, `canonical`, `codons`, `amino_acids`, `cadd_phred`, `cadd_raw`,
+  `revel`, the four `spliceai_ds_*` scores, `spliceai_max` and `lof`.
+* New `vep_parse_colocated()` reads the dbSNP record beside a variant: `rsid`,
+  gnomAD genome and exome frequencies with their per-population maximum, and
+  the clinical significance of the allele asked. `vep_parse_batch()` carries
+  these columns.
+
 # bioclients 0.1.0
 
 First release. 29 clients, 125 exported functions, and the behaviour they depend
