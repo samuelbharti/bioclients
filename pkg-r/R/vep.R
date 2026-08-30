@@ -19,6 +19,15 @@
 #    VEP transcript being reported, so the values silently belong to a different
 #    transcript than the rest of the row.
 #
+# 5. VEP left-trims and renumbers indels. An insertion sent as
+#    `1 55516888 . T TA . . .` comes back with start 55516889 and allele_string
+#    "-/A", so a key rebuilt from those fields never matches the key the caller
+#    built from its own input, and every indel reads as "VEP returned nothing".
+#    VEP echoes the exact input line in `input`, and with vcf_string=1 also
+#    reports a normalised `vcf_string`, so results are matched on those first
+#    and on the rebuilt key only as a fallback for a response that carries
+#    neither.
+#
 # AND: VEP does not promise response order, so results are matched back by
 # variant identity rather than by array position.
 #
@@ -73,7 +82,44 @@ vep_key <- function(chrom, pos, ref, alt) {
   )
 }
 
-# The key a VEP element reports for itself.
+# The key carried by the echoed input line. VEP hands back exactly the
+# `chrom pos . ref alt . . .` string it was sent, so this is the one identity
+# that survives left-trimming and renumbering of an indel.
+vep_input_key <- function(input) {
+  if (biohttp::is_blank(input)) {
+    return(NA_character_)
+  }
+  parts <- strsplit(trimws(as.character(input)), "[[:space:]]+")[[1]]
+  if (length(parts) < 5) {
+    return(NA_character_)
+  }
+  vep_key(parts[1], parts[2], parts[4], parts[5])
+}
+
+# Every key a VEP element can be matched on, most reliable first: the echoed
+# input, then the normalised vcf_string, then the key rebuilt from the
+# reported coordinates. The last is wrong for an indel (trap 5 in the file
+# header) and is kept only for a response that carries neither of the others.
+vep_element_keys <- function(element) {
+  vcf <- biohttp::pluck_at(element, "vcf_string", default = NA_character_)
+  if (!is.na(vcf)) {
+    vcf_parts <- strsplit(as.character(vcf), "-", fixed = TRUE)[[1]]
+    vcf <- if (length(vcf_parts) == 4) {
+      do.call(vep_key, as.list(vcf_parts))
+    } else {
+      NA_character_
+    }
+  }
+  keys <- c(
+    vep_input_key(biohttp::pluck_at(element, "input")),
+    vcf,
+    vep_element_key(element)
+  )
+  unique(keys[!is.na(keys)])
+}
+
+# The key rebuilt from what a VEP element reports about itself. Right for an
+# SNV, wrong for an indel, so it is the last resort in vep_element_keys().
 vep_element_key <- function(element) {
   alleles <- strsplit(
     biohttp::pluck_at(element, "allele_string", default = "/"),
@@ -222,8 +268,16 @@ vep_empty_row <- function() {
 #' @section Matched by identity, not by position:
 #' VEP does not promise that results come back in the order they were sent.
 #' Zipping the response onto the input by index therefore assigns consequences
-#' to the wrong variants, silently. Elements are matched on
-#' `(chromosome, position, ref, alt)` reconstructed from what VEP reports.
+#' to the wrong variants, silently. Elements are matched on the key built from
+#' the echoed `input` line, which is the exact string that was sent.
+#'
+#' @section Indels are renumbered:
+#' VEP left-trims and renumbers an indel, so the `start` and `allele_string` it
+#' reports do not rebuild the key the caller asked with. An insertion sent as
+#' `1 55516888 . T TA . . .` comes back as start 55516889 and `-/A`, and a
+#' delins can come back re-anchored in `vcf_string` too. The echoed `input` is
+#' the identity that survives, so it is matched first, then `vcf_string`, and
+#' the rebuilt key only for a response carrying neither.
 #'
 #' @param body A parsed VEP response, an array of elements.
 #' @param keys Variant keys from [vep_key()], in the order asked.
@@ -234,7 +288,14 @@ vep_empty_row <- function() {
 vep_parse_batch <- function(body, keys) {
   by_key <- list()
   for (element in body) {
-    by_key[[vep_element_key(element)]] <- vep_parse_element(element)
+    row <- vep_parse_element(element)
+    for (key in vep_element_keys(element)) {
+      # First identity wins. The rebuilt key of an indel is a different string
+      # from any real input, so it never shadows a correct match.
+      if (is.null(by_key[[key]])) {
+        by_key[[key]] <- row
+      }
+    }
   }
   rows <- lapply(keys, function(key) {
     row <- by_key[[key]] %||% vep_empty_row()
@@ -277,7 +338,9 @@ vep_variants <- function(chrom, pos, ref, alt, ...) {
   regions <- vep_region(chrom, pos, ref, alt)
   keys <- vep_key(chrom, pos, ref, alt)
   res <- biohttp::post_json(
-    paste0(VEP_URL, "?AlphaMissense=1&mane=1&numbers=1"),
+    # vcf_string=1 makes VEP report the normalised variant alongside the echoed
+    # input, which is the second of the identities results are matched on.
+    paste0(VEP_URL, "?AlphaMissense=1&mane=1&numbers=1&vcf_string=1"),
     # unname() is load-bearing: a named list serialises as a JSON object and VEP
     # answers 500. The value must be a JSON array.
     body = list(variants = unname(as.list(regions))),

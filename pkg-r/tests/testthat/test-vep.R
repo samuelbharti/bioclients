@@ -76,6 +76,102 @@ test_that("the cap matches the verified limit", {
   expect_identical(VEP_BATCH, 200L)
 })
 
+# --- Trap: indels are renumbered ---------------------------------------------
+
+test_that("every input row of the recorded indel batch comes back populated", {
+  # Recorded live from rest.ensembl.org with AlphaMissense=1&mane=1&numbers=1&
+  # vcf_string=1 for one SNV, one insertion, one deletion and one delins on
+  # public sites: TP53 p.Pro72Arg, a PCSK9 intronic insertion, CFTR p.Phe508del
+  # and a TP53 exonic delins. VEP renumbers three of the four, so a key rebuilt
+  # from the reported coordinates matched only the SNV.
+  body <- read_fixture("vep_region_indels.json")
+  keys <- c(
+    vep_key("17", 7676154, "G", "C"),
+    vep_key("1", 55516888, "T", "TA"),
+    vep_key("7", 117559590, "ATCT", "A"),
+    vep_key("17", 7675088, "CGC", "TA")
+  )
+  out <- vep_parse_batch(body, keys)
+
+  expect_identical(nrow(out), 4L)
+  expect_identical(out$key, keys)
+  expect_false(anyNA(out$consequence))
+  expect_identical(
+    out$consequence,
+    c(
+      "missense_variant",
+      "intron_variant",
+      "inframe_deletion",
+      "frameshift_variant"
+    )
+  )
+  expect_identical(out$gene[c(1, 3, 4)], c("TP53", "CFTR", "TP53"))
+})
+
+test_that("the key VEP rebuilds for an indel is not the key that was asked", {
+  # This is the bug. The insertion sent as 1 55516888 T>TA is reported with
+  # start 55516889 and allele_string -/A.
+  body <- read_fixture("vep_region_indels.json")
+  insertion <- body[[2]]
+
+  expect_identical(insertion$start, 55516889L)
+  expect_identical(insertion$allele_string, "-/A")
+  expect_false(
+    identical(vep_element_key(insertion), vep_key("1", 55516888, "T", "TA"))
+  )
+})
+
+test_that("the echoed input is matched before the vcf_string", {
+  # VEP re-anchors a delins in vcf_string: CGC>TA at 7675088 is reported as
+  # 17-7675087-GCGC-GTA. Only the echoed input carries the key that was asked.
+  element <- list(
+    input = "17 7675088 . CGC TA . . .",
+    vcf_string = "17-7675087-GCGC-GTA",
+    seq_region_name = "17",
+    start = 7675088,
+    allele_string = "CGC/TA",
+    most_severe_consequence = "frameshift_variant",
+    transcript_consequences = list(list(
+      gene_symbol = "TP53",
+      consequence_terms = list("frameshift_variant")
+    ))
+  )
+  out <- vep_parse_batch(list(element), vep_key("17", 7675088, "CGC", "TA"))
+
+  expect_identical(out$gene, "TP53")
+  expect_identical(
+    vep_element_keys(element)[1],
+    vep_key("17", 7675088, "CGC", "TA")
+  )
+})
+
+test_that("an element without an input line still matches on vcf_string", {
+  element <- list(
+    vcf_string = "1-55516888-T-TA",
+    seq_region_name = "1",
+    start = 55516889,
+    allele_string = "-/A",
+    most_severe_consequence = "intron_variant",
+    transcript_consequences = list()
+  )
+  out <- vep_parse_batch(list(element), vep_key("1", 55516888, "T", "TA"))
+
+  expect_identical(out$consequence, "intron_variant")
+})
+
+test_that("vcf_string is requested so the second identity is present", {
+  reset_transport()
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json("[]")
+  })
+
+  vep_variants("7", 140753336, "A", "T")
+
+  expect_match(url, "vcf_string=1", fixed = TRUE)
+})
+
 # --- Trap: order is not promised ---------------------------------------------
 
 test_that("results are matched by identity, not by array position", {
