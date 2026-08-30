@@ -38,6 +38,12 @@
   sends `tool` and `email` read from `BIOHTTP_CALLER_IDENTITY` and
   `BIOHTTP_CONTACT_EMAIL` when they are set.
 
+## MyGene
+
+* `mygene_genes()` chunks a list longer than the 1000 identifiers MyGene
+  takes per POST, dispatches the chunks through `biohttp::post_json_many()`
+  and merges the hits back in input order.
+
 # bioclients 0.1.0
 
 First release. 29 clients, 125 exported functions, and the behaviour they depend
