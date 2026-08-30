@@ -31,6 +31,13 @@
 * The 25-alias cost cap was re-verified against the live API for the variant
   query. The cost is one per alias whatever the selection set.
 
+## ClinVar
+
+* `clinvar_classification()` throttles by default at the documented
+  E-utilities rate, 3 requests a second or 10 when `NCBI_API_KEY` is set, and
+  sends `tool` and `email` read from `BIOHTTP_CALLER_IDENTITY` and
+  `BIOHTTP_CONTACT_EMAIL` when they are set.
+
 # bioclients 0.1.0
 
 First release. 29 clients, 125 exported functions, and the behaviour they depend
