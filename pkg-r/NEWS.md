@@ -19,6 +19,15 @@
   200 VEP accepts per POST and dispatches the chunks through
   `biohttp::post_json_many()`. One row per input in input order; a failed
   chunk becomes rows of `NA` carrying the envelope status in `status`.
+* `vep_variants_all()` puts the input in genome order and sends a repeated
+  variant once, before chunking, rather than once per occurrence. A
+  duplicate now always carries the same answer at every position it was
+  asked at, which was not guaranteed before when duplicates could land in
+  different chunks and see different transient failures. `chunk_size` and
+  the row count and order the contract promises are unchanged. It also
+  applies a default `throttle` (one request per second) so an unpaced burst
+  does not trip Ensembl's rate limiter; pass `throttle = NULL` to disable
+  it.
 
 ## gnomAD
 
