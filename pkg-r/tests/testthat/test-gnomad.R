@@ -190,3 +190,297 @@ test_that("a blank symbol is no_data and never reaches the network", {
   expect_identical(gnomad_constraint("")$status, "no_data")
   expect_identical(gnomad_frequency("")$status, "no_data")
 })
+
+# --- Frequency by variant id -------------------------------------------------
+
+test_that("a variant id is chrom-pos-ref-alt without a chr prefix", {
+  expect_identical(
+    gnomad_variant_id("1", 55516888, "G", "GA"),
+    "1-55516888-G-GA"
+  )
+  expect_identical(
+    gnomad_variant_id("chr1", 55516888, "g", "ga"),
+    "1-55516888-G-GA"
+  )
+  expect_identical(
+    gnomad_variant_id(
+      c("17", "chrX"),
+      c(7676154, 10),
+      c("G", "A"),
+      c("C", "T")
+    ),
+    c("17-7676154-G-C", "X-10-A-T")
+  )
+})
+
+test_that("the recorded present variant parses to the expected row", {
+  # Recorded live from gnomad.broadinstitute.org on 2026-08-30 for TP53
+  # p.Pro72Arg, with the HGDP and 1000 Genomes subsets trimmed out of the
+  # population arrays.
+  body <- read_fixture("gnomad_variant_present.json")
+  out <- gnomad_parse_variant(body, "17-7676154-G-C")
+
+  expect_s3_class(out, "tbl_df")
+  expect_identical(nrow(out), 1L)
+  expect_identical(out$variant_id, "17-7676154-G-C")
+  expect_identical(out$rsid, "rs1042522")
+  expect_equal(out$exome_af, 0.7163184765845761)
+  expect_equal(out$exome_ac, 1046941)
+  expect_equal(out$exome_an, 1461558)
+  expect_equal(out$exome_nhomalt, 380188)
+  expect_equal(out$genome_af, 0.626776035)
+  expect_equal(out$genome_ac, 95285)
+  expect_equal(out$genome_an, 152024)
+  expect_equal(out$genome_nhomalt, 31776)
+  expect_equal(out$faf95, 0.74639068)
+  expect_identical(out$faf95_pop, "nfe")
+  # An empty filters array means the site passed.
+  expect_true(is.na(out$filters))
+})
+
+test_that("nhomalt is gnomAD's homozygote_count", {
+  body <- read_fixture("gnomad_variant_present.json")
+  expect_equal(
+    gnomad_parse_variant(body)$exome_nhomalt,
+    body$data$variant$exome$homozygote_count
+  )
+})
+
+test_that("grpmax is the top eligible group over summed exome and genome counts", {
+  body <- read_fixture("gnomad_variant_present.json")
+  out <- gnomad_parse_variant(body, "17-7676154-G-C")
+  pops <- gnomad_parse_populations(
+    body$data$variant$exome$populations,
+    body$data$variant$genome$populations
+  )
+  eligible <- pops[!(pops$pop %in% GNOMAD_GRPMAX_EXCLUDED), ]
+
+  expect_identical(out$grpmax_id, eligible$pop[1])
+  expect_equal(out$grpmax_af, eligible$af[1])
+  expect_equal(out$grpmax_an, eligible$an[1])
+  expect_identical(out$grpmax_id, "nfe")
+})
+
+test_that("a bottlenecked group never becomes grpmax", {
+  # Finnish and Ashkenazi founder effects are exactly what grpmax exists to
+  # leave out. A rarity filter reading a Finnish-only frequency as the group
+  # maximum would call a globally rare variant common.
+  variant <- list(
+    exome = list(
+      populations = list(
+        list(id = "fin", ac = 50, an = 100),
+        list(id = "nfe", ac = 1, an = 100)
+      )
+    )
+  )
+  out <- gnomad_variant_row(variant, "x")
+
+  expect_identical(out$grpmax_id, "nfe")
+  expect_equal(out$grpmax_af, 0.01)
+})
+
+test_that("faf95 is the higher of the two sample sets, with its group", {
+  variant <- list(
+    exome = list(faf95 = list(popmax = 0.01, popmax_population = "afr")),
+    genome = list(faf95 = list(popmax = 0.02, popmax_population = "eas"))
+  )
+  out <- gnomad_variant_row(variant, "x")
+
+  expect_equal(out$faf95, 0.02)
+  expect_identical(out$faf95_pop, "eas")
+})
+
+test_that("filters from both sample sets are joined", {
+  variant <- list(
+    exome = list(filters = list("AC0")),
+    genome = list(filters = list("AS_VQSR", "AC0"))
+  )
+  expect_identical(gnomad_variant_row(variant, "x")$filters, "AC0;AS_VQSR")
+})
+
+test_that("the recorded absent variant parses to NULL", {
+  # gnomAD answers a variant it has never seen with a 200, a null variant and
+  # a "Variant not found" entry in errors.
+  body <- read_fixture("gnomad_variant_absent.json")
+
+  expect_null(gnomad_parse_variant(body, "17-7676154-G-GTTTTT"))
+  expect_identical(body$errors[[1]]$message, "Variant not found")
+})
+
+test_that("a variant with only one sample set fills the other with NA", {
+  body <- list(
+    data = list(
+      variant = list(
+        variant_id = "x",
+        genome = list(af = 0.5, ac = 1, an = 2, homozygote_count = 0)
+      )
+    )
+  )
+  out <- gnomad_parse_variant(body, "x")
+
+  expect_true(is.na(out$exome_af))
+  expect_equal(out$genome_af, 0.5)
+  expect_true(is.na(out$rsid))
+  expect_true(is.na(out$grpmax_af))
+})
+
+# --- The aliased variant batch -----------------------------------------------
+
+test_that("aliased variants map back by index, with NA for an absent one", {
+  present <- read_fixture("gnomad_variant_present.json")$data$variant
+  body <- list(
+    errors = list(list(message = "Variant not found")),
+    data = list(v1 = NULL, v2 = present)
+  )
+  out <- gnomad_parse_variants(body, c("17-7676154-G-GTTTTT", "17-7676154-G-C"))
+
+  expect_identical(nrow(out), 2L)
+  expect_identical(out$variant_id, c("17-7676154-G-GTTTTT", "17-7676154-G-C"))
+  expect_true(is.na(out$exome_af[1]))
+  expect_identical(out$rsid[2], "rs1042522")
+})
+
+test_that("the variant alias query names one alias per id", {
+  query <- gnomad_variant_alias_query(c("1-1-A-T", "2-2-C-G"), "gnomad_r4")
+
+  expect_match(
+    query,
+    'v1: variant(variantId: "1-1-A-T", dataset: gnomad_r4)',
+    fixed = TRUE
+  )
+  expect_match(
+    query,
+    'v2: variant(variantId: "2-2-C-G", dataset: gnomad_r4)',
+    fixed = TRUE
+  )
+  expect_match(query, "homozygote_count", fixed = TRUE)
+})
+
+test_that("Variant not found is an answer, anything else in errors is a failure", {
+  not_found <- biohttp::status_ok(
+    data = list(errors = list(list(message = "Variant not found"))),
+    source = "gnomAD"
+  )
+  expect_null(gnomad_variant_error(not_found))
+
+  bad <- biohttp::status_ok(
+    data = list(
+      errors = list(
+        list(message = "Variant not found"),
+        list(
+          message = "Query is too expensive (26). Maximum allowed cost is 25."
+        )
+      )
+    ),
+    source = "gnomAD"
+  )
+  expect_identical(gnomad_variant_error(bad)$status, "error")
+})
+
+# --- The client half ---------------------------------------------------------
+
+test_that("gnomad_frequency_by_id returns an ok envelope carrying the row", {
+  reset_transport()
+  fixture <- readLines(
+    testthat::test_path("fixtures", "gnomad_variant_present.json"),
+    warn = FALSE
+  )
+  sent <- NULL
+  httr2::local_mocked_responses(function(req) {
+    sent <<- req$body$data
+    mock_json(paste(fixture, collapse = ""))
+  })
+
+  res <- gnomad_frequency_by_id("17-7676154-G-C")
+
+  expect_true(res$ok)
+  expect_identical(res$source, "gnomAD")
+  expect_identical(biohttp::body_or_null(res)$rsid, "rs1042522")
+  expect_match(sent$query, "variantId: $id", fixed = TRUE)
+  expect_match(sent$query, "dataset: gnomad_r4", fixed = TRUE)
+  expect_identical(sent$variables$id, "17-7676154-G-C")
+})
+
+test_that("an absent variant is no_data, not an error", {
+  reset_transport()
+  fixture <- readLines(
+    testthat::test_path("fixtures", "gnomad_variant_absent.json"),
+    warn = FALSE
+  )
+  httr2::local_mocked_responses(function(req) {
+    mock_json(paste(fixture, collapse = ""))
+  })
+
+  res <- gnomad_frequency_by_id("17-7676154-G-GTTTTT")
+
+  expect_identical(res$status, "no_data")
+  expect_match(res$detail, "no record", fixed = TRUE)
+})
+
+test_that("a dataset on the other assembly is refused before any request", {
+  reset_transport()
+  res <- gnomad_frequency_by_id("17-7676154-G-C", reference_genome = "GRCh37")
+  expect_identical(res$status, "no_data")
+  expect_identical(
+    gnomad_frequencies("17-7676154-G-C", dataset = "gnomad_r2_1")$status,
+    "no_data"
+  )
+})
+
+test_that("a blank id is no_data and never reaches the network", {
+  reset_transport()
+  expect_identical(gnomad_frequency_by_id("")$status, "no_data")
+  expect_identical(gnomad_frequencies(c("", NA))$status, "no_data")
+})
+
+test_that("gnomad_frequencies chunks, batches by alias and keeps input order", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  present <- read_fixture("gnomad_variant_present.json")$data$variant
+  queries <- character()
+  httr2::local_mocked_responses(function(req) {
+    query <- req$body$data$query
+    queries <<- c(queries, query)
+    ids <- regmatches(query, gregexpr('variantId: "[^"]+"', query))[[1]]
+    ids <- sub('variantId: "([^"]+)"', "\\1", ids)
+    data <- list()
+    errors <- list()
+    for (i in seq_along(ids)) {
+      alias <- paste0("v", i)
+      if (identical(ids[i], "17-7676154-G-C")) {
+        data[[alias]] <- present
+      } else {
+        data[alias] <- list(NULL)
+        errors <- c(errors, list(list(message = "Variant not found")))
+      }
+    }
+    body <- list(data = data)
+    if (length(errors) > 0) {
+      body$errors <- errors
+    }
+    mock_json(jsonlite::toJSON(body, auto_unbox = TRUE, null = "null"))
+  })
+
+  ids <- c("1-1-A-T", "17-7676154-G-C", "2-2-C-G")
+  res <- gnomad_frequencies(ids, chunk_size = 2)
+
+  expect_true(res$ok)
+  expect_length(queries, 2)
+  out <- biohttp::body_or_null(res)
+  expect_identical(out$variant_id, ids)
+  expect_identical(out$rsid, c(NA, "rs1042522", NA))
+})
+
+test_that("a failed chunk yields NA rows rather than failing the call", {
+  reset_transport()
+  httr2::local_mocked_responses(function(req) {
+    mock_json('{"errors":[{"message":"Cannot query field"}]}')
+  })
+
+  res <- gnomad_frequencies(c("1-1-A-T", "2-2-C-G"))
+
+  expect_true(res$ok)
+  out <- biohttp::body_or_null(res)
+  expect_identical(nrow(out), 2L)
+  expect_true(all(is.na(out$exome_af)))
+})

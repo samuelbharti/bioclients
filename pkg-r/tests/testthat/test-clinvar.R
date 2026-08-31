@@ -210,3 +210,102 @@ test_that("a transport failure does not report the key back", {
   expect_false(isTRUE(res$ok))
   expect_false(grepl("SECRET123", res$detail, fixed = TRUE))
 })
+
+# --- The default throttle ----------------------------------------------------
+
+test_that("the default throttle follows the documented rate for the key", {
+  withr::with_envvar(c(NCBI_API_KEY = ""), {
+    expect_identical(clinvar_throttle(), list(capacity = 3, fill_time_s = 1))
+  })
+  withr::with_envvar(c(NCBI_API_KEY = "SECRET123"), {
+    expect_identical(clinvar_throttle(), list(capacity = 10, fill_time_s = 1))
+  })
+})
+
+test_that("both requests are throttled by default", {
+  # Without a throttle a loop over variants runs straight into the E-utilities
+  # limit and reads as a flaky service rather than as a client sending too
+  # fast. The default is supplied so a caller does not have to know that.
+  reset_transport()
+  withr::local_envvar(NCBI_API_KEY = "")
+  realms <- character()
+  httr2::local_mocked_responses(function(req) {
+    realms <<- c(realms, req$policies$throttle_realm %||% NA_character_)
+    if (grepl("esearch", req$url, fixed = TRUE)) {
+      return(mock_json('{"esearchresult":{"idlist":["40389"]}}'))
+    }
+    mock_json('{"result":{"40389":{"accession":"VCV000040389"}}}')
+  })
+
+  clinvar_classification("rs113488022")
+
+  expect_length(realms, 2)
+  expect_false(anyNA(realms))
+})
+
+test_that("a caller can still supply its own throttle", {
+  reset_transport()
+  realm <- NULL
+  httr2::local_mocked_responses(function(req) {
+    realm <<- req$policies$throttle_realm
+    mock_json('{"esearchresult":{"idlist":[]}}')
+  })
+
+  clinvar_classification(
+    "rs113488022",
+    throttle = list(capacity = 1, fill_time_s = 1, realm = "mine")
+  )
+
+  expect_identical(realm, "mine")
+})
+
+# --- Identifying the caller --------------------------------------------------
+
+test_that("tool and email are sent when the identity is configured", {
+  reset_transport()
+  withr::local_envvar(
+    BIOHTTP_CALLER_IDENTITY = "myapp",
+    BIOHTTP_CONTACT_EMAIL = "dev@example.org"
+  )
+  urls <- character()
+  httr2::local_mocked_responses(function(req) {
+    urls <<- c(urls, req$url)
+    if (grepl("esearch", req$url, fixed = TRUE)) {
+      return(mock_json('{"esearchresult":{"idlist":["40389"]}}'))
+    }
+    mock_json('{"result":{"40389":{"accession":"VCV000040389"}}}')
+  })
+
+  clinvar_classification("rs113488022")
+
+  expect_length(urls, 2)
+  expect_true(all(grepl("tool=myapp", urls, fixed = TRUE)))
+  expect_true(all(grepl("email=dev%40example.org", urls, fixed = TRUE)))
+})
+
+test_that("a blank identity sends neither parameter", {
+  # An empty tool= is not the same as omitting it.
+  reset_transport()
+  withr::local_envvar(BIOHTTP_CALLER_IDENTITY = "", BIOHTTP_CONTACT_EMAIL = "")
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json('{"esearchresult":{"idlist":[]}}')
+  })
+
+  clinvar_classification("rs113488022")
+
+  expect_false(grepl("tool=", url, fixed = TRUE))
+  expect_false(grepl("email=", url, fixed = TRUE))
+})
+
+test_that("one half of the identity is sent without the other", {
+  withr::with_envvar(
+    c(BIOHTTP_CALLER_IDENTITY = "myapp", BIOHTTP_CONTACT_EMAIL = ""),
+    expect_identical(clinvar_identity_query(), list(tool = "myapp"))
+  )
+  withr::with_envvar(
+    c(BIOHTTP_CALLER_IDENTITY = "", BIOHTTP_CONTACT_EMAIL = "a@b.org"),
+    expect_identical(clinvar_identity_query(), list(email = "a@b.org"))
+  )
+})

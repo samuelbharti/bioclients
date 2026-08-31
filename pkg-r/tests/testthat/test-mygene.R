@@ -193,3 +193,133 @@ test_that("the batch path carries the column too", {
 
   expect_identical(out$hgnc, c("11998", NA_character_))
 })
+
+# --- The batch client and its chunking ---------------------------------------
+
+# A mock that answers each batch POST with one hit per query it was sent,
+# echoing the query the way MyGene does. `fail_when` makes a chunk fail.
+mygene_chunk_mock <- function(seen, fail_when = function(queries) FALSE) {
+  function(req) {
+    queries <- unlist(req$body$data$q, use.names = FALSE)
+    seen$calls <- c(seen$calls, list(queries))
+    if (isTRUE(fail_when(queries))) {
+      return(httr2::response(status_code = 503))
+    }
+    hits <- lapply(queries, function(query) {
+      list(query = query, symbol = query, entrezgene = paste0("id_", query))
+    })
+    mock_json(jsonlite::toJSON(hits, auto_unbox = TRUE))
+  }
+}
+
+test_that("mygene_genes returns one row per input in input order", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(mygene_chunk_mock(seen))
+
+  res <- mygene_genes(c("TP53", "BRCA1", "EGFR"))
+
+  expect_true(res$ok)
+  expect_length(seen$calls, 1)
+  out <- biohttp::body_or_null(res)
+  expect_identical(out$symbol, c("TP53", "BRCA1", "EGFR"))
+  expect_identical(out$entrez, c("id_TP53", "id_BRCA1", "id_EGFR"))
+})
+
+test_that("the batch is chunked at the MyGene limit", {
+  # 1001 identifiers is two requests: 1000 and 1. MyGene answers a body over
+  # the limit with an error rather than a truncated result.
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(mygene_chunk_mock(seen))
+  symbols <- paste0("G", seq_len(MYGENE_BATCH + 1L))
+
+  res <- mygene_genes(symbols)
+
+  expect_true(res$ok)
+  expect_identical(lengths(seen$calls), c(1000L, 1L))
+  out <- biohttp::body_or_null(res)
+  expect_identical(nrow(out), MYGENE_BATCH + 1L)
+  expect_identical(out$symbol, symbols)
+  expect_identical(out$entrez, paste0("id_", symbols))
+})
+
+test_that("the limit matches the documented one", {
+  expect_identical(MYGENE_BATCH, 1000L)
+})
+
+test_that("chunks merge in input order even when a later chunk answers first", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(mygene_chunk_mock(seen))
+
+  res <- mygene_genes(c("A", "B", "C", "D", "E"), chunk_size = 2)
+
+  expect_length(seen$calls, 3)
+  expect_identical(
+    biohttp::body_or_null(res)$symbol,
+    c("A", "B", "C", "D", "E")
+  )
+})
+
+test_that("a failed chunk becomes NA rows rather than failing the call", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(mygene_chunk_mock(
+    seen,
+    fail_when = function(queries) "C" %in% queries
+  ))
+
+  res <- mygene_genes(c("A", "B", "C", "D", "E"), chunk_size = 2)
+
+  expect_true(res$ok)
+  out <- biohttp::body_or_null(res)
+  expect_identical(out$symbol, c("A", "B", "C", "D", "E"))
+  expect_identical(out$entrez, c("id_A", "id_B", NA, NA, "id_E"))
+  reset_transport()
+})
+
+test_that("when every chunk fails the envelope passes straight through", {
+  reset_transport()
+  httr2::local_mocked_responses(function(req) {
+    httr2::response(status_code = 503)
+  })
+
+  res <- mygene_genes(c("TP53", "BRCA1"))
+
+  expect_false(res$ok)
+  expect_identical(res$status, "error")
+  expect_identical(res$source, "MyGene")
+  reset_transport()
+})
+
+test_that("a chunk size over the limit is refused", {
+  reset_transport()
+  expect_error(
+    mygene_genes("TP53", chunk_size = MYGENE_BATCH + 1L),
+    "chunk_size"
+  )
+})
+
+test_that("duplicates and blanks are sent once and still fill every row", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(mygene_chunk_mock(seen))
+
+  res <- mygene_genes(c("TP53", "  ", "TP53"))
+
+  expect_identical(seen$calls[[1]], "TP53")
+  out <- biohttp::body_or_null(res)
+  expect_identical(nrow(out), 3L)
+  expect_identical(out$entrez, c("id_TP53", NA, "id_TP53"))
+})

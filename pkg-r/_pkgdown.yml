@@ -55,9 +55,14 @@ reference:
       - gnomad_constraint
       - gnomad_constraints
       - gnomad_frequency
+      - gnomad_frequency_by_id
+      - gnomad_frequencies
+      - gnomad_variant_id
       - gnomad_parse_constraint
       - gnomad_parse_constraints
       - gnomad_parse_frequency
+      - gnomad_parse_variant
+      - gnomad_parse_variants
       - gnomad_parse_populations
 
   - title: ClinVar
@@ -80,11 +85,15 @@ reference:
 
   - title: Ensembl VEP
     desc: >
-      Predicted consequence for genomic coordinates, exactly 200 per POST.
-      Results are matched back by identity, because VEP does not promise order.
+      Predicted consequence for genomic coordinates, exactly 200 per POST, or
+      any number chunked through vep_variants_all(). Results are matched back
+      by identity, because VEP does not promise order.
     contents:
       - vep_variants
+      - vep_variants_all
+      - vep_default_options
       - vep_parse_element
+      - vep_parse_colocated
       - vep_parse_batch
       - vep_pick_transcript
       - vep_key

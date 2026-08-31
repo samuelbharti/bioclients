@@ -22,12 +22,24 @@ GNOMAD_DATASET <- "gnomad_r4"
 # was established against the live API and is recorded in the source registry of
 # the app that verified it, as a hard limit rather than tuning.
 #
-# 20 rather than 25 on purpose. Cost is charged per field, not only per alias,
-# and this query asks for eight fields per gene where the client that verified
-# the 25 asked for two. Sitting on the exact ceiling with a wider selection set
-# is how a batch starts failing for a reason that reads like rate limiting and
-# is not. Raising this needs a live re-check, not a guess.
+# 20 rather than 25 on purpose. Sitting on the exact ceiling is how a batch
+# starts failing for a reason that reads like rate limiting and is not, and
+# the headroom costs one request in twenty-five. Raising this needs a live
+# re-check, not a guess.
+#
+# Re-verified for the aliased variant query on 2026-08-30: 25 aliases of
+# `variant()` with the whole GNOMAD_VARIANT_FIELDS selection set answered, and
+# 26 came back HTTP 400 with "Query is too expensive (26). Maximum allowed
+# cost is 25." So the cost is one per alias regardless of how many fields the
+# alias selects, and the same chunk size serves both batched queries.
 GNOMAD_CHUNK <- 20
+
+# The groups gnomAD leaves out when it reports a group maximum frequency:
+# the bottlenecked ancestries, whose founder effects inflate the frequency of
+# their own variants, and the remaining/other bucket, which is not a group.
+# The API does not serve grpmax itself, so gnomad_variant_row() derives it
+# from the per-group counts and applies the same exclusion.
+GNOMAD_GRPMAX_EXCLUDED <- c("ami", "asj", "fin", "mid", "remaining")
 
 # Display labels for gnomAD's genetic-ancestry group codes.
 GNOMAD_POP_LABELS <- c(
@@ -481,4 +493,401 @@ gnomad_frequency <- function(rsid, dataset = GNOMAD_DATASET, ...) {
     ))
   }
   biohttp::status_ok(data = parsed, source = "gnomAD", http = res$http)
+}
+
+# --- Variant frequency by id -------------------------------------------------
+
+# The selection set for one variant, shared by the single and the batched
+# query so the two cannot drift. `homozygote_count` is what gnomAD calls
+# nhomalt. The faf95 block is the filtering allele frequency, and `filters` is
+# the list of VCF filters the site failed, empty when it passed.
+GNOMAD_VARIANT_FIELDS <- paste(
+  "variant_id rsids",
+  "exome { af ac an homozygote_count filters",
+  "  faf95 { popmax popmax_population } populations { id ac an } }",
+  "genome { af ac an homozygote_count filters",
+  "  faf95 { popmax popmax_population } populations { id ac an } }"
+)
+
+#' Build a gnomAD variant id from variant components
+#'
+#' Pure. gnomAD's variant query takes `chrom-pos-ref-alt`, with no `chr`
+#' prefix and the alleles in upper case. Vectorised over its arguments.
+#'
+#' @inheritParams vep_region
+#'
+#' @return A character vector of ids such as `"1-55516888-G-GA"`.
+#'
+#' @examples
+#' gnomad_variant_id("chr1", 55516888, "g", "ga")
+#'
+#' @export
+gnomad_variant_id <- function(chrom, pos, ref, alt) {
+  paste(
+    sub("^chr", "", as.character(chrom), ignore.case = TRUE),
+    as.integer(pos),
+    toupper(as.character(ref)),
+    toupper(as.character(alt)),
+    sep = "-"
+  )
+}
+
+# The assembly a dataset's ids are on. The variant query is keyed by dataset
+# alone, so this is what lets a caller's reference_genome be checked against
+# it rather than silently ignored.
+gnomad_dataset_genome <- function(dataset) {
+  if (grepl("^gnomad_r2", dataset)) "GRCh37" else "GRCh38"
+}
+
+# One variant object to one tibble row.
+gnomad_variant_row <- function(variant, variant_id) {
+  if (is.null(variant)) {
+    return(NULL)
+  }
+  exome <- biohttp::pluck_at(variant, "exome")
+  genome <- biohttp::pluck_at(variant, "genome")
+  rsids <- unlist(biohttp::pluck_at(variant, "rsids"), use.names = FALSE)
+  # The group maximum, derived: exome and genome counts fold together per
+  # ancestry group, the bottlenecked groups are left out, and the group with
+  # the highest frequency is reported. gnomad_parse_populations() returns the
+  # table sorted by frequency, so the first surviving row is the answer.
+  populations <- gnomad_parse_populations(
+    biohttp::pluck_at(exome, "populations"),
+    biohttp::pluck_at(genome, "populations")
+  )
+  grpmax <- NULL
+  if (!is.null(populations)) {
+    eligible <- populations[!(populations$pop %in% GNOMAD_GRPMAX_EXCLUDED), ]
+    if (nrow(eligible) > 0) {
+      grpmax <- eligible[1, ]
+    }
+  }
+  faf <- gnomad_faf95(exome, genome)
+  filters <- unique(c(
+    unlist(biohttp::pluck_at(exome, "filters"), use.names = FALSE),
+    unlist(biohttp::pluck_at(genome, "filters"), use.names = FALSE)
+  ))
+  tibble::tibble(
+    variant_id = as.character(variant_id),
+    rsid = if (length(rsids) == 0) NA_character_ else as.character(rsids[[1]]),
+    exome_af = num_at(exome, "af"),
+    exome_ac = num_at(exome, "ac"),
+    exome_an = num_at(exome, "an"),
+    exome_nhomalt = num_at(exome, "homozygote_count"),
+    genome_af = num_at(genome, "af"),
+    genome_ac = num_at(genome, "ac"),
+    genome_an = num_at(genome, "an"),
+    genome_nhomalt = num_at(genome, "homozygote_count"),
+    grpmax_af = if (is.null(grpmax)) NA_real_ else grpmax$af,
+    grpmax_an = if (is.null(grpmax)) NA_real_ else grpmax$an,
+    grpmax_id = if (is.null(grpmax)) NA_character_ else grpmax$pop,
+    faf95 = faf$value,
+    faf95_pop = faf$pop,
+    filters = if (length(filters) == 0) {
+      NA_character_
+    } else {
+      paste(filters, collapse = ";")
+    }
+  )
+}
+
+# The higher of the exome and genome filtering allele frequencies, with the
+# group it belongs to.
+gnomad_faf95 <- function(exome, genome) {
+  candidates <- list(
+    biohttp::pluck_at(exome, "faf95"),
+    biohttp::pluck_at(genome, "faf95")
+  )
+  best <- list(value = NA_real_, pop = NA_character_)
+  for (candidate in candidates) {
+    value <- num_at(candidate, "popmax")
+    if (!is.na(value) && (is.na(best$value) || value > best$value)) {
+      best <- list(value = value, pop = chr_at(candidate, "popmax_population"))
+    }
+  }
+  best
+}
+
+gnomad_empty_variant_row <- function(variant_id) {
+  tibble::tibble(
+    variant_id = as.character(variant_id),
+    rsid = NA_character_,
+    exome_af = NA_real_,
+    exome_ac = NA_real_,
+    exome_an = NA_real_,
+    exome_nhomalt = NA_real_,
+    genome_af = NA_real_,
+    genome_ac = NA_real_,
+    genome_an = NA_real_,
+    genome_nhomalt = NA_real_,
+    grpmax_af = NA_real_,
+    grpmax_an = NA_real_,
+    grpmax_id = NA_character_,
+    faf95 = NA_real_,
+    faf95_pop = NA_character_,
+    filters = NA_character_
+  )
+}
+
+#' Turn a gnomAD variant response into a frequency row
+#'
+#' Pure. The flat, one-row form of a variant record, for a variant table that
+#' wants a frequency per row. [gnomad_parse_frequency()] is the nested form
+#' with the per-ancestry table.
+#'
+#' @section grpmax is derived:
+#' The API does not serve a group maximum. It is computed here from the
+#' per-group counts, exome and genome summed, leaving out the bottlenecked
+#' groups and the remaining bucket the same way gnomAD does. See
+#' `GNOMAD_GRPMAX_EXCLUDED`.
+#'
+#' @param body A parsed gnomAD GraphQL response body.
+#' @param variant_id The id that was queried, carried through to the row.
+#'
+#' @return A one-row tibble of `variant_id`, `rsid`, `exome_af`, `exome_ac`,
+#'   `exome_an`, `exome_nhomalt`, `genome_af`, `genome_ac`, `genome_an`,
+#'   `genome_nhomalt`, `grpmax_af`, `grpmax_an`, `grpmax_id`, `faf95`,
+#'   `faf95_pop`, and `filters`. `NULL` when the body carries no variant,
+#'   which is how gnomAD answers for a variant it has never seen.
+#'
+#' @examples
+#' body <- list(data = list(variant = list(
+#'   variant_id = "17-7676154-G-C",
+#'   rsids = list("rs1042522"),
+#'   exome = list(af = 0.72, ac = 1046941, an = 1461558, homozygote_count = 380188)
+#' )))
+#' gnomad_parse_variant(body, "17-7676154-G-C")
+#'
+#' @export
+gnomad_parse_variant <- function(body, variant_id = NA_character_) {
+  variant <- biohttp::pluck_at(body, "data", "variant")
+  gnomad_variant_row(variant, variant_id)
+}
+
+# An errors array that only says "Variant not found" is not a failed query.
+# gnomAD answers an absent variant with a 200, `variant: null` in data, and
+# that message in errors, in both the single and the aliased form. Treating
+# it as biohttp::graphql_error() does would turn every rare variant into an
+# error envelope. Anything else in the array is a real failure.
+gnomad_variant_error <- function(res) {
+  if (!isTRUE(res$ok)) {
+    return(res)
+  }
+  errors <- res$data$errors
+  if (is.null(errors) || length(errors) == 0) {
+    return(NULL)
+  }
+  messages <- vapply(errors, function(e) chr_at(e, "message"), character(1))
+  if (all(!is.na(messages) & messages == "Variant not found")) {
+    return(NULL)
+  }
+  biohttp::graphql_error(res, "gnomAD")
+}
+
+#' Population allele frequency for a variant, by id
+#'
+#' Looked up by `chrom-pos-ref-alt`, which names one allele exactly. This is
+#' the lookup [gnomad_frequency()] cannot do, because an rsID is shared by
+#' every allele at a site.
+#'
+#' @param variant_id A gnomAD variant id, see [gnomad_variant_id()].
+#' @param dataset The gnomAD dataset. `gnomad_r4` is GRCh38; the `gnomad_r2`
+#'   datasets are GRCh37.
+#' @param reference_genome The assembly the id is on. The variant query is
+#'   keyed by dataset alone, so this is checked against `dataset` and a
+#'   mismatch is refused rather than sent, because gnomAD would answer with
+#'   whatever sits at those coordinates on the other assembly.
+#' @param ... Passed to [biohttp::post_json()].
+#'
+#' @return A biohttp envelope whose `data` is the one-row tibble described in
+#'   [gnomad_parse_variant()]. `no_data` when gnomAD has no record of the
+#'   variant.
+#'
+#' @examples
+#' \dontrun{
+#' biohttp::body_or_null(gnomad_frequency_by_id("17-7676154-G-C"))
+#' }
+#'
+#' @export
+gnomad_frequency_by_id <- function(
+  variant_id,
+  dataset = GNOMAD_DATASET,
+  reference_genome = "GRCh38",
+  ...
+) {
+  if (biohttp::is_blank(variant_id)) {
+    return(biohttp::status_no_data(
+      source = "gnomAD",
+      detail = "no variant id was supplied"
+    ))
+  }
+  if (!identical(gnomad_dataset_genome(dataset), reference_genome)) {
+    return(biohttp::status_no_data(
+      source = "gnomAD",
+      detail = paste0(dataset, " is not on ", reference_genome)
+    ))
+  }
+  query <- sprintf(
+    paste(
+      "query($id: String!) {",
+      "  variant(variantId: $id, dataset: %s) {",
+      "    %s",
+      "  }",
+      "}",
+      sep = "\n"
+    ),
+    dataset,
+    GNOMAD_VARIANT_FIELDS
+  )
+  res <- biohttp::post_json(
+    GNOMAD_URL,
+    body = list(query = query, variables = list(id = as.character(variant_id))),
+    source = "gnomAD",
+    ...
+  )
+  bad <- gnomad_variant_error(res)
+  if (!is.null(bad)) {
+    return(bad)
+  }
+  parsed <- gnomad_parse_variant(res$data, variant_id)
+  if (is.null(parsed)) {
+    return(biohttp::status_no_data(
+      source = "gnomAD",
+      http = res$http,
+      detail = paste0("gnomAD has no record for ", variant_id)
+    ))
+  }
+  biohttp::status_ok(data = parsed, source = "gnomAD", http = res$http)
+}
+
+# One aliased query covering a chunk of variant ids, v1, v2, and so on.
+gnomad_variant_alias_query <- function(variant_ids, dataset) {
+  aliases <- vapply(
+    seq_along(variant_ids),
+    function(i) {
+      sprintf(
+        'v%d: variant(variantId: "%s", dataset: %s) { %s }',
+        i,
+        variant_ids[[i]],
+        dataset,
+        GNOMAD_VARIANT_FIELDS
+      )
+    },
+    character(1)
+  )
+  paste0("{\n", paste(aliases, collapse = "\n"), "\n}")
+}
+
+#' Turn an aliased gnomAD variant response into a table
+#'
+#' Pure. The batched query uses aliases `v1`, `v2`, and so on, so rows are
+#' mapped back by alias index rather than by the echoed id. A variant gnomAD
+#' has not seen comes back as `null` under its alias, with a
+#' "Variant not found" entry in `errors`, and becomes a row of `NA`.
+#'
+#' @param body A parsed gnomAD GraphQL response body.
+#' @param variant_ids The ids that were queried, in the order asked.
+#'
+#' @return A tibble with one row per entry in `variant_ids`, same order. See
+#'   [gnomad_parse_variant()] for the columns.
+#'
+#' @examples
+#' body <- list(data = list(
+#'   v1 = list(variant_id = "17-7676154-G-C", exome = list(af = 0.72)),
+#'   v2 = NULL
+#' ))
+#' gnomad_parse_variants(body, c("17-7676154-G-C", "17-7676154-G-GTTTTT"))
+#'
+#' @export
+gnomad_parse_variants <- function(body, variant_ids) {
+  data <- biohttp::pluck_at(body, "data")
+  rows <- lapply(seq_along(variant_ids), function(i) {
+    row <- gnomad_variant_row(
+      biohttp::pluck_at(data, paste0("v", i)),
+      variant_ids[[i]]
+    )
+    row %||% gnomad_empty_variant_row(variant_ids[[i]])
+  })
+  do.call(rbind, rows)
+}
+
+#' Population allele frequency for many variants
+#'
+#' Batched through GraphQL aliases and chunked at `chunk_size` to stay under
+#' gnomAD's query cost cap of 25, which was verified for this query. See
+#' `GNOMAD_CHUNK`. Dispatched through [biohttp::post_json_many()], so only
+#' the chunks the cache is missing go over the wire.
+#'
+#' A failed chunk yields a row of `NA` per variant rather than taking the
+#' whole call down, following [gnomad_constraints()]. A variant gnomAD has no
+#' record of is a row of `NA` too, because that is an answer.
+#'
+#' @param variant_ids gnomAD variant ids, see [gnomad_variant_id()].
+#' @param chunk_size Variants per request.
+#' @inheritParams gnomad_frequency_by_id
+#' @param ... Passed to [biohttp::post_json_many()].
+#'
+#' @return A biohttp envelope whose `data` is a tibble with one row per entry
+#'   in `variant_ids`, in the same order. See [gnomad_parse_variant()].
+#'
+#' @examples
+#' \dontrun{
+#' biohttp::body_or_null(gnomad_frequencies(
+#'   c("17-7676154-G-C", "7-117559590-ATCT-A")
+#' ))
+#' }
+#'
+#' @export
+gnomad_frequencies <- function(
+  variant_ids,
+  dataset = GNOMAD_DATASET,
+  reference_genome = "GRCh38",
+  chunk_size = GNOMAD_CHUNK,
+  ...
+) {
+  ids <- as.character(variant_ids %||% character())
+  usable <- unique(ids[!is.na(ids) & nzchar(trimws(ids))])
+  if (length(usable) == 0) {
+    return(biohttp::status_no_data(
+      source = "gnomAD",
+      detail = "no variant ids were supplied"
+    ))
+  }
+  if (!identical(gnomad_dataset_genome(dataset), reference_genome)) {
+    return(biohttp::status_no_data(
+      source = "gnomAD",
+      detail = paste0(dataset, " is not on ", reference_genome)
+    ))
+  }
+  chunks <- split(usable, ceiling(seq_along(usable) / chunk_size))
+  bodies <- lapply(chunks, function(chunk) {
+    list(query = gnomad_variant_alias_query(chunk, dataset))
+  })
+  results <- biohttp::post_json_many(
+    GNOMAD_URL,
+    bodies = bodies,
+    source = "gnomAD",
+    ...
+  )
+  parsed <- lapply(seq_along(chunks), function(i) {
+    res <- results[[i]]
+    bad <- gnomad_variant_error(res)
+    if (!is.null(bad)) {
+      return(do.call(rbind, lapply(chunks[[i]], gnomad_empty_variant_row)))
+    }
+    gnomad_parse_variants(res$data, chunks[[i]])
+  })
+  table <- do.call(rbind, parsed)
+  # Map back onto the caller's input, including blanks and repeats.
+  out <- do.call(
+    rbind,
+    lapply(ids, function(id) {
+      hit <- match(id, table$variant_id)
+      if (is.na(hit)) {
+        return(gnomad_empty_variant_row(id))
+      }
+      table[hit, , drop = FALSE]
+    })
+  )
+  biohttp::status_ok(data = out, source = "gnomAD")
 }

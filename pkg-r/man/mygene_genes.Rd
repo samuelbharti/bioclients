@@ -4,14 +4,16 @@
 \alias{mygene_genes}
 \title{Look up many genes in one request}
 \usage{
-mygene_genes(symbols, species = "human", ...)
+mygene_genes(symbols, species = "human", chunk_size = MYGENE_BATCH, ...)
 }
 \arguments{
 \item{symbols}{Gene symbols, Ensembl gene ids, or Entrez ids.}
 
 \item{species}{Passed through to MyGene.}
 
-\item{...}{Passed to \code{\link[biohttp:post_json]{biohttp::post_json()}}.}
+\item{chunk_size}{Identifiers per request, at most \code{MYGENE_BATCH}.}
+
+\item{...}{Passed to \code{\link[biohttp:post_json_many]{biohttp::post_json_many()}}.}
 }
 \value{
 A biohttp envelope whose \code{data} is a tibble with one row per entry in
@@ -21,6 +23,14 @@ A biohttp envelope whose \code{data} is a tibble with one row per entry in
 The batch POST, which is the reason this client is worth installing. An
 N-symbol list is one round trip rather than N, and the round trip is where
 essentially all the time goes.
+}
+\details{
+MyGene takes at most 1000 identifiers per POST, see \code{MYGENE_BATCH}. A
+longer list is chunked, the chunks are dispatched through
+\code{\link[biohttp:post_json_many]{biohttp::post_json_many()}}, and the hits are merged back onto \code{symbols}
+in input order. A chunk that failed yields a row of \code{NA} per identifier
+rather than taking the whole call down, following \code{\link[=gnomad_constraints]{gnomad_constraints()}};
+only when every chunk failed is the failing envelope returned.
 }
 \examples{
 \dontrun{

@@ -1,3 +1,49 @@
+# bioclients (development version)
+
+## Ensembl VEP
+
+* Results are matched back on the echoed `input` line and on `vcf_string`
+  rather than on a key rebuilt from the reported coordinates. VEP left-trims
+  and renumbers indels, so the rebuilt key matched only SNVs and every indel
+  came back as an empty row.
+* `vep_variants()` takes an `options` list of request flags, defaulting to
+  `vep_default_options()`. `dbNSFP` is refused.
+* `vep_parse_element()` adds `transcript`, `gene_id`, `biotype`, `hgvsc`,
+  `hgvsp`, `canonical`, `codons`, `amino_acids`, `cadd_phred`, `cadd_raw`,
+  `revel`, the four `spliceai_ds_*` scores, `spliceai_max` and `lof`.
+* New `vep_parse_colocated()` reads the dbSNP record beside a variant: `rsid`,
+  gnomAD genome and exome frequencies with their per-population maximum, and
+  the clinical significance of the allele asked. `vep_parse_batch()` carries
+  these columns.
+* New `vep_variants_all()` takes any number of variants, chunks them at the
+  200 VEP accepts per POST and dispatches the chunks through
+  `biohttp::post_json_many()`. One row per input in input order; a failed
+  chunk becomes rows of `NA` carrying the envelope status in `status`.
+
+## gnomAD
+
+* New `gnomad_frequency_by_id()` looks a variant up by `chrom-pos-ref-alt`,
+  which names one allele where an rsID names a site, and `gnomad_frequencies()`
+  does the same for many ids, alias-batched and chunked like
+  `gnomad_constraints()`. `gnomad_variant_id()` builds the id. The flat row
+  from `gnomad_parse_variant()` carries exome and genome `af`, `ac`, `an` and
+  `nhomalt`, a derived `grpmax`, `faf95` and `filters`.
+* The 25-alias cost cap was re-verified against the live API for the variant
+  query. The cost is one per alias whatever the selection set.
+
+## ClinVar
+
+* `clinvar_classification()` throttles by default at the documented
+  E-utilities rate, 3 requests a second or 10 when `NCBI_API_KEY` is set, and
+  sends `tool` and `email` read from `BIOHTTP_CALLER_IDENTITY` and
+  `BIOHTTP_CONTACT_EMAIL` when they are set.
+
+## MyGene
+
+* `mygene_genes()` chunks a list longer than the 1000 identifiers MyGene
+  takes per POST, dispatches the chunks through `biohttp::post_json_many()`
+  and merges the hits back in input order.
+
 # bioclients 0.1.0
 
 First release. 29 clients, 125 exported functions, and the behaviour they depend

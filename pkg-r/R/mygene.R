@@ -31,6 +31,11 @@ MYGENE_FIELDS <- paste(
 # types resolve in one request without a per-token prefix.
 MYGENE_BATCH_SCOPES <- "symbol,alias,ensembl.gene,entrezgene,retired"
 
+# The documented ceiling on identifiers per batch POST. MyGene answers a
+# larger body with an error rather than truncating it, so a gene list longer
+# than this has to be chunked and the chunks merged back in input order.
+MYGENE_BATCH <- 1000L
+
 # Build the query term, detecting Ensembl gene and Entrez ids so they resolve
 # precisely rather than as free-text symbol matches.
 mygene_query_term <- function(symbol) {
@@ -273,9 +278,17 @@ mygene_gene <- function(symbol, species = "human", ...) {
 #' N-symbol list is one round trip rather than N, and the round trip is where
 #' essentially all the time goes.
 #'
+#' MyGene takes at most 1000 identifiers per POST, see `MYGENE_BATCH`. A
+#' longer list is chunked, the chunks are dispatched through
+#' [biohttp::post_json_many()], and the hits are merged back onto `symbols`
+#' in input order. A chunk that failed yields a row of `NA` per identifier
+#' rather than taking the whole call down, following [gnomad_constraints()];
+#' only when every chunk failed is the failing envelope returned.
+#'
 #' @param symbols Gene symbols, Ensembl gene ids, or Entrez ids.
 #' @inheritParams mygene_gene
-#' @param ... Passed to [biohttp::post_json()].
+#' @param chunk_size Identifiers per request, at most `MYGENE_BATCH`.
+#' @param ... Passed to [biohttp::post_json_many()].
 #'
 #' @return A biohttp envelope whose `data` is a tibble with one row per entry in
 #'   `symbols`, in the same order.
@@ -287,7 +300,12 @@ mygene_gene <- function(symbol, species = "human", ...) {
 #' }
 #'
 #' @export
-mygene_genes <- function(symbols, species = "human", ...) {
+mygene_genes <- function(
+  symbols,
+  species = "human",
+  chunk_size = MYGENE_BATCH,
+  ...
+) {
   cleaned <- vapply(
     symbols,
     function(symbol) clean_symbol(symbol) %||% NA_character_,
@@ -301,23 +319,44 @@ mygene_genes <- function(symbols, species = "human", ...) {
       detail = "no usable gene identifiers were supplied"
     ))
   }
-  res <- biohttp::post_json(
-    paste0(MYGENE_BASE, "/query"),
-    body = list(
-      q = as.list(usable),
+  if (chunk_size < 1 || chunk_size > MYGENE_BATCH) {
+    stop(
+      "chunk_size must be between 1 and ",
+      MYGENE_BATCH,
+      ", the MyGene limit per request",
+      call. = FALSE
+    )
+  }
+  chunks <- split(usable, ceiling(seq_along(usable) / chunk_size))
+  bodies <- lapply(chunks, function(chunk) {
+    list(
+      q = as.list(chunk),
       scopes = MYGENE_BATCH_SCOPES,
       fields = MYGENE_FIELDS,
       species = species
-    ),
+    )
+  })
+  results <- biohttp::post_json_many(
+    paste0(MYGENE_BASE, "/query"),
+    bodies = bodies,
     source = "MyGene",
     ...
   )
-  if (!isTRUE(res$ok)) {
-    return(res)
+  answered <- Filter(function(res) isTRUE(res$ok), results)
+  if (length(answered) == 0) {
+    return(results[[1]])
   }
+  # Every answered chunk is a flat array of hits echoing its query, so the
+  # arrays concatenate into one and the batch parser maps them back onto the
+  # caller's input. A hit from a failed chunk is simply absent, and its
+  # identifier gets the NA row the parser gives any unmatched token.
+  hits <- unlist(
+    lapply(answered, function(res) res$data),
+    recursive = FALSE,
+    use.names = FALSE
+  )
   biohttp::status_ok(
-    data = mygene_parse_batch(res$data, symbols),
-    source = "MyGene",
-    http = res$http
+    data = mygene_parse_batch(hits, symbols),
+    source = "MyGene"
   )
 }
