@@ -703,3 +703,90 @@ test_that("no variants is no_data without a request", {
     "no_data"
   )
 })
+
+# --- Sorted, deduplicated, and throttled before dispatch ---------------------
+
+test_that("vep_variants_all sorts into genome order before chunking", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(vep_chunk_mock(seen))
+
+  # Deliberately out of genome order: chrX before chr1, descending position
+  # within chr1.
+  res <- vep_variants_all(
+    c("X", "1", "1"),
+    c(500, 300, 100),
+    c("A", "A", "A"),
+    c("T", "T", "T"),
+    chunk_size = 2
+  )
+
+  expect_true(res$ok)
+  # Chunk 1 dispatches chr1:100 then chr1:300, in genome order; chunk 2
+  # dispatches chrX:500.
+  expect_identical(
+    seen$calls[[1]],
+    c("1 100 . A T . . .", "1 300 . A T . . .")
+  )
+  expect_identical(seen$calls[[2]], "X 500 . A T . . .")
+
+  out <- biohttp::body_or_null(res)
+  # The output stays in the ORIGINAL input order, regardless of dispatch
+  # order.
+  expect_identical(
+    out$key,
+    vep_key(
+      c("X", "1", "1"),
+      c(500, 300, 100),
+      c("A", "A", "A"),
+      c("T", "T", "T")
+    )
+  )
+})
+
+test_that("a repeated variant is sent once and every occurrence gets the same answer", {
+  skip_if_not_installed("jsonlite")
+  reset_transport()
+  seen <- new.env()
+  seen$calls <- list()
+  httr2::local_mocked_responses(vep_chunk_mock(seen))
+
+  # Positions 1 and 3 are the same variant, as a multiallelic split can
+  # produce.
+  res <- vep_variants_all(
+    c("1", "1", "1"),
+    c(100, 200, 100),
+    c("A", "A", "A"),
+    c("T", "G", "T"),
+    chunk_size = 10
+  )
+
+  expect_true(res$ok)
+  # Two distinct variants dispatched, not three.
+  expect_length(unlist(seen$calls), 2)
+  out <- biohttp::body_or_null(res)
+  expect_identical(nrow(out), 3L)
+  expect_identical(out$gene[[1]], out$gene[[3]])
+  expect_identical(out$status, rep("ok", 3))
+})
+
+test_that("vep_variants_all applies a default throttle for VEP's host", {
+  reset_transport()
+  captured <- "unset"
+  httr2::local_mocked_responses(function(req) {
+    captured <<- req$policies$throttle_realm
+    mock_json("[]")
+  })
+
+  vep_variants_all("1", 1, "A", "T")
+  expect_identical(captured, "rest.ensembl.org")
+
+  # A fresh cache, or the second call (same URL and body as the first) would
+  # be served from the success-only cache and never re-dispatch.
+  reset_transport()
+  captured <- "unset"
+  vep_variants_all("1", 1, "A", "T", throttle = NULL)
+  expect_null(captured)
+})

@@ -39,6 +39,39 @@ VEP_URL <- "https://rest.ensembl.org/vep/homo_sapiens/region"
 # "verified hard limits, not tuning".
 VEP_BATCH <- 200L
 
+# Genome order for the chunking in vep_variants_all(): 1-22, X, Y, MT, then
+# anything else by name. A stable order makes chunk boundaries reproducible
+# across variant sets that share a common background (two runs over
+# overlapping coding regions, say), which is what lets biohttp's per-chunk
+# cache (parallel.R, keyed on the exact request body) ever actually hit
+# between two calls. Position and allele are tie-breakers, not the point.
+vep_sort_order <- function(chrom, pos, ref, alt) {
+  known <- c(as.character(1:22), "X", "Y", "MT")
+  bare <- toupper(sub("^chr", "", as.character(chrom), ignore.case = TRUE))
+  rank <- match(bare, known)
+  rank[is.na(rank)] <- length(known) + 1L
+  order(rank, bare, as.integer(pos), toupper(ref), toupper(alt))
+}
+
+#' The default rate limit for VEP requests
+#'
+#' Ensembl publishes no formal limit for the REST service, but an unpaced
+#' burst of the 100 or so requests one case's coding lane needs reliably
+#' trips a 429 partway through. One request per second is conservative
+#' enough to avoid that while still finishing a typical chunk count in a
+#' few minutes; [vep_variants_all()] applies it by default.
+#'
+#' @return A throttle spec, see `biohttp::req_defaults()`'s `throttle`
+#'   argument.
+#'
+#' @examples
+#' vep_default_throttle()
+#'
+#' @export
+vep_default_throttle <- function() {
+  list(capacity = 1, fill_time_s = 1)
+}
+
 #' The request flags VEP is asked for by default
 #'
 #' Pure. The default for the `options` argument of [vep_variants()] and
@@ -688,9 +721,23 @@ vep_variants <- function(
 #' when every chunk failed is the first failing envelope returned, so an
 #' outage still reads as one.
 #'
+#' @section Sorted and deduplicated before chunking:
+#' The input is put in genome order and a repeated variant is sent once, not
+#' once per occurrence, before it is split into chunks. Neither changes the
+#' contract: the return is still one row per input, in input order, and a
+#' repeated variant's positions all carry the same answer (which they did
+#' not necessarily do before, when duplicates could land in different
+#' chunks and see different transient failures). What it does change is how
+#' many requests go out: a coding lane's ~1500 multiallelic-split duplicates
+#' stop costing a request each, and a stable chunk order gives
+#' `biohttp`'s per-chunk cache a real chance to hit between two calls that
+#' share a background.
+#'
 #' @inheritParams vep_variants
 #' @param chunk_size Variants per request, at most `VEP_BATCH` (200).
-#' @param ... Passed to [biohttp::post_json_many()], for example `throttle` or
+#' @param throttle A throttle spec passed to [biohttp::post_json_many()].
+#'   Defaults to [vep_default_throttle()]; pass `NULL` to disable pacing.
+#' @param ... Passed to [biohttp::post_json_many()], for example
 #'   `max_active`.
 #'
 #' @return A biohttp envelope whose `data` is a tibble with one row per
@@ -716,6 +763,7 @@ vep_variants_all <- function(
   alt,
   chunk_size = VEP_BATCH,
   options = vep_default_options(),
+  throttle = vep_default_throttle(),
   ...
 ) {
   n <- length(chrom)
@@ -738,15 +786,27 @@ vep_variants_all <- function(
   url <- paste0(VEP_URL, "?", vep_query_string(options))
   regions <- vep_region(chrom, pos, ref, alt)
   keys <- vep_key(chrom, pos, ref, alt)
-  chunks <- split(seq_len(n), ceiling(seq_len(n) / chunk_size))
+
+  # Original indices, reordered to genome order and reduced to one per
+  # distinct key. Everything from here dispatches over this set; the input
+  # order is restored only at the very end.
+  dispatch_order <- vep_sort_order(chrom, pos, ref, alt)
+  dispatch_order <- dispatch_order[!duplicated(keys[dispatch_order])]
+  dispatch_keys <- keys[dispatch_order]
+
+  chunks <- split(
+    seq_along(dispatch_order),
+    ceiling(seq_along(dispatch_order) / chunk_size)
+  )
   bodies <- lapply(chunks, function(rows) {
     # unname() is load-bearing here too. See vep_variants().
-    list(variants = unname(as.list(regions[rows])))
+    list(variants = unname(as.list(regions[dispatch_order[rows]])))
   })
   results <- biohttp::post_json_many(
     url,
     bodies = bodies,
     source = "VEP",
+    throttle = throttle,
     ...
   )
   failed <- Filter(function(res) !isTRUE(res$ok), results)
@@ -755,7 +815,7 @@ vep_variants_all <- function(
   }
   parsed <- lapply(seq_along(chunks), function(i) {
     res <- results[[i]]
-    chunk_keys <- keys[chunks[[i]]]
+    chunk_keys <- dispatch_keys[chunks[[i]]]
     if (!isTRUE(res$ok)) {
       rows <- vep_parse_batch(list(), chunk_keys)
       rows$status <- as.character(res$status %||% "error")
@@ -765,8 +825,13 @@ vep_variants_all <- function(
     rows$status <- "ok"
     rows
   })
+  by_key <- tibble::as_tibble(do.call(rbind, parsed))
+
+  # Replay the (once-computed) answer for each distinct key onto every
+  # original position that asked for it, in the order those positions were
+  # asked in.
   biohttp::status_ok(
-    data = tibble::as_tibble(do.call(rbind, parsed)),
+    data = by_key[match(keys, by_key$key), , drop = FALSE],
     source = "VEP"
   )
 }

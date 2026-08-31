@@ -11,6 +11,7 @@ vep_variants_all(
   alt,
   chunk_size = VEP_BATCH,
   options = vep_default_options(),
+  throttle = vep_default_throttle(),
   ...
 )
 }
@@ -23,7 +24,10 @@ vep_variants_all(
 \code{\link[=vep_default_options]{vep_default_options()}} for the supported flags and what each one adds to
 the result.}
 
-\item{...}{Passed to \code{\link[biohttp:post_json_many]{biohttp::post_json_many()}}, for example \code{throttle} or
+\item{throttle}{A throttle spec passed to \code{\link[biohttp:post_json_many]{biohttp::post_json_many()}}.
+Defaults to \code{\link[=vep_default_throttle]{vep_default_throttle()}}; pass \code{NULL} to disable pacing.}
+
+\item{...}{Passed to \code{\link[biohttp:post_json_many]{biohttp::post_json_many()}}, for example
 \code{max_active}.}
 }
 \value{
@@ -47,6 +51,20 @@ usual. Partial failure is the normal case across many requests, and taking
 the whole call down would throw away the answers that did arrive. Only
 when every chunk failed is the first failing envelope returned, so an
 outage still reads as one.
+}
+
+\section{Sorted and deduplicated before chunking}{
+
+The input is put in genome order and a repeated variant is sent once, not
+once per occurrence, before it is split into chunks. Neither changes the
+contract: the return is still one row per input, in input order, and a
+repeated variant's positions all carry the same answer (which they did
+not necessarily do before, when duplicates could land in different
+chunks and see different transient failures). What it does change is how
+many requests go out: a coding lane's ~1500 multiallelic-split duplicates
+stop costing a request each, and a stable chunk order gives
+\code{biohttp}'s per-chunk cache a real chance to hit between two calls that
+share a background.
 }
 
 \examples{
