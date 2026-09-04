@@ -331,6 +331,13 @@ To pin the exact version you used, cite its own DOI instead. Version 0.1.0 is
 `CITATION.cff` carries the same metadata, so `citation("bioclients")` in R and
 the "Cite this repository" button on GitHub both work.
 
+## Acknowledgements
+
+Barret Schloerke and Carson Sievert advise this work as thesis advisors.
+Posit Software, PBC funds it and holds copyright together with the author. An
+additional gift from Anthropic supported the early stages and the planning of
+this work.
+
 ## License
 
 MIT. See `LICENSE`.

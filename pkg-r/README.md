@@ -100,3 +100,10 @@ rest.
 See `CONTRIBUTING.md` at the repository root. Tests are offline, fixtures are
 ported rather than regenerated, and a ported fixture that needs editing is a
 signal that a parser changed behaviour during the port.
+
+## Acknowledgements
+
+Barret Schloerke and Carson Sievert advise this work as thesis advisors.
+Posit Software, PBC funds it and holds copyright together with the author. An
+additional gift from Anthropic supported the early stages and the planning of
+this work.
