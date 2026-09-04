@@ -23,6 +23,12 @@ home:
     One client per biological database, each with a pure parser that runs
     offline.
 
+# The home page sidebar lists the advisors and the funders next to the author.
+# The footer keeps the pkgdown default.
+authors:
+  sidebar:
+    roles: [aut, cre, ths, fnd]
+
 navbar:
   structure:
     left: [reference, news]
