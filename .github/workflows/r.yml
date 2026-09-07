@@ -1,12 +1,11 @@
 name: R-CMD-check
 
-# Only a pull request into main runs this, matching biohttp. Work on a feature
-# branch and into dev is verified locally instead: `prek run --all-files` and
-# `rcmdcheck::rcmdcheck('pkg-r', args = c('--no-manual', '--as-cran'))`. See
-# CONTRIBUTING.md. workflow_dispatch stays so a run can be asked for by hand.
+# Runs on every pull request, whatever it targets. It used to run only into
+# main, to save Actions minutes while the repo was private. The repo is public
+# now, so minutes are free and there is no reason to let work reach dev without
+# a check. workflow_dispatch stays so a run can be asked for by hand.
 on:
   pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

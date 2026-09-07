@@ -13,6 +13,12 @@ name: cran
 # changing, not this repository changing. No pull-request trigger can catch
 # that. A weekly run can, and it is how a dead endpoint or a moved URL gets
 # found before CRAN's daily checks find it.
+#
+# This one stays on pull requests into main only, while the other workflows now
+# run on every pull request. It is the one that runs the \donttest{} examples,
+# which means 53 real requests to services we do not own. Firing that at every
+# push to a feature branch would be rude to them and slow for us, and it would
+# tell us nothing r.yml has not already said.
 on:
   pull_request:
     branches: [main]

@@ -1,11 +1,10 @@
 name: lint
 
-# Only a pull request into main runs this. The same hooks run on every commit
-# through the local prek install, so this is a backstop rather than the first
-# line of defence. See CONTRIBUTING.md.
+# Runs on every pull request, whatever it targets. The same hooks run on every
+# commit through the local prek install, so this is a backstop rather than the
+# first line of defence. See CONTRIBUTING.md.
 on:
   pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
