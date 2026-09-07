@@ -6,7 +6,9 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21770870.svg)](https://doi.org/10.5281/zenodo.21770870)
 <!-- badges: end -->
 
-One client per biological database, each with a pure parser that runs offline.
+Look up genes, variants and proteins from R. One consistent way to call gnomAD,
+ClinVar, UniProt, Ensembl and the other databases you already use, instead of
+writing a client for each one.
 
 > **Status:** 0.1.0 is the current release. 0.1.1 is ready and going to CRAN
 > next. Docs are at <https://www.samuelbharti.com/bioclients/>. What can still
