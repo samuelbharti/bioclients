@@ -64,6 +64,8 @@ vep_sort_order <- function(chrom, pos, ref, alt) {
 #' @return A throttle spec, see `biohttp::req_defaults()`'s `throttle`
 #'   argument.
 #'
+#' @inherit vep_variants references
+#'
 #' @examples
 #' vep_default_throttle()
 #'
@@ -103,6 +105,8 @@ vep_default_throttle <- function() {
 #' values silently belong to a different transcript than the rest of the row.
 #'
 #' @return A named list of flags.
+#'
+#' @inherit vep_variants references
 #'
 #' @examples
 #' vep_default_options()
@@ -548,6 +552,8 @@ vep_clin_sig <- function(record, element) {
 #'   `gnomadg_af_max`, `gnomade_af_max`, and `clin_sig`, all `NA` when the
 #'   element has no dbSNP record.
 #'
+#' @inherit vep_variants references
+#'
 #' @examples
 #' element <- list(
 #'   allele_string = "G/C",
@@ -760,6 +766,8 @@ vep_variants <- function(
 #'   variant, in the order asked: the columns of [vep_parse_batch()] plus
 #'   `status`, which is `"ok"` for a row whose chunk was answered and the
 #'   failing envelope's status otherwise.
+#'
+#' @inherit vep_variants references
 #'
 #' @examples
 #' \donttest{
