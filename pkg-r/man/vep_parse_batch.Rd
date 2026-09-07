@@ -12,7 +12,8 @@ vep_parse_batch(body, keys)
 \item{keys}{Variant keys from \code{\link[=vep_key]{vep_key()}}, in the order asked.}
 }
 \value{
-A tibble with one row per entry in \code{keys}, plus a \code{key} column.
+A tibble with one row per entry in \code{keys}: a \code{key} column, the
+columns of \code{\link[=vep_parse_element]{vep_parse_element()}}, then those of \code{\link[=vep_parse_colocated]{vep_parse_colocated()}}.
 }
 \description{
 Pure. One row per requested variant, in the order asked.
@@ -21,6 +22,23 @@ Pure. One row per requested variant, in the order asked.
 
 VEP does not promise that results come back in the order they were sent.
 Zipping the response onto the input by index therefore assigns consequences
-to the wrong variants, silently. Elements are matched on
-\verb{(chromosome, position, ref, alt)} reconstructed from what VEP reports.
+to the wrong variants, silently. Elements are matched on the key built from
+the echoed \code{input} line, which is the exact string that was sent.
+}
+
+\section{Indels are renumbered}{
+
+VEP left-trims and renumbers an indel, so the \code{start} and \code{allele_string} it
+reports do not rebuild the key the caller asked with. An insertion sent as
+\verb{1 55516888 . T TA . . .} comes back as start 55516889 and \verb{-/A}, and a
+delins can come back re-anchored in \code{vcf_string} too. The echoed \code{input} is
+the identity that survives, so it is matched first, then \code{vcf_string}, and
+the rebuilt key only for a response carrying neither.
+}
+
+\references{
+McLaren et al. (2016). The Ensembl Variant Effect Predictor.
+Genome Biology 17, 122. \doi{10.1186/s13059-016-0974-4}
+
+Service documentation: \url{https://rest.ensembl.org/}
 }

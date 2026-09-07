@@ -18,8 +18,15 @@ A biohttp envelope whose \code{data} is a one-row tibble.
 A thin wrapper over \code{\link[=pharos_targets]{pharos_targets()}}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(pharos_target("NF1"))
 }
 
+}
+\references{
+Kelleher et al. (2023). Pharos 2023: an integrated resource for the
+understudied human proteome. Nucleic Acids Research 51(D1), D1405-D1416.
+\doi{10.1093/nar/gkac1033}
+
+Service documentation: \url{https://pharos.nih.gov/}
 }

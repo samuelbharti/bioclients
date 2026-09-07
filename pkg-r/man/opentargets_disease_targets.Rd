@@ -22,8 +22,15 @@ The discovery direction. \code{disease_id} is an Open Targets id in either
 separator form; \code{MONDO:0018975} and \code{MONDO_0018975} both work.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_disease_targets("MONDO_0018975"))
 }
 
+}
+\references{
+Buniello et al. (2025). Open Targets Platform: facilitating therapeutic
+hypotheses building in drug discovery. Nucleic Acids Research 53(D1),
+D1467-D1475. \doi{10.1093/nar/gkae1128}
+
+Service documentation: \url{https://platform.opentargets.org/}
 }

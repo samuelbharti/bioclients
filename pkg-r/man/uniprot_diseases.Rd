@@ -19,8 +19,15 @@ A biohttp envelope whose \code{data} is the tibble described in
 Diseases UniProt curates for an accession
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(uniprot_diseases("P04637"))
 }
 
+}
+\references{
+The UniProt Consortium (2025). UniProt: the Universal Protein
+Knowledgebase in 2025. Nucleic Acids Research 53(D1), D609-D617.
+\doi{10.1093/nar/gkae1010}
+
+Service documentation: \url{https://www.uniprot.org/}
 }

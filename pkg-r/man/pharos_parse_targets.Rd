@@ -30,3 +30,10 @@ body <- list(data = list(targets = list(targets = list(
 pharos_parse_targets(body, "NF1")
 
 }
+\references{
+Kelleher et al. (2023). Pharos 2023: an integrated resource for the
+understudied human proteome. Nucleic Acids Research 51(D1), D1405-D1416.
+\doi{10.1093/nar/gkac1033}
+
+Service documentation: \url{https://pharos.nih.gov/}
+}

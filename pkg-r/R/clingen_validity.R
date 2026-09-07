@@ -56,6 +56,8 @@ CLINGEN_HEADER_MARKER <- "\"GENE SYMBOL\""
 #'   curation. A gene appears once per disease it has been curated against.
 #'   `NULL` when the file is empty or carries no header.
 #'
+#' @inherit clingen_gene_validity references
+#'
 #' @examples
 #' text <- paste(
 #'   '"CLINGEN GENE DISEASE VALIDITY CURATIONS","",""',
@@ -125,6 +127,8 @@ clingen_parse_validity <- function(text) {
 #'
 #' @return The matching rows, or `NULL` when none match.
 #'
+#' @inherit clingen_gene_validity references
+#'
 #' @examples
 #' table <- tibble::tibble(
 #'   gene = c("NF1", "TP53"),
@@ -160,8 +164,16 @@ clingen_validity_for <- function(table, symbols) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [clingen_parse_validity()].
 #'
+#' @references
+#' Strande et al. (2017). Evaluating the clinical validity of gene-disease
+#' associations: an evidence-based framework developed by the Clinical
+#' Genome Resource. The American Journal of Human Genetics 100(6), 895-906.
+#' \doi{10.1016/j.ajhg.2017.04.015}
+#'
+#' Service documentation: <https://search.clinicalgenome.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' table <- biohttp::body_or_null(clingen_gene_validity())
 #' clingen_validity_for(table, c("NF1", "TP53"))
 #' }

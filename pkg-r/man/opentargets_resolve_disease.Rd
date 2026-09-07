@@ -27,9 +27,16 @@ This is the \code{resolve_disease} that exists twice in the family, once in
 \code{genescout/R/tools/disease_resolver.R} and once in a sibling app.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_resolve_disease("neurofibromatosis type 1"))
 biohttp::body_or_null(opentargets_resolve_disease("MONDO:0018975"))
 }
 
+}
+\references{
+Buniello et al. (2025). Open Targets Platform: facilitating therapeutic
+hypotheses building in drug discovery. Nucleic Acids Research 53(D1),
+D1467-D1475. \doi{10.1093/nar/gkae1128}
+
+Service documentation: \url{https://platform.opentargets.org/}
 }

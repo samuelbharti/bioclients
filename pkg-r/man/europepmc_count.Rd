@@ -22,8 +22,14 @@ wanted. Read the note in the file header: a count of 0 comes back as \code{ok},
 not as \code{no_data}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(europepmc_count(europepmc_query("NF1")))$count
 }
 
+}
+\references{
+Ferguson et al. (2021). Europe PMC in 2020. Nucleic Acids Research
+49(D1), D1507-D1514. \doi{10.1093/nar/gkaa994}
+
+Service documentation: \url{https://europepmc.org/}
 }

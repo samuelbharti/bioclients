@@ -1,8 +1,8 @@
 name: pkgdown
 
-# Only a pull request into main, and the push to main when it merges. Nothing on
-# a feature branch or a pull request into dev runs here at all; build the site
-# locally with `pkgdown::build_site("pkg-r", preview = FALSE)` while working.
+# The site builds on every pull request, whatever it targets, so a broken help
+# page shows up on the branch that broke it. Publishing is separate: only the
+# push to main deploys, which is what the `deploy` job below checks for.
 #
 # The `paths:` filters that used to narrow this to pkg-r/** are gone on purpose.
 # They would skip the job on a docs-only pull request, and a required check that
@@ -11,7 +11,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

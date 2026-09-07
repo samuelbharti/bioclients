@@ -26,3 +26,10 @@ body <- list(data = list(variant = list(
 gnomad_parse_frequency(body)$variant_id
 
 }
+\references{
+Chen et al. (2024). A genomic mutational constraint map using variation
+in 76,156 human genomes. Nature 625(7993), 92-100.
+\doi{10.1038/s41586-023-06045-0}
+
+Service documentation: \url{https://gnomad.broadinstitute.org/}
+}

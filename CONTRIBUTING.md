@@ -104,12 +104,20 @@ or `vroom` for the bulk flat-file sources. All of them install everywhere today.
 
 ## Where the checks run
 
-Everything is checked locally, on every commit, through the prek hooks. The
-GitHub workflows run only at the release gate: a pull request into `main`, and
-the push to `main` when it merges. A pull request into `dev` runs nothing on
-GitHub, and neither does a feature branch.
+Everything is checked locally, on every commit, through the prek hooks. Open a
+pull request and GitHub checks it too, wherever you are aiming it: `R CMD check`
+on five platforms, the imports-only job, lintr, gitleaks, the pull request title,
+and the pkgdown build.
 
-That means the local run is not a convenience, it is the check. Before pushing:
+These used to run only on a pull request into `main`, to save Actions minutes
+while the repo was private. It is public now, so they run everywhere.
+
+One workflow is still narrow on purpose. `cran.yml` runs the check the way CRAN
+runs it, including the `\donttest{}` examples, and that means 53 real requests
+to services we do not own. It stays on pull requests into `main` plus a weekly
+schedule.
+
+Run the checks locally first anyway. It is faster than waiting for a runner:
 
 ```sh
 prek run --all-files
@@ -117,13 +125,8 @@ Rscript -e 'devtools::test()'
 Rscript -e 'rcmdcheck::rcmdcheck("pkg-r", args = c("--no-manual", "--as-cran"))'
 ```
 
-A `dev` to `main` pull request then runs the full matrix once: `R CMD check` on
-five platforms, the imports-only job, lintr, prek, gitleaks, and the pkgdown
-build.
-
-`biohttp` is not on CRAN, so `DESCRIPTION` carries a `Remotes:` line pointing at
-its GitHub repository. That is what lets a clean CI runner resolve it, and it is
-also why a local checkout needs `biohttp` installed before anything here builds.
+`biohttp` is on CRAN, so a local checkout picks it up with
+`install.packages("biohttp")` like any other dependency.
 
 ## Local setup
 

@@ -4,10 +4,14 @@
 \alias{vep_variants}
 \title{Consequence predictions for many variants}
 \usage{
-vep_variants(chrom, pos, ref, alt, ...)
+vep_variants(chrom, pos, ref, alt, options = vep_default_options(), ...)
 }
 \arguments{
 \item{chrom, pos, ref, alt}{Variant components, all the same length.}
+
+\item{options}{A named list of VEP request flags. See
+\code{\link[=vep_default_options]{vep_default_options()}} for the supported flags and what each one adds to
+the result.}
 
 \item{...}{Passed to \code{\link[biohttp:post_json]{biohttp::post_json()}}, for example \code{throttle}.}
 }
@@ -19,8 +23,18 @@ in the order asked. See \code{\link[=vep_parse_batch]{vep_parse_batch()}}.
 Consequence predictions for many variants
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(vep_variants("7", 140753336, "A", "T"))
+biohttp::body_or_null(vep_variants(
+  "7", 140753336, "A", "T",
+  options = c(vep_default_options(), list(af_gnomadg = 1, CADD = 1))
+))
 }
 
+}
+\references{
+McLaren et al. (2016). The Ensembl Variant Effect Predictor.
+Genome Biology 17, 122. \doi{10.1186/s13059-016-0974-4}
+
+Service documentation: \url{https://rest.ensembl.org/}
 }

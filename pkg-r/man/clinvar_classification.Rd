@@ -4,12 +4,15 @@
 \alias{clinvar_classification}
 \title{Look up the ClinVar classification for a variant}
 \usage{
-clinvar_classification(term, ...)
+clinvar_classification(term, throttle = clinvar_throttle(), ...)
 }
 \arguments{
 \item{term}{A search term, usually an rsID or an accession.}
 
-\item{...}{Passed to \code{\link[biohttp:get_json]{biohttp::get_json()}}, for example \code{throttle}.}
+\item{throttle}{A throttle spec, see \code{\link[biohttp:req_defaults]{biohttp::req_defaults()}}. Defaults to
+the documented E-utilities rate for the key in use.}
+
+\item{...}{Passed to \code{\link[biohttp:get_json]{biohttp::get_json()}}.}
 }
 \value{
 A biohttp envelope whose \code{data} is a one-row tibble. See
@@ -32,12 +35,28 @@ UID, and this function returns that record.
 Set \code{NCBI_API_KEY} and both requests carry it, which raises the rate limit
 from 3 to 10 requests a second. It is passed as a \code{secret_query}, so it stays
 out of the cache key and out of every message. Without one the client works
-at the lower limit.
+at the lower limit, and the default \code{throttle} follows: 3 a second without
+a key, 10 with one.
+}
+
+\section{Identifying the caller}{
+
+NCBI asks every client to send \code{tool} and \code{email}. They are read from
+\code{BIOHTTP_CALLER_IDENTITY} and \code{BIOHTTP_CONTACT_EMAIL}, the same variables
+biohttp builds its User-Agent from, and a blank one is omitted. They are
+ordinary query parameters, so they are part of the cache key.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(clinvar_classification("rs113488022"))
 }
 
+}
+\references{
+Landrum et al. (2018). ClinVar: improving access to variant
+interpretations and supporting evidence. Nucleic Acids Research 46(D1),
+D1062-D1067. \doi{10.1093/nar/gkx1153}
+
+Service documentation: \url{https://www.ncbi.nlm.nih.gov/clinvar/}
 }

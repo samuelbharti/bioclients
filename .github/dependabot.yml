@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # GitHub Actions used in workflows. There is no lockfile to update for the R
+  # package: CI resolves dependencies from CRAN at run time, and biohttp comes
+  # from the Remotes: line until it is on CRAN itself.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci

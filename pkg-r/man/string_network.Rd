@@ -44,9 +44,17 @@ result.
 }
 
 \examples{
-\dontrun{
+\donttest{
 res <- string_network(c("TP53", "NF1", "EGFR"))
 biohttp::body_or_null(res)$edges
 }
 
+}
+\references{
+Szklarczyk et al. (2023). The STRING database in 2023: protein-protein
+association networks and functional enrichment analyses for any sequenced
+genome of interest. Nucleic Acids Research 51(D1), D638-D646.
+\doi{10.1093/nar/gkac1000}
+
+Service documentation: \url{https://string-db.org/}
 }

@@ -32,3 +32,10 @@ body <- list(diseases = list(
 hpo_parse_diseases(body)
 
 }
+\references{
+Gargano et al. (2024). The Human Phenotype Ontology in 2024: phenotypes
+around the world. Nucleic Acids Research 52(D1), D1333-D1346.
+\doi{10.1093/nar/gkad1005}
+
+Service documentation: \url{https://hpo.jax.org/}
+}

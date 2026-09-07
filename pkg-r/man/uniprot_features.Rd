@@ -22,8 +22,19 @@ A biohttp envelope whose \code{data} is the tibble described in
 From the EBI Proteins API, which is a different host to \code{\link[=uniprot_diseases]{uniprot_diseases()}}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(uniprot_features("P15056"))
 }
 
+}
+\references{
+Nightingale et al. (2017). The Proteins API: accessing key integrated
+protein and genome information. Nucleic Acids Research 45(W1), W539-W544.
+\doi{10.1093/nar/gkx237}
+
+The data it serves is UniProt's. The UniProt Consortium (2025). UniProt:
+the Universal Protein Knowledgebase in 2025. Nucleic Acids Research 53(D1),
+D609-D617. \doi{10.1093/nar/gkae1010}
+
+Service documentation: \url{https://www.ebi.ac.uk/proteins/api/doc/}
 }

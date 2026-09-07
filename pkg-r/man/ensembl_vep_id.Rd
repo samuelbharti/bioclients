@@ -27,8 +27,14 @@ with \code{\link[=vep_variants]{vep_variants()}} when the allele matters.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(ensembl_vep_id("rs113488022"))$consequences
 }
 
+}
+\references{
+Dyer et al. (2025). Ensembl 2025. Nucleic Acids Research 53(D1),
+D948-D957. \doi{10.1093/nar/gkae1071}
+
+Service documentation: \url{https://rest.ensembl.org/}
 }

@@ -23,8 +23,15 @@ A biohttp envelope whose \code{data} is a list of \code{count}, \code{entity},
 Articles PubTator3 has tagged with a gene
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(pubtator_gene_literature("TP53", 7157))$count
 }
 
+}
+\references{
+Wei et al. (2024). PubTator 3.0: an AI-powered literature resource for
+unlocking biomedical knowledge. Nucleic Acids Research 52(W1), W540-W546.
+\doi{10.1093/nar/gkae235}
+
+Service documentation: \url{https://www.ncbi.nlm.nih.gov/research/pubtator3/}
 }

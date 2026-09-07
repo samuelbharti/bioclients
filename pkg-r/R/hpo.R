@@ -48,6 +48,8 @@ HPO_TERM_WEB <- "https://hpo.jax.org/browse/term"
 #' @return A tibble of `id`, `name`, `mondo`, and `description`, one row per
 #'   associated disease. `NULL` when there are none.
 #'
+#' @inherit hpo_search references
+#'
 #' @examples
 #' body <- list(diseases = list(
 #'   list(
@@ -86,6 +88,8 @@ hpo_parse_diseases <- function(body) {
 #' @return A tibble of `id` and `name`, one row per phenotype term. `NULL` when
 #'   there are none.
 #'
+#' @inherit hpo_search references
+#'
 #' @examples
 #' body <- list(phenotypes = list(list(id = "HP:0003002", name = "Breast carcinoma")))
 #' hpo_parse_phenotypes(body)
@@ -110,6 +114,8 @@ hpo_parse_phenotypes <- function(body) {
 #'
 #' @return A tibble of `id`, `name`, `definition`, and `descendant_count`, best
 #'   match first, which is the order JAX returns. `NULL` when nothing matched.
+#'
+#' @inherit hpo_search references
 #'
 #' @examples
 #' body <- list(terms = list(list(id = "HP:0001250", name = "Seizure")))
@@ -140,6 +146,8 @@ hpo_parse_search <- function(body) {
 #' @return A one-row tibble of `id`, `name`, `definition`, `comment`,
 #'   `descendant_count`, and the list columns `synonyms` and `xrefs`. `NULL`
 #'   when the body carries no term.
+#'
+#' @inherit hpo_search references
 #'
 #' @examples
 #' body <- list(id = "HP:0001250", name = "Seizure", synonyms = list("Seizures"))
@@ -178,8 +186,15 @@ hpo_parse_term <- function(body) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [hpo_parse_search()].
 #'
+#' @references
+#' Gargano et al. (2024). The Human Phenotype Ontology in 2024: phenotypes
+#' around the world. Nucleic Acids Research 52(D1), D1333-D1346.
+#' \doi{10.1093/nar/gkad1005}
+#'
+#' Service documentation: <https://hpo.jax.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(hpo_search("seizure"))
 #' }
 #'
@@ -220,8 +235,10 @@ hpo_search <- function(query, limit = 10, ...) {
 #' @return A biohttp envelope whose `data` is the one-row tibble described in
 #'   [hpo_parse_term()].
 #'
+#' @inherit hpo_search references
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(hpo_term("HP:0001250"))
 #' }
 #'
@@ -269,8 +286,10 @@ hpo_term <- function(id, ...) {
 #'   carries `source_url`. See [hpo_parse_diseases()] and
 #'   [hpo_parse_phenotypes()].
 #'
+#' @inherit hpo_search references
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(hpo_gene_annotation(7157))$diseases
 #' }
 #'

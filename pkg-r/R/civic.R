@@ -21,6 +21,8 @@ CIVIC_WEB <- "https://civicdb.org"
 #'   `assertions`, `variants`, and `source_url`. `NULL` when CIViC does not track
 #'   the gene, which it reports as `data.gene = null`.
 #'
+#' @inherit civic_gene references
+#'
 #' @examples
 #' body <- list(data = list(gene = list(
 #'   id = 3867, name = "NF1", entrezId = 4763, link = "/features/3867",
@@ -72,8 +74,15 @@ civic_parse_gene <- function(body) {
 #' @return A biohttp envelope whose `data` is a one-row tibble. See
 #'   [civic_parse_gene()].
 #'
+#' @references
+#' Griffith et al. (2017). CIViC is a community knowledgebase for expert
+#' crowdsourcing the clinical interpretation of variants in cancer.
+#' Nature Genetics 49(2), 170-174. \doi{10.1038/ng.3774}
+#'
+#' Service documentation: <https://civicdb.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(civic_gene("NF1"))
 #' }
 #'

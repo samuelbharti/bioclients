@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
-One client per biological database, each split into a request half that calls the service and a parser half that turns a response body into a canonical structure. The parser is pure, so it is tested against a stored response with no network. Transport, retries, caching, and error handling are left to the 'biohttp' package. Per-service dependencies are optional, so a caller that wants one service does not install the requirements of the rest.
+One client per biological database, each split into a request half that calls the service and a parser half that turns a response body into a canonical structure. The parser is pure, so it is tested against a stored response with no network. Transport, retries, caching, and error handling are left to the 'biohttp' package. Per-service dependencies are optional, so a caller that wants one service does not install the requirements of the rest. Twenty-nine services are covered, among them 'Ensembl', described in Dyer et al. (2025) \doi{10.1093/nar/gkae1071}, 'UniProt', in The UniProt Consortium (2025) \doi{10.1093/nar/gkae1010}, 'gnomAD', in Chen et al. (2024) \doi{10.1038/s41586-023-06045-0}, 'Open Targets', in Buniello et al. (2025) \doi{10.1093/nar/gkae1128}, and the 'AlphaFold' Protein Structure Database, in Varadi et al. (2024) \doi{10.1093/nar/gkad1011}. Each client's help page cites the service it calls.
 }
 \details{
 Every service module ships two halves, and the split is the point.
@@ -60,6 +60,14 @@ Useful links:
 Authors:
 \itemize{
   \item Samuel Bharti \email{samuelbharti.io@gmail.com} (\href{https://orcid.org/0000-0003-4190-7058}{ORCID}) [copyright holder]
+}
+
+Other contributors:
+\itemize{
+  \item Barret Schloerke \email{barret@posit.co} (\href{https://orcid.org/0000-0001-9986-114X}{ORCID}) [thesis advisor]
+  \item Carson Sievert \email{carson@posit.co} (\href{https://orcid.org/0000-0002-4958-2844}{ORCID}) [thesis advisor]
+  \item Posit Software, PBC (\href{https://ror.org/03wc8by49}{ROR}) [copyright holder, funder]
+  \item Anthropic, PBC [funder]
 }
 
 }

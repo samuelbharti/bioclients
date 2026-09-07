@@ -23,8 +23,15 @@ presenting the first few as everything.
 Turns typed text into the entity id the other calls need.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(monarch_search("Marfan syndrome"))$matches
 }
 
+}
+\references{
+Putman et al. (2024). The Monarch Initiative in 2024: an analytic
+platform integrating phenotypes, genes and diseases across species.
+Nucleic Acids Research 52(D1), D938-D949. \doi{10.1093/nar/gkad1082}
+
+Service documentation: \url{https://monarchinitiative.org/}
 }

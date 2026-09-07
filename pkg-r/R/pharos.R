@@ -45,6 +45,8 @@ PHAROS_QUERY <- paste(
 #' @return A tibble of `symbol`, `tdl`, and `source_url`, one row per entry in
 #'   `symbols`. `tdl` is one of `Tclin`, `Tchem`, `Tbio`, `Tdark`, or `NA`.
 #'
+#' @inherit pharos_targets references
+#'
 #' @examples
 #' body <- list(data = list(targets = list(targets = list(
 #'   list(sym = "NF1", tdl = "Tbio")
@@ -93,8 +95,15 @@ pharos_parse_targets <- function(body, symbols) {
 #' @return A biohttp envelope whose `data` is a tibble with one row per entry in
 #'   `symbols`, in the same order. See [pharos_parse_targets()].
 #'
+#' @references
+#' Kelleher et al. (2023). Pharos 2023: an integrated resource for the
+#' understudied human proteome. Nucleic Acids Research 51(D1), D1405-D1416.
+#' \doi{10.1093/nar/gkac1033}
+#'
+#' Service documentation: <https://pharos.nih.gov/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(pharos_targets(c("NF1", "EGFR")))
 #' }
 #'
@@ -139,8 +148,10 @@ pharos_targets <- function(symbols, ...) {
 #'
 #' @return A biohttp envelope whose `data` is a one-row tibble.
 #'
+#' @inherit pharos_targets references
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(pharos_target("NF1"))
 #' }
 #'

@@ -36,6 +36,8 @@ ENSEMBL_URL <- "https://rest.ensembl.org"
 #'   `consequence`, `impact`, `sift`, and `polyphen`. `NULL` when there are
 #'   none.
 #'
+#' @inherit ensembl_vep_id references
+#'
 #' @examples
 #' ensembl_parse_consequences(list(list(
 #'   gene_symbol = "BRAF",
@@ -97,6 +99,8 @@ ensembl_first_record <- function(body) {
 #' @return A list of `most_severe`, `assembly`, and `consequences` (the tibble
 #'   from [ensembl_parse_consequences()]). `NULL` when the record is empty.
 #'
+#' @inherit ensembl_vep_id references
+#'
 #' @examples
 #' ensembl_parse_vep(list(
 #'   most_severe_consequence = "missense_variant",
@@ -132,6 +136,8 @@ ensembl_parse_vep <- function(record) {
 #' @return A list of `transcript`, `strand`, `region`, `gene_start`,
 #'   `gene_end`, and `exons`, a tibble of `start`, `end`, and `number` sorted by
 #'   `start`. `NULL` when the record carries no transcript with exons.
+#'
+#' @inherit ensembl_vep_id references
 #'
 #' @examples
 #' record <- list(
@@ -200,8 +206,14 @@ ensembl_parse_gene_model <- function(record) {
 #' @return A biohttp envelope whose `data` is the list described in
 #'   [ensembl_parse_vep()].
 #'
+#' @references
+#' Dyer et al. (2025). Ensembl 2025. Nucleic Acids Research 53(D1),
+#' D948-D957. \doi{10.1093/nar/gkae1071}
+#'
+#' Service documentation: <https://rest.ensembl.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(ensembl_vep_id("rs113488022"))$consequences
 #' }
 #'
@@ -249,8 +261,10 @@ ensembl_vep_id <- function(rsid, ...) {
 #' @return A biohttp envelope whose `data` is the list described in
 #'   [ensembl_parse_gene_model()].
 #'
+#' @inherit ensembl_vep_id references
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(ensembl_gene_model("ENSG00000157764"))$exons
 #' }
 #'

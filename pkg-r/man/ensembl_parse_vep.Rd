@@ -23,3 +23,9 @@ ensembl_parse_vep(list(
 ))
 
 }
+\references{
+Dyer et al. (2025). Ensembl 2025. Nucleic Acids Research 53(D1),
+D948-D957. \doi{10.1093/nar/gkae1071}
+
+Service documentation: \url{https://rest.ensembl.org/}
+}

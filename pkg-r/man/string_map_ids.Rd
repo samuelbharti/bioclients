@@ -22,8 +22,16 @@ Maps each queried symbol to STRING's own \code{preferredName}. Needed to interpr
 network edges; see \code{\link[=string_reconcile_edges]{string_reconcile_edges()}}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(string_map_ids(c("SEPTIN9", "TP53")))
 }
 
+}
+\references{
+Szklarczyk et al. (2023). The STRING database in 2023: protein-protein
+association networks and functional enrichment analyses for any sequenced
+genome of interest. Nucleic Acids Research 51(D1), D638-D646.
+\doi{10.1093/nar/gkac1000}
+
+Service documentation: \url{https://string-db.org/}
 }

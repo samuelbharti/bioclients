@@ -33,3 +33,10 @@ body <- list(variants = list(list(
 protvar_parse_population(body)
 
 }
+\references{
+Stephenson et al. (2024). ProtVar: mapping and contextualizing human
+missense variation. Nucleic Acids Research 52(W1), W140-W147.
+\doi{10.1093/nar/gkae413}
+
+Service documentation: \url{https://www.ebi.ac.uk/ProtVar/}
+}

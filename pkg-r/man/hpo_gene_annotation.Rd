@@ -24,8 +24,15 @@ carries \code{source_url}. See \code{\link[=hpo_parse_diseases]{hpo_parse_diseas
 HPO's annotation for a gene
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(hpo_gene_annotation(7157))$diseases
 }
 
+}
+\references{
+Gargano et al. (2024). The Human Phenotype Ontology in 2024: phenotypes
+around the world. Nucleic Acids Research 52(D1), D1333-D1346.
+\doi{10.1093/nar/gkad1005}
+
+Service documentation: \url{https://hpo.jax.org/}
 }

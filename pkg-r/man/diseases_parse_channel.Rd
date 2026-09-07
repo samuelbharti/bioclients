@@ -27,3 +27,10 @@ body <- list(
 diseases_parse_channel(body, "Knowledge")
 
 }
+\references{
+Pletscher-Frankild et al. (2015). DISEASES: text mining and data
+integration of disease-gene associations. Methods 74, 83-89.
+\doi{10.1016/j.ymeth.2014.11.020}
+
+Service documentation: \url{https://diseases.jensenlab.org/}
+}

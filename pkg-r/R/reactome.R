@@ -34,6 +34,8 @@ REACTOME_WEB <- "https://reactome.org/content/detail"
 #' @return A tibble of `pathway_id`, `name`, `in_disease`, and `source_url`, one
 #'   row per pathway. `NULL` when the gene has none.
 #'
+#' @inherit reactome_pathways references
+#'
 #' @examples
 #' body <- list(list(
 #'   stId = "R-HSA-5658442",
@@ -78,8 +80,14 @@ reactome_parse_pathways <- function(body) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [reactome_parse_pathways()].
 #'
+#' @references
+#' Milacic et al. (2024). The Reactome Pathway Knowledgebase 2024.
+#' Nucleic Acids Research 52(D1), D672-D678. \doi{10.1093/nar/gkad1025}
+#'
+#' Service documentation: <https://reactome.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(reactome_pathways("NF1"))
 #' }
 #'
