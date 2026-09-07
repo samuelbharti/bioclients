@@ -35,7 +35,7 @@ the lookup \code{\link[=gnomad_frequency]{gnomad_frequency()}} cannot do, becaus
 every allele at a site.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(gnomad_frequency_by_id("17-7676154-G-C"))
 }
 

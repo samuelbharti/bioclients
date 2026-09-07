@@ -113,11 +113,11 @@ These used to run only on a pull request into `main`, to save Actions minutes
 while the repo was private. It is public now, so they run everywhere.
 
 One workflow is still narrow on purpose. `cran.yml` runs the check the way CRAN
-runs it, including the `\donttest{}` examples, and that means 53 real requests
-to services we do not own. It stays on pull requests into `main` plus a weekly
-schedule.
+runs it, which includes the `\donttest{}` examples. That is 56 real requests to
+services we do not own, so it runs only on pull requests into `main`, plus once
+a week.
 
-Run the checks locally first anyway. It is faster than waiting for a runner:
+Run the checks locally first anyway. It is quicker than waiting for a runner:
 
 ```sh
 prek run --all-files

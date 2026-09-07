@@ -8,36 +8,30 @@
 
 One client per biological database, each with a pure parser that runs offline.
 
-> **Status:** 0.1.0 is the current release. 0.1.1 is prepared for CRAN and
-> waiting on [`biohttp`](https://github.com/samuelbharti/biohttp) getting there
-> first, since CRAN will not take a package whose dependency it does not have.
-> Read the docs at <https://www.samuelbharti.com/bioclients/>. The parser output
-> shape is what can still move; a change to an existing column is a breaking
-> change.
+> **Status:** 0.1.0 is the current release. 0.1.1 is ready and going to CRAN
+> next. Docs are at <https://www.samuelbharti.com/bioclients/>. What can still
+> change is the shape of a parser's output. A change to a column that already
+> exists is a breaking change.
 
 ## Installation
 
-Neither package is on CRAN. Both are on r-universe, which pulls `biohttp` in as a
-dependency, so one call is enough:
+```r
+pak::pak("samuelbharti/bioclients/pkg-r")
+```
+
+The `pkg-r` on the end matters. The package sits in a subdirectory, not at the
+root of the repository, and an install that leaves it off fails without saying
+why.
+
+r-universe works too, and pulls in `biohttp` for you:
 
 ```r
 install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
 ```
 
-From GitHub instead, note the `subdir`. The package sits in `pkg-r/` rather than
-at the repository root, and an install that leaves this out fails without saying
-why:
-
-```r
-pak::pak("samuelbharti/bioclients/pkg-r")
-# or
-remotes::install_github("samuelbharti/bioclients", subdir = "pkg-r")
-```
-
-`DESCRIPTION` carries a `Remotes:` line pointing at
-[`biohttp`](https://github.com/samuelbharti/biohttp) on GitHub, which is what
-lets a clean CI runner resolve it without any credentials. That line has to come
-back out before any CRAN submission.
+bioclients is not on CRAN yet.
+[`biohttp`](https://github.com/samuelbharti/biohttp), the transport underneath
+it, is.
 
 ## A first call
 
@@ -253,25 +247,12 @@ dependencies only and then running the suite.
 
 The package is pure R. There is no `src/`, and there will not be.
 
-That was evaluated rather than assumed. Measured in `biohttp` against the live
-MyGene API, a call spends about 210 ms on the network and 0.2 ms parsing the
-response, so parsing is roughly one tenth of one percent of the work. bioclients
-adds field extraction on top of that parse, which is smaller still. The largest
-stored response in the ported fixture set is 8 KB.
-
-Where the performance actually is, in order:
-
-1. **Concurrent fan-out.** Twelve services queried one after another at ~300 ms
-   each is 3.6 seconds; queried together it is closer to 400 ms.
-2. **Batch endpoints.** MyGene takes a batch POST, gnomAD's GraphQL API takes
-   aliases so many genes fit in one request, and Ensembl VEP takes exactly 200
-   per POST. Each turns N round trips into a small fraction of N.
-3. **The cache `biohttp` already has**, which a client gets for free by using the
-   entry points rather than building requests by hand.
-
-All three are I/O, not compute. If a parsing bottleneck ever does appear, reach
-for an existing C or C++ implementation: `yyjsonr` or `RcppSimdJson` for JSON,
-`data.table::fread` or `vroom` for the bulk flat-file sources.
+That was measured, not assumed. Against the live MyGene API a call spends about
+210 ms on the network and 0.2 ms parsing the response. Parsing is around a
+tenth of one percent of the work, and the biggest stored response in the whole
+fixture set is 8 KB. The time goes on I/O, so the things that make this faster
+are concurrent requests, batch endpoints and the cache `biohttp` already has,
+none of which need C.
 
 ## Roadmap
 
@@ -280,16 +261,17 @@ for an existing C or C++ implementation: `yyjsonr` or `RcppSimdJson` for JSON,
 | 0. Scaffold | done |
 | 1. Three pilot clients: MyGene, gnomAD, ClinVar | done |
 | 1b. Batch A, the GraphQL services: Open Targets, DGIdb, Pharos, CIViC | done |
-| 2. Expand to every remaining service | done, 29 clients and 125 exports |
+| 2. Expand to every remaining service | done, 29 clients and 134 exports |
 | 3. Confirm the ported behaviour against live services | done, 28 of 29 confirmed |
-| 4. Migrate `variant-reviewer` onto `biohttp` and `bioclients` | demonstrated, not landed |
+| 4a. Move `variant-reviewer` onto `biohttp` | shown to work, not landed |
+| 4b. Move `variant-reviewer` onto `bioclients` | not started |
 
-Phase 3 called every service once and then made the specific assertions the five
-unchecked claims depended on. Four held: MyGene's upper case `HGNC`, Reactome's
-404, PanelApp's `search` that does not filter, and Ensembl's array wrapping a
-single record. The fifth did not, and usefully so. Monarch's two hosts turned out
-to serve all three routes with identical payloads, so they collapsed to one, and
-Monarch now has one circuit breaker rather than two.
+Phase 3 called every service once, then checked the five claims that had never
+been tested against a real server. Four held: MyGene's upper case `HGNC`,
+Reactome's 404, PanelApp's `search` that does not filter, and Ensembl's array
+wrapping a single record. The fifth did not, and that was useful. Monarch's two
+hosts turned out to serve all three routes with the same payloads, so they
+collapsed to one and Monarch now has one circuit breaker instead of two.
 
 Pharos is the one service the run could not confirm, because it was answering
 HTTP 502 from its own gateway at the time. That is an outage rather than a
@@ -302,10 +284,14 @@ No CI job sets the variable that turns them on.
 BIOCLIENTS_LIVE=true Rscript -e 'devtools::test("pkg-r", filter = "live")'
 ```
 
-Phase 4 has a working demonstration. Swapping `variant-reviewer`'s HTTP layer for
-`biohttp` touched one file, left all eleven of its API clients unchanged, and
-passed its full suite at 340 of 340 with live calls confirmed against four
-services. It also surfaced three real bugs in `biohttp`, since fixed in 0.1.1.
+Phase 4a has a working demo. Swapping `variant-reviewer`'s HTTP layer for
+`biohttp` touched one file, left its eleven API clients alone, and passed the
+app's whole suite at 340 of 340, with live calls confirmed against four
+services. It also turned up three real bugs in `biohttp`, fixed in 0.1.1.
+
+Phase 4b is the bigger half and has not started. `variant-reviewer` still has
+its own client for each service, which is the duplication bioclients exists to
+remove.
 
 ## Testing
 
@@ -337,9 +323,8 @@ the "Cite this repository" button on GitHub both work.
 ## Acknowledgements
 
 Barret Schloerke and Carson Sievert advise this work as thesis advisors.
-Posit Software, PBC funds it and holds copyright together with the author. An
-additional gift from Anthropic, PBC supported the early stages and the planning of
-this work.
+Posit Software, PBC funded early work on this package and holds copyright
+together with the author.
 
 ## License
 
