@@ -723,7 +723,7 @@ gnomad_variant_error <- function(res) {
 #'   variant.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(gnomad_frequency_by_id("17-7676154-G-C"))
 #' }
 #'
@@ -850,7 +850,7 @@ gnomad_parse_variants <- function(body, variant_ids) {
 #'   in `variant_ids`, in the same order. See [gnomad_parse_variant()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(gnomad_frequencies(
 #'   c("17-7676154-G-C", "7-117559590-ATCT-A")
 #' ))

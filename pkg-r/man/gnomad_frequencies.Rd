@@ -43,7 +43,7 @@ whole call down, following \code{\link[=gnomad_constraints]{gnomad_constraints()
 record of is a row of \code{NA} too, because that is an answer.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(gnomad_frequencies(
   c("17-7676154-G-C", "7-117559590-ATCT-A")
 ))

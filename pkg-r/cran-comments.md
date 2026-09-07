@@ -35,7 +35,7 @@ biobouncer. They are answered here in advance.
 
 Two further points about how the examples are structured.
 
-* **53 examples call a live service, and all of them run.** They are wrapped in
+* **56 examples call a live service, and all of them run.** They are wrapped in
   `\donttest{}` rather than `\dontrun{}` because they are executable: every
   service is public and none needs a key. They are safe to run during a check
   for the reason the package exists. A client returns a value describing the
@@ -51,26 +51,29 @@ Two further points about how the examples are structured.
 ## R CMD check results
 
 `R CMD check --as-cran --run-donttest`, with incoming and remote checks
-enabled: 0 errors | 0 warnings | 0 or 1 note depending on the run.
-
-The note, when it appears, is two examples over 5 seconds:
+enabled: 0 errors | 0 warnings | 1 or 2 notes depending on the run. One is
+always the new submission. The other, when it appears, is examples over 5
+seconds. From the most recent run:
 
 ```
-                      user system elapsed
-ensembl_gene_model   0.026  0.003   5.536
-vep_variants         0.028  0.003   8.328
+                    user system elapsed
+vep_variants       0.096  0.008  20.463
+uniprot_features   0.025  0.000  15.026
+diseases_channel   0.082  0.003   5.475
 ```
 
-It is not reproducible, and that is the useful part. Both are single requests
-to Ensembl, so the elapsed time is entirely Ensembl's latency and the CPU time
-is a rounding error. Across repeated runs the pair has measured anywhere from
-5 to 20 seconds, and one run produced no note at all because Ensembl happened
-to be quick. `ensembl_gene_model()` fetches one gene model and `vep_variants()`
-posts one variant, so there is nothing left to make smaller. A run slow enough
-to exceed biohttp's timeout returns a `timeout` envelope rather than failing
-the example. Both are in `\donttest{}`, which is the wrapper the CRAN Cookbook
-prescribes for an example over 5 seconds, so the note reports that they are
-correctly wrapped.
+Which examples show up changes from run to run. Look at the two columns: 0.096
+seconds of CPU against 20 seconds elapsed. That time is the service answering,
+not this package working. Each one is a single request, so there is nothing
+left to make smaller.
+
+If a service is slow enough to pass biohttp's timeout, the example gets a
+`timeout` envelope back and still prints without an error. All of these sit in
+`\donttest{}`, which the CRAN Cookbook asks for when an example takes more
+than 5 seconds. So the note is telling us they are wrapped the right way.
+
+The whole check fits well inside the 10 minute limit. Examples take about two
+minutes, tests about one.
 
 Every DOI resolves: the five in the `Description` field and the 29 distinct
 ones across the help pages. MyGene and MyVariant share a citation, and
