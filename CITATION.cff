@@ -10,10 +10,9 @@ abstract: >-
   one service does not install the requirements of the rest.
 type: software
 # This describes the newest release, which is what somebody citing the package
-# should get. DESCRIPTION is already at 0.1.1 because that is the version being
-# prepared; this moves when 0.1.1 is tagged and Zenodo mints its DOI.
-version: 0.1.0
-date-released: "2026-08-03"
+# should get.
+version: 0.1.1
+date-released: "2026-09-07"
 # The concept DOI, which always resolves to the newest release. Cite this one
 # unless you specifically need to pin the version you used.
 doi: 10.5281/zenodo.21770870
