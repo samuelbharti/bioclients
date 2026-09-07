@@ -20,7 +20,7 @@ biobouncer. They are answered here in advance.
   unreadable, so five anchors are there in the requested `authors (year)
   <doi:...>` form, with no space after `doi:`: Ensembl, UniProt, gnomAD, Open
   Targets and the AlphaFold Protein Structure Database. The other 24 are on the
-  help pages. Every one of the 125 exported topics has a `References` section
+  help pages. Every one of the 134 exported topics has a `References` section
   naming the service it calls, its canonical publication with a DOI, and the
   service's own documentation URL. Each DOI was resolved through the CrossRef
   API and checked against the title, first author, year and pagination.

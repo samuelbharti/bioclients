@@ -42,3 +42,9 @@ element <- list(
 vep_parse_colocated(element)
 
 }
+\references{
+McLaren et al. (2016). The Ensembl Variant Effect Predictor.
+Genome Biology 17, 122. \doi{10.1186/s13059-016-0974-4}
+
+Service documentation: \url{https://rest.ensembl.org/}
+}
