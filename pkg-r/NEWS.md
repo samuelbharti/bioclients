@@ -1,7 +1,62 @@
 # bioclients 0.1.1
 
-Documentation and packaging for a CRAN submission. There is no change to
-behaviour, and no exported function's arguments or output shape moved.
+## Ensembl VEP
+
+* Results are matched back on the echoed `input` line and on `vcf_string`
+  rather than on a key rebuilt from the reported coordinates. VEP left-trims
+  and renumbers indels, so the rebuilt key matched only SNVs and every indel
+  came back as an empty row.
+* `vep_variants()` takes an `options` list of request flags, defaulting to
+  `vep_default_options()`. `dbNSFP` is refused.
+* `vep_parse_element()` adds `transcript`, `gene_id`, `biotype`, `hgvsc`,
+  `hgvsp`, `canonical`, `codons`, `amino_acids`, `cadd_phred`, `cadd_raw`,
+  `revel`, the four `spliceai_ds_*` scores, `spliceai_max` and `lof`.
+* New `vep_parse_colocated()` reads the dbSNP record beside a variant: `rsid`,
+  gnomAD genome and exome frequencies with their per-population maximum, and
+  the clinical significance of the allele asked. `vep_parse_batch()` carries
+  these columns.
+* New `vep_variants_all()` takes any number of variants, chunks them at the
+  200 VEP accepts per POST and dispatches the chunks through
+  `biohttp::post_json_many()`. One row per input in input order; a failed
+  chunk becomes rows of `NA` carrying the envelope status in `status`.
+* `vep_variants_all()` puts the input in genome order and sends a repeated
+  variant once, before chunking, rather than once per occurrence. A
+  duplicate now always carries the same answer at every position it was
+  asked at, which was not guaranteed before when duplicates could land in
+  different chunks and see different transient failures. `chunk_size` and
+  the row count and order the contract promises are unchanged. It also
+  applies a default `throttle` (one request per second) so an unpaced burst
+  does not trip Ensembl's rate limiter; pass `throttle = NULL` to disable
+  it.
+
+## gnomAD
+
+* New `gnomad_frequency_by_id()` looks a variant up by `chrom-pos-ref-alt`,
+  which names one allele where an rsID names a site, and `gnomad_frequencies()`
+  does the same for many ids, alias-batched and chunked like
+  `gnomad_constraints()`. `gnomad_variant_id()` builds the id. The flat row
+  from `gnomad_parse_variant()` carries exome and genome `af`, `ac`, `an` and
+  `nhomalt`, a derived `grpmax`, `faf95` and `filters`.
+* The 25-alias cost cap was re-verified against the live API for the variant
+  query. The cost is one per alias whatever the selection set.
+
+## ClinVar
+
+* `clinvar_classification()` throttles by default at the documented
+  E-utilities rate, 3 requests a second or 10 when `NCBI_API_KEY` is set, and
+  sends `tool` and `email` read from `BIOHTTP_CALLER_IDENTITY` and
+  `BIOHTTP_CONTACT_EMAIL` when they are set.
+
+## MyGene
+
+* `mygene_genes()` chunks a list longer than the 1000 identifiers MyGene
+  takes per POST, dispatches the chunks through `biohttp::post_json_many()`
+  and merges the hits back in input order.
+
+## Packaging
+
+Everything below is for the CRAN submission. Nothing here changes how the
+package behaves, and no function's arguments or output shape moved.
 
 * Every example that calls a service now runs under `\donttest{}` rather than
   `\dontrun{}`, 53 of them. `\dontrun{}` is for an example that genuinely
@@ -21,9 +76,13 @@ behaviour, and no exported function's arguments or output shape moved.
 * The `Description` field cites five of those references, for Ensembl, UniProt,
   gnomAD, Open Targets and AlphaFold DB, in the form CRAN asks for.
 
-* `cran-comments.md` records the submission notes, including the one thing
-  still outstanding: `biohttp` is not on CRAN, so `DESCRIPTION` carries a
-  `Remotes:` line and this package cannot be submitted before that one is.
+* `biohttp` is on CRAN now, at 0.1.2. So the `Remotes:` line is gone and we
+  ask for `biohttp (>= 0.1.2)` instead. I ran the tests against the CRAN
+  build rather than the newer one on GitHub, to be sure nothing here needs a
+  version CRAN cannot give you.
+
+* `cran-comments.md` records the submission notes.
+
 
 # bioclients 0.1.0
 

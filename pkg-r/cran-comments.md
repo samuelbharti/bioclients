@@ -4,12 +4,10 @@
 
 This is a new submission.
 
-**This package is not ready to be sent yet, and this file records why.**
-bioclients imports `biohttp`, which is not on CRAN. Until it is, `DESCRIPTION`
-carries a `Remotes:` line pointing at its GitHub repository, which is what lets
-a clean CI runner and r-universe resolve the dependency. That line comes out,
-and this paragraph with it, at the point biohttp is accepted. Everything else
-below is the submission as it stands.
+bioclients imports `biohttp`, which is on CRAN at 0.1.2. `DESCRIPTION` asks for
+`biohttp (>= 0.1.2)` and has no `Remotes:` field. I ran the tests against the
+CRAN build of biohttp, not the newer one on GitHub, so I know nothing here needs
+a version you do not have.
 
 ## Notes for the reviewer
 
@@ -53,10 +51,7 @@ Two further points about how the examples are structured.
 ## R CMD check results
 
 `R CMD check --as-cran --run-donttest`, with incoming and remote checks
-enabled: 0 errors | 1 warning | 0 or 1 note depending on the run.
-
-The warning is the `Remotes:` field and the unavailable `biohttp` dependency
-described at the top. It goes away when that line does.
+enabled: 0 errors | 0 warnings | 0 or 1 note depending on the run.
 
 The note, when it appears, is two examples over 5 seconds:
 
@@ -84,7 +79,7 @@ than UniProt's own REST service and both deserve naming.
 
 ## Test environments
 
-* Local: macOS 26.5.2, R 4.6.0, aarch64
+* Local: Windows 11, R 4.6.1, x86_64
 * GitHub Actions, on the pull request into `main`: ubuntu-latest (R-devel,
   R-release, R-oldrel-1), windows-latest (R-release), macos-latest (R-release),
   plus a job that installs hard dependencies only and runs the suite with no

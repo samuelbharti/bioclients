@@ -140,10 +140,10 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
 | gnomAD constraint | `gnomad_constraint()` | `gnomad_constraints()` | `gnomad_parse_constraint()`, `gnomad_parse_constraints()` |
-| gnomAD frequency | `gnomad_frequency()` | | `gnomad_parse_frequency()`, `gnomad_parse_populations()` |
+| gnomAD frequency | `gnomad_frequency()`, `gnomad_frequency_by_id()` | `gnomad_frequencies()` | `gnomad_parse_frequency()`, `gnomad_parse_variant()`, `gnomad_parse_variants()`, `gnomad_parse_populations()` |
 | ClinVar | `clinvar_classification()` | | `clinvar_parse_record()`, `clinvar_category()` |
 | MyVariant | | `myvariant_variants()` | `myvariant_parse_record()`, `myvariant_parse_batch()` |
-| Ensembl VEP | | `vep_variants()` | `vep_parse_element()`, `vep_parse_batch()` |
+| Ensembl VEP | | `vep_variants()`, `vep_variants_all()` | `vep_parse_element()`, `vep_parse_colocated()`, `vep_parse_batch()` |
 | Ensembl REST | `ensembl_vep_id()`, `ensembl_gene_model()` | | `ensembl_parse_vep()`, `ensembl_parse_gene_model()` |
 | VariantValidator | `variantvalidator_normalize()` | | `variantvalidator_parse()` |
 | ClinGen Allele Registry | | `clingen_alleles()` | `clingen_parse_allele()`, `clingen_parse_batch()` |
@@ -333,6 +333,13 @@ To pin the exact version you used, cite its own DOI instead. Version 0.1.0 is
 
 `CITATION.cff` carries the same metadata, so `citation("bioclients")` in R and
 the "Cite this repository" button on GitHub both work.
+
+## Acknowledgements
+
+Barret Schloerke and Carson Sievert advise this work as thesis advisors.
+Posit Software, PBC funds it and holds copyright together with the author. An
+additional gift from Anthropic, PBC supported the early stages and the planning of
+this work.
 
 ## License
 

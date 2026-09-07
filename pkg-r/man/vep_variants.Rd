@@ -4,10 +4,14 @@
 \alias{vep_variants}
 \title{Consequence predictions for many variants}
 \usage{
-vep_variants(chrom, pos, ref, alt, ...)
+vep_variants(chrom, pos, ref, alt, options = vep_default_options(), ...)
 }
 \arguments{
 \item{chrom, pos, ref, alt}{Variant components, all the same length.}
+
+\item{options}{A named list of VEP request flags. See
+\code{\link[=vep_default_options]{vep_default_options()}} for the supported flags and what each one adds to
+the result.}
 
 \item{...}{Passed to \code{\link[biohttp:post_json]{biohttp::post_json()}}, for example \code{throttle}.}
 }
@@ -21,6 +25,10 @@ Consequence predictions for many variants
 \examples{
 \donttest{
 biohttp::body_or_null(vep_variants("7", 140753336, "A", "T"))
+biohttp::body_or_null(vep_variants(
+  "7", 140753336, "A", "T",
+  options = c(vep_default_options(), list(af_gnomadg = 1, CADD = 1))
+))
 }
 
 }

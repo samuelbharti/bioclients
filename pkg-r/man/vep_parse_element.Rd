@@ -23,6 +23,16 @@ transcript is the single easiest way to get \code{NA} everywhere and conclude th
 API does not serve it.
 }
 
+\section{Optional columns}{
+
+\code{hgvsc}, \code{hgvsp}, \code{canonical}, \code{cadd_phred}, \code{cadd_raw}, \code{revel}, the
+\verb{spliceai_*} scores and \code{lof} are only populated when the matching flag was
+requested, see \code{\link[=vep_default_options]{vep_default_options()}}. Otherwise they are \code{NA}. VEP marks
+only the canonical transcript, so \code{canonical} is \code{TRUE} on that transcript
+and \code{NA} everywhere else, including when the flag was never asked.
+\code{spliceai_max} is the largest of the four SpliceAI delta scores.
+}
+
 \examples{
 element <- list(
   most_severe_consequence = "missense_variant",

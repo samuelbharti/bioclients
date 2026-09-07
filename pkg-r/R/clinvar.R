@@ -30,6 +30,34 @@ clinvar_secret_query <- function() {
   if (nzchar(key)) list(api_key = key) else NULL
 }
 
+# The documented E-utilities rate: 3 requests a second without a key, 10 with
+# one. Supplied as the default throttle so a caller gets it right without
+# reading the docs, the way CLINGEN_THROTTLE does for the Allele Registry. A
+# function rather than a constant because the rate follows the key, and the
+# key is read at call time.
+clinvar_throttle <- function() {
+  per_second <- if (nzchar(Sys.getenv("NCBI_API_KEY"))) 10 else 3
+  list(capacity = per_second, fill_time_s = 1)
+}
+
+# NCBI asks a caller to say who it is with `tool` and `email` on every
+# request, so that a misbehaving client can be contacted before it is blocked.
+# Both come from the variables biohttp already builds its User-Agent from, so
+# a caller that has identified itself once is identified here too. A blank
+# value is omitted rather than sent empty.
+clinvar_identity_query <- function() {
+  tool <- Sys.getenv("BIOHTTP_CALLER_IDENTITY", "")
+  email <- Sys.getenv("BIOHTTP_CONTACT_EMAIL", "")
+  out <- list()
+  if (nzchar(tool)) {
+    out$tool <- tool
+  }
+  if (nzchar(email)) {
+    out$email <- email
+  }
+  out
+}
+
 #' Collapse a ClinVar trait set into one condition string
 #'
 #' Pure.
@@ -148,10 +176,19 @@ clinvar_category <- function(significance) {
 #' Set `NCBI_API_KEY` and both requests carry it, which raises the rate limit
 #' from 3 to 10 requests a second. It is passed as a `secret_query`, so it stays
 #' out of the cache key and out of every message. Without one the client works
-#' at the lower limit.
+#' at the lower limit, and the default `throttle` follows: 3 a second without
+#' a key, 10 with one.
+#'
+#' @section Identifying the caller:
+#' NCBI asks every client to send `tool` and `email`. They are read from
+#' `BIOHTTP_CALLER_IDENTITY` and `BIOHTTP_CONTACT_EMAIL`, the same variables
+#' biohttp builds its User-Agent from, and a blank one is omitted. They are
+#' ordinary query parameters, so they are part of the cache key.
 #'
 #' @param term A search term, usually an rsID or an accession.
-#' @param ... Passed to [biohttp::get_json()], for example `throttle`.
+#' @param throttle A throttle spec, see [biohttp::req_defaults()]. Defaults to
+#'   the documented E-utilities rate for the key in use.
+#' @param ... Passed to [biohttp::get_json()].
 #'
 #' @return A biohttp envelope whose `data` is a one-row tibble. See
 #'   [clinvar_parse_record()].
@@ -169,18 +206,23 @@ clinvar_category <- function(significance) {
 #' }
 #'
 #' @export
-clinvar_classification <- function(term, ...) {
+clinvar_classification <- function(term, throttle = clinvar_throttle(), ...) {
   if (biohttp::is_blank(term)) {
     return(biohttp::status_no_data(
       source = "ClinVar",
       detail = "no variant identifier was supplied"
     ))
   }
+  identity <- clinvar_identity_query()
   search <- biohttp::get_json(
     EUTILS_BASE,
     path = "esearch.fcgi",
-    query = list(db = "clinvar", term = as.character(term), retmode = "json"),
+    query = c(
+      list(db = "clinvar", term = as.character(term), retmode = "json"),
+      identity
+    ),
     source = "ClinVar",
+    throttle = throttle,
     secret_query = clinvar_secret_query(),
     ...
   )
@@ -200,8 +242,9 @@ clinvar_classification <- function(term, ...) {
   summary <- biohttp::get_json(
     EUTILS_BASE,
     path = "esummary.fcgi",
-    query = list(db = "clinvar", id = uid, retmode = "json"),
+    query = c(list(db = "clinvar", id = uid, retmode = "json"), identity),
     source = "ClinVar",
+    throttle = throttle,
     secret_query = clinvar_secret_query(),
     ...
   )
