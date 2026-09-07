@@ -1,13 +1,15 @@
 # bioclients (R package) <img src="man/figures/logo.png" align="right" height="139" alt="bioclients logo" />
 
-This directory holds the R package. See the repository root `README.md` for what
-bioclients is for, where the line sits on scope, and how the repository is laid
-out.
+Look up genes, variants and proteins from R. One consistent way to call gnomAD,
+ClinVar, UniProt, Ensembl and the other databases you already use, instead of
+writing a client for each one.
 
-One client per biological database, 29 of them, each split into a request half
-that calls the service and a parser half that turns a response body into a
-canonical structure. The parser is pure, so it is tested against a stored
-response with no network.
+Each database gets one client, split in two. One half makes the request. The
+other turns the answer into a table, and that half needs no network at all, so
+it is tested against a saved response.
+
+The repository root `README.md` covers scope and how the repository is laid
+out.
 
 ## Installation
 
