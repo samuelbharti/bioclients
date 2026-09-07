@@ -59,7 +59,7 @@ Everything below is for the CRAN submission. Nothing here changes how the
 package behaves, and no function's arguments or output shape moved.
 
 * Every example that calls a service now runs under `\donttest{}` rather than
-  `\dontrun{}`, 53 of them. `\dontrun{}` is for an example that genuinely
+  `\dontrun{}`, 56 of them. `\dontrun{}` is for an example that genuinely
   cannot be executed, which none of these are: they are keyless public
   requests, a client returns an envelope rather than raising, and biohttp's
   disk cache is off unless a caller turns it on. So an example run with no

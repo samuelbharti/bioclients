@@ -68,7 +68,7 @@ share a background.
 }
 
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(vep_variants_all(
   c("7", "17"),
   c(140753336, 7676154),
