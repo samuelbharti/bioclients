@@ -19,8 +19,15 @@ A biohttp envelope whose \code{data} is the one-row tibble described in
 Resolve one HP id to its term
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(hpo_term("HP:0001250"))
 }
 
+}
+\references{
+Gargano et al. (2024). The Human Phenotype Ontology in 2024: phenotypes
+around the world. Nucleic Acids Research 52(D1), D1333-D1346.
+\doi{10.1093/nar/gkad1005}
+
+Service documentation: \url{https://hpo.jax.org/}
 }

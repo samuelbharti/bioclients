@@ -26,3 +26,10 @@ body <- list(results = list(list(
 quickgo_parse_annotations(body)
 
 }
+\references{
+Binns et al. (2009). QuickGO: a web-based tool for Gene Ontology
+searching. Bioinformatics 25(22), 3045-3046.
+\doi{10.1093/bioinformatics/btp536}
+
+Service documentation: \url{https://www.ebi.ac.uk/QuickGO/}
+}

@@ -35,3 +35,10 @@ delins can come back re-anchored in \code{vcf_string} too. The echoed \code{inpu
 the identity that survives, so it is matched first, then \code{vcf_string}, and
 the rebuilt key only for a response carrying neither.
 }
+
+\references{
+McLaren et al. (2016). The Ensembl Variant Effect Predictor.
+Genome Biology 17, 122. \doi{10.1186/s13059-016-0974-4}
+
+Service documentation: \url{https://rest.ensembl.org/}
+}

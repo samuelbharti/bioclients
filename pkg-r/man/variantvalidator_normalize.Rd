@@ -28,8 +28,15 @@ A biohttp envelope whose \code{data} is the tibble described in
 Validate and normalize one HGVS variant
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(variantvalidator_normalize("NM_000546.6:c.215C>G"))
 }
 
+}
+\references{
+Freeman et al. (2018). VariantValidator: accurate validation, mapping,
+and formatting of sequence variation descriptions. Human Mutation 39(1),
+61-68. \doi{10.1002/humu.23348}
+
+Service documentation: \url{https://variantvalidator.org/}
 }

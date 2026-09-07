@@ -23,7 +23,7 @@ in the order asked. See \code{\link[=vep_parse_batch]{vep_parse_batch()}}.
 Consequence predictions for many variants
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(vep_variants("7", 140753336, "A", "T"))
 biohttp::body_or_null(vep_variants(
   "7", 140753336, "A", "T",
@@ -31,4 +31,10 @@ biohttp::body_or_null(vep_variants(
 ))
 }
 
+}
+\references{
+McLaren et al. (2016). The Ensembl Variant Effect Predictor.
+Genome Biology 17, 122. \doi{10.1186/s13059-016-0974-4}
+
+Service documentation: \url{https://rest.ensembl.org/}
 }

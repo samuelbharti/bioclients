@@ -28,3 +28,10 @@ the input was rejected.
 clingen_parse_allele(list(errorType = "IncorrectHgvsPosition"))
 
 }
+\references{
+Pawliczek et al. (2018). ClinGen Allele Registry links information about
+genetic variants. Human Mutation 39(11), 1690-1701.
+\doi{10.1002/humu.23637}
+
+Service documentation: \url{https://reg.clinicalgenome.org/}
+}

@@ -31,3 +31,11 @@ text <- paste(
 clingen_parse_validity(text)
 
 }
+\references{
+Strande et al. (2017). Evaluating the clinical validity of gene-disease
+associations: an evidence-based framework developed by the Clinical
+Genome Resource. The American Journal of Human Genetics 100(6), 895-906.
+\doi{10.1016/j.ajhg.2017.04.015}
+
+Service documentation: \url{https://search.clinicalgenome.org/}
+}

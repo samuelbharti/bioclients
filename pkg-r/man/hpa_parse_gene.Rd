@@ -34,3 +34,9 @@ body <- list(
 hpa_parse_gene(body, "ENSG00000141510")
 
 }
+\references{
+\enc{Uhlén}{Uhlen} et al. (2015). Tissue-based map of the human proteome.
+Science 347(6220), 1260419. \doi{10.1126/science.1260419}
+
+Service documentation: \url{https://www.proteinatlas.org/}
+}

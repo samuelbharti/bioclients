@@ -66,6 +66,8 @@ clinvar_identity_query <- function() {
 #'
 #' @return A single semicolon-separated string, or `NA_character_`.
 #'
+#' @inherit clinvar_classification references
+#'
 #' @examples
 #' clinvar_conditions(list(trait_set = list(list(trait_name = "RASopathy"))))
 #'
@@ -92,6 +94,8 @@ clinvar_conditions <- function(germline) {
 #' @return A one-row tibble with `uid`, `accession`, `title`, `significance`,
 #'   `review_status`, `last_evaluated`, and `conditions`. `NULL` when `record`
 #'   is absent.
+#'
+#' @inherit clinvar_classification references
 #'
 #' @examples
 #' record <- list(
@@ -134,6 +138,8 @@ clinvar_parse_record <- function(record, uid = NA_character_) {
 #'
 #' @return One of `"Conflicting"`, `"Pathogenic / likely"`,
 #'   `"Benign / likely"`, `"Uncertain"`, or `"Other"`.
+#'
+#' @inherit clinvar_classification references
 #'
 #' @examples
 #' clinvar_category("Pathogenic")
@@ -187,8 +193,15 @@ clinvar_category <- function(significance) {
 #' @return A biohttp envelope whose `data` is a one-row tibble. See
 #'   [clinvar_parse_record()].
 #'
+#' @references
+#' Landrum et al. (2018). ClinVar: improving access to variant
+#' interpretations and supporting evidence. Nucleic Acids Research 46(D1),
+#' D1062-D1067. \doi{10.1093/nar/gkx1153}
+#'
+#' Service documentation: <https://www.ncbi.nlm.nih.gov/clinvar/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(clinvar_classification("rs113488022"))
 #' }
 #'

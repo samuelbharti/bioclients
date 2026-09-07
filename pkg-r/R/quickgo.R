@@ -39,6 +39,8 @@ QUICKGO_ASPECTS <- c(
 #' @return A tibble of `go_id`, `go_name`, `evidence`, `reference`, `aspect`,
 #'   and `source_url`, one row per distinct GO term. `NULL` when there are none.
 #'
+#' @inherit quickgo_annotations references
+#'
 #' @examples
 #' body <- list(results = list(list(
 #'   goId = "GO:0001937",
@@ -82,8 +84,15 @@ quickgo_parse_annotations <- function(body) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [quickgo_parse_annotations()].
 #'
+#' @references
+#' Binns et al. (2009). QuickGO: a web-based tool for Gene Ontology
+#' searching. Bioinformatics 25(22), 3045-3046.
+#' \doi{10.1093/bioinformatics/btp536}
+#'
+#' Service documentation: <https://www.ebi.ac.uk/QuickGO/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(quickgo_annotations("P21359"))
 #' }
 #'

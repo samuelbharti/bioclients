@@ -98,6 +98,7 @@ reference:
       - vep_variants
       - vep_variants_all
       - vep_default_options
+      - vep_default_throttle
       - vep_parse_element
       - vep_parse_colocated
       - vep_parse_batch

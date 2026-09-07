@@ -1,12 +1,11 @@
 name: R-CMD-check
 
-# Only a pull request into main runs this, matching biohttp. Work on a feature
-# branch and into dev is verified locally instead: `prek run --all-files` and
-# `rcmdcheck::rcmdcheck('pkg-r', args = c('--no-manual', '--as-cran'))`. See
-# CONTRIBUTING.md. workflow_dispatch stays so a run can be asked for by hand.
+# Runs on every pull request, whatever it targets. It used to run only into
+# main, to save Actions minutes while the repo was private. The repo is public
+# now, so minutes are free and there is no reason to let work reach dev without
+# a check. workflow_dispatch stays so a run can be asked for by hand.
 on:
   pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -48,10 +47,18 @@ jobs:
           needs: check
           working-directory: pkg-r
 
+      # --run-donttest is not the default and --as-cran does not imply it, which
+      # was verified by running the check both ways: without it no example
+      # timing is recorded at all. Every example that calls a service lives in
+      # \donttest{}, so leaving it off means the 53 of them are never executed
+      # here, while CRAN's own incoming checks do run them. That is the wrong
+      # way round: a service change would first surface at submission instead
+      # of on a pull request.
       - uses: r-lib/actions/check-r-package@v2
         with:
           working-directory: pkg-r
           upload-snapshots: true
+          args: 'c("--no-manual", "--as-cran", "--run-donttest")'
 
   # The Suggests split is an architectural requirement (build plan section 5.2):
   # a caller that wants one service must not install the dependency closure of

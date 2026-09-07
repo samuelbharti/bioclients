@@ -1,4 +1,4 @@
-# bioclients (development version)
+# bioclients 0.1.1
 
 ## Ensembl VEP
 
@@ -52,6 +52,37 @@
 * `mygene_genes()` chunks a list longer than the 1000 identifiers MyGene
   takes per POST, dispatches the chunks through `biohttp::post_json_many()`
   and merges the hits back in input order.
+
+## Packaging
+
+Everything below is for the CRAN submission. Nothing here changes how the
+package behaves, and no function's arguments or output shape moved.
+
+* Every example that calls a service now runs under `\donttest{}` rather than
+  `\dontrun{}`, 53 of them. `\dontrun{}` is for an example that genuinely
+  cannot be executed, which none of these are: they are keyless public
+  requests, a client returns an envelope rather than raising, and biohttp's
+  disk cache is off unless a caller turns it on. So an example run with no
+  network prints `NULL` and writes nothing.
+
+* Every help page now cites the service behind it. The 29 service files each
+  carry the canonical publication with a DOI and the service's own
+  documentation URL, and the other topics in the file inherit it, so all 125
+  exported topics have a `References` section. Each DOI was resolved through
+  CrossRef and checked against the title, author and pagination written here.
+  `uniprot_features()` carries two, because it calls the EBI Proteins API on a
+  different host to the rest of the file and both are worth naming.
+
+* The `Description` field cites five of those references, for Ensembl, UniProt,
+  gnomAD, Open Targets and AlphaFold DB, in the form CRAN asks for.
+
+* `biohttp` is on CRAN now, at 0.1.2. So the `Remotes:` line is gone and we
+  ask for `biohttp (>= 0.1.2)` instead. I ran the tests against the CRAN
+  build rather than the newer one on GitHub, to be sure nothing here needs a
+  version CRAN cannot give you.
+
+* `cran-comments.md` records the submission notes.
+
 
 # bioclients 0.1.0
 

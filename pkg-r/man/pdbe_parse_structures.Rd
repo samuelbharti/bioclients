@@ -39,3 +39,10 @@ body <- list(P21359 = list(
 pdbe_parse_structures(body, "P21359")
 
 }
+\references{
+Armstrong et al. (2020). PDBe: improved findability of macromolecular
+structure data in the PDB. Nucleic Acids Research 48(D1), D335-D343.
+\doi{10.1093/nar/gkz990}
+
+Service documentation: \url{https://www.ebi.ac.uk/pdbe/}
+}

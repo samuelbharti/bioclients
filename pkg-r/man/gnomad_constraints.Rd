@@ -30,8 +30,15 @@ rather than one per gene. Chunked at \code{chunk_size} to stay under gnomAD's
 query cost cap of 25. See \code{GNOMAD_CHUNK}.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(gnomad_constraints(c("BRAF", "TP53", "EGFR")))
 }
 
+}
+\references{
+Chen et al. (2024). A genomic mutational constraint map using variation
+in 76,156 human genomes. Nature 625(7993), 92-100.
+\doi{10.1038/s41586-023-06045-0}
+
+Service documentation: \url{https://gnomad.broadinstitute.org/}
 }

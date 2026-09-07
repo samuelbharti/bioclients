@@ -28,8 +28,15 @@ silently made a second call to a different service would make one failure look
 like the other's, and a MyGene outage would read as an Open Targets outage.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_gene_diseases("ENSG00000141510"))
 }
 
+}
+\references{
+Buniello et al. (2025). Open Targets Platform: facilitating therapeutic
+hypotheses building in drug discovery. Nucleic Acids Research 53(D1),
+D1467-D1475. \doi{10.1093/nar/gkae1128}
+
+Service documentation: \url{https://platform.opentargets.org/}
 }

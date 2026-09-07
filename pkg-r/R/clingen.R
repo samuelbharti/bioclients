@@ -73,6 +73,8 @@ clingen_first_record <- function(records, group, field) {
 #'
 #' @return A one-row tibble.
 #'
+#' @inherit clingen_alleles references
+#'
 #' @examples
 #' clingen_parse_allele(list(errorType = "IncorrectHgvsPosition"))
 #'
@@ -132,6 +134,8 @@ clingen_parse_allele <- function(element) {
 #'
 #' @return A tibble with one row per element.
 #'
+#' @inherit clingen_alleles references
+#'
 #' @export
 clingen_parse_batch <- function(body) {
   if (is.null(body) || length(body) == 0) {
@@ -151,8 +155,15 @@ clingen_parse_batch <- function(body) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [clingen_parse_allele()].
 #'
+#' @references
+#' Pawliczek et al. (2018). ClinGen Allele Registry links information about
+#' genetic variants. Human Mutation 39(11), 1690-1701.
+#' \doi{10.1002/humu.23637}
+#'
+#' Service documentation: <https://reg.clinicalgenome.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(clingen_alleles("NM_000546.6:c.215C>G"))
 #' }
 #'

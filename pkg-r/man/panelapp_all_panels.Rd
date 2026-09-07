@@ -24,8 +24,15 @@ Walks the paginated index and stacks the pages. Stops at \code{max_pages}, which
 is a guard against an unbounded walk rather than a tuned number.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(panelapp_all_panels(max_pages = 2))
 }
 
+}
+\references{
+Martin et al. (2019). PanelApp crowdsources expert knowledge to establish
+consensus diagnostic gene panels. Nature Genetics 51(11), 1560-1565.
+\doi{10.1038/s41588-019-0528-2}
+
+Service documentation: \url{https://panelapp.genomicsengland.co.uk/}
 }

@@ -19,8 +19,16 @@ A biohttp envelope whose \code{data} is the one-row tibble described in
 The mouse ortholog IMPC holds for a human gene
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(impc_mouse_ortholog("NF1"))
 }
 
+}
+\references{
+Groza et al. (2023). The International Mouse Phenotyping Consortium:
+comprehensive knockout phenotyping underpinning the study of human
+disease. Nucleic Acids Research 51(D1), D1038-D1045.
+\doi{10.1093/nar/gkac972}
+
+Service documentation: \url{https://www.mousephenotype.org/}
 }

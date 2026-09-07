@@ -160,6 +160,8 @@ vep_query_string <- function(options) {
 #'
 #' @return A single string.
 #'
+#' @inherit vep_variants references
+#'
 #' @examples
 #' vep_region("7", 140753336, "A", "T")
 #'
@@ -177,6 +179,8 @@ vep_region <- function(chrom, pos, ref, alt) {
 #' @inheritParams vep_region
 #'
 #' @return A single string, `chrom-pos-ref-alt`.
+#'
+#' @inherit vep_variants references
 #'
 #' @examples
 #' vep_key("7", 140753336, "A", "T")
@@ -259,6 +263,8 @@ vep_element_key <- function(element) {
 #'
 #' @return One transcript consequence, or `NULL` when there are none.
 #'
+#' @inherit vep_variants references
+#'
 #' @examples
 #' element <- list(
 #'   most_severe_consequence = "missense_variant",
@@ -318,6 +324,8 @@ vep_pick_transcript <- function(element) {
 #' @param element One parsed VEP result element.
 #'
 #' @return A one-row tibble.
+#'
+#' @inherit vep_variants references
 #'
 #' @examples
 #' element <- list(
@@ -617,6 +625,8 @@ vep_empty_colocated <- function() {
 #' @return A tibble with one row per entry in `keys`: a `key` column, the
 #'   columns of [vep_parse_element()], then those of [vep_parse_colocated()].
 #'
+#' @inherit vep_variants references
+#'
 #' @export
 vep_parse_batch <- function(body, keys) {
   by_key <- list()
@@ -648,8 +658,14 @@ vep_parse_batch <- function(body, keys) {
 #' @return A biohttp envelope whose `data` is a tibble with one row per variant,
 #'   in the order asked. See [vep_parse_batch()].
 #'
+#' @references
+#' McLaren et al. (2016). The Ensembl Variant Effect Predictor.
+#' Genome Biology 17, 122. \doi{10.1186/s13059-016-0974-4}
+#'
+#' Service documentation: <https://rest.ensembl.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(vep_variants("7", 140753336, "A", "T"))
 #' biohttp::body_or_null(vep_variants(
 #'   "7", 140753336, "A", "T",

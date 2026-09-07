@@ -69,6 +69,8 @@ UNIPROT_FEATURE_LABELS <- c(
 #' @return A tibble of `id`, `name`, `acronym`, `mim`, `causal`, and
 #'   `source_url`. `NULL` when the entry curates no disease involvement.
 #'
+#' @inherit uniprot_diseases references
+#'
 #' @examples
 #' body <- list(comments = list(list(
 #'   commentType = "DISEASE",
@@ -147,6 +149,8 @@ uniprot_parse_diseases <- function(body) {
 #'   zero-row tibble when the entry has no features of the requested types,
 #'   because "this protein has no annotated domains" is a real answer.
 #'
+#' @inherit uniprot_features references
+#'
 #' @examples
 #' body <- list(features = list(
 #'   list(type = "DOMAIN", description = "Protein kinase", begin = "457", end = "717")
@@ -191,6 +195,8 @@ uniprot_parse_features <- function(body) {
 #'
 #' @return The rows of `features` whose `begin`/`end` span `position`.
 #'
+#' @inherit uniprot_features references
+#'
 #' @examples
 #' features <- uniprot_parse_features(list(features = list(
 #'   list(type = "DOMAIN", description = "Kinase", begin = "457", end = "717")
@@ -225,8 +231,15 @@ uniprot_features_at <- function(features, position) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [uniprot_parse_diseases()].
 #'
+#' @references
+#' The UniProt Consortium (2025). UniProt: the Universal Protein
+#' Knowledgebase in 2025. Nucleic Acids Research 53(D1), D609-D617.
+#' \doi{10.1093/nar/gkae1010}
+#'
+#' Service documentation: <https://www.uniprot.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(uniprot_diseases("P04637"))
 #' }
 #'
@@ -272,8 +285,19 @@ uniprot_diseases <- function(accession, ...) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [uniprot_parse_features()].
 #'
+#' @references
+#' Nightingale et al. (2017). The Proteins API: accessing key integrated
+#' protein and genome information. Nucleic Acids Research 45(W1), W539-W544.
+#' \doi{10.1093/nar/gkx237}
+#'
+#' The data it serves is UniProt's. The UniProt Consortium (2025). UniProt:
+#' the Universal Protein Knowledgebase in 2025. Nucleic Acids Research 53(D1),
+#' D609-D617. \doi{10.1093/nar/gkae1010}
+#'
+#' Service documentation: <https://www.ebi.ac.uk/proteins/api/doc/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(uniprot_features("P15056"))
 #' }
 #'

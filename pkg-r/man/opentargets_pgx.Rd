@@ -23,8 +23,15 @@ Most genes have none, so \code{no_data} here is the ordinary answer rather than 
 sign anything went wrong.
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(opentargets_pgx("ENSG00000165841"))
 }
 
+}
+\references{
+Buniello et al. (2025). Open Targets Platform: facilitating therapeutic
+hypotheses building in drug discovery. Nucleic Acids Research 53(D1),
+D1467-D1475. \doi{10.1093/nar/gkae1128}
+
+Service documentation: \url{https://platform.opentargets.org/}
 }

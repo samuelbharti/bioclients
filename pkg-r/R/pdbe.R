@@ -29,6 +29,8 @@ PDBE_WEB <- "https://www.ebi.ac.uk/pdbe/entry/pdb"
 #' @return A tibble of `pdb_id`, `method`, `resolution`, `coverage`, and
 #'   `source_url`, one row per distinct structure. `NULL` when there are none.
 #'
+#' @inherit pdbe_structures references
+#'
 #' @examples
 #' body <- list(P21359 = list(
 #'   list(pdb_id = "7pgp", chain_id = "F", experimental_method = "Electron Microscopy",
@@ -71,8 +73,15 @@ pdbe_parse_structures <- function(body, accession = NA_character_) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [pdbe_parse_structures()].
 #'
+#' @references
+#' Armstrong et al. (2020). PDBe: improved findability of macromolecular
+#' structure data in the PDB. Nucleic Acids Research 48(D1), D335-D343.
+#' \doi{10.1093/nar/gkz990}
+#'
+#' Service documentation: <https://www.ebi.ac.uk/pdbe/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(pdbe_structures("P21359"))
 #' }
 #'

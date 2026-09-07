@@ -37,3 +37,10 @@ body <- list(comments = list(list(
 uniprot_parse_diseases(body)
 
 }
+\references{
+The UniProt Consortium (2025). UniProt: the Universal Protein
+Knowledgebase in 2025. Nucleic Acids Research 53(D1), D609-D617.
+\doi{10.1093/nar/gkae1010}
+
+Service documentation: \url{https://www.uniprot.org/}
+}

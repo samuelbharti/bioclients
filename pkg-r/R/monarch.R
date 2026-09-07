@@ -64,6 +64,8 @@ MONARCH_GENE_PHENOTYPE <- "biolink:GeneToPhenotypicFeatureAssociation"
 #' @return A tibble of `id`, `name`, `category`, `description`, `taxon`, and
 #'   `source_url`, one row per match. `NULL` when there are none.
 #'
+#' @inherit monarch_search references
+#'
 #' @examples
 #' body <- list(items = list(list(
 #'   id = "HGNC:3603",
@@ -112,6 +114,8 @@ monarch_parse_search <- function(body) {
 #'   `primary_knowledge_source`, `knowledge_level`, and `publications`. `NULL`
 #'   when there are no associations.
 #'
+#' @inherit monarch_search references
+#'
 #' @examples
 #' body <- list(items = list(list(
 #'   subject = "MONDO:0017309",
@@ -157,6 +161,8 @@ monarch_parse_associations <- function(body) {
 #'
 #' @return A single string, or `NULL` when there is nothing usable.
 #'
+#' @inherit monarch_search references
+#'
 #' @examples
 #' monarch_hgnc_id("11998")
 #' monarch_hgnc_id("hgnc:11998")
@@ -186,8 +192,15 @@ monarch_hgnc_id <- function(hgnc) {
 #'   not the page size, so a caller can say how much was left behind rather than
 #'   presenting the first few as everything.
 #'
+#' @references
+#' Putman et al. (2024). The Monarch Initiative in 2024: an analytic
+#' platform integrating phenotypes, genes and diseases across species.
+#' Nucleic Acids Research 52(D1), D938-D949. \doi{10.1093/nar/gkad1082}
+#'
+#' Service documentation: <https://monarchinitiative.org/>
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(monarch_search("Marfan syndrome"))$matches
 #' }
 #'
@@ -246,8 +259,10 @@ monarch_search <- function(text, limit = 10, ...) {
 #' @return A biohttp envelope whose `data` is the tibble described in
 #'   [monarch_parse_associations()].
 #'
+#' @inherit monarch_search references
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(monarch_associations("MONDO:0007947"))
 #' }
 #'
@@ -301,8 +316,10 @@ monarch_associations <- function(
 #' @return A biohttp envelope whose `data` is a list of `associations` (the
 #'   tibble) and `total`.
 #'
+#' @inherit monarch_search references
+#'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' biohttp::body_or_null(monarch_gene_phenotypes("11998"))$associations
 #' }
 #'

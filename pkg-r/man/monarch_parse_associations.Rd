@@ -36,3 +36,10 @@ body <- list(items = list(list(
 monarch_parse_associations(body)
 
 }
+\references{
+Putman et al. (2024). The Monarch Initiative in 2024: an analytic
+platform integrating phenotypes, genes and diseases across species.
+Nucleic Acids Research 52(D1), D938-D949. \doi{10.1093/nar/gkad1082}
+
+Service documentation: \url{https://monarchinitiative.org/}
+}

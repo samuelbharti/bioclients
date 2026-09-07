@@ -22,8 +22,15 @@ A biohttp envelope whose \code{data} is a single string. See
 Functional context for a residue
 }
 \examples{
-\dontrun{
+\donttest{
 biohttp::body_or_null(protvar_function("P04637", 175))
 }
 
+}
+\references{
+Stephenson et al. (2024). ProtVar: mapping and contextualizing human
+missense variation. Nucleic Acids Research 52(W1), W140-W147.
+\doi{10.1093/nar/gkae413}
+
+Service documentation: \url{https://www.ebi.ac.uk/ProtVar/}
 }

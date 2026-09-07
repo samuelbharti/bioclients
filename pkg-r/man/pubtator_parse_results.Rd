@@ -26,3 +26,10 @@ body <- list(results = list(list(
 pubtator_parse_results(body)
 
 }
+\references{
+Wei et al. (2024). PubTator 3.0: an AI-powered literature resource for
+unlocking biomedical knowledge. Nucleic Acids Research 52(W1), W540-W546.
+\doi{10.1093/nar/gkae235}
+
+Service documentation: \url{https://www.ncbi.nlm.nih.gov/research/pubtator3/}
+}
