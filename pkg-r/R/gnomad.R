@@ -537,6 +537,8 @@ GNOMAD_VARIANT_FIELDS <- paste(
 #'
 #' @return A character vector of ids such as `"1-55516888-G-GA"`.
 #'
+#' @inherit gnomad_constraint references
+#'
 #' @examples
 #' gnomad_variant_id("chr1", 55516888, "g", "ga")
 #'
@@ -669,6 +671,8 @@ gnomad_empty_variant_row <- function(variant_id) {
 #'   `faf95_pop`, and `filters`. `NULL` when the body carries no variant,
 #'   which is how gnomAD answers for a variant it has never seen.
 #'
+#' @inherit gnomad_constraint references
+#'
 #' @examples
 #' body <- list(data = list(variant = list(
 #'   variant_id = "17-7676154-G-C",
@@ -721,6 +725,8 @@ gnomad_variant_error <- function(res) {
 #' @return A biohttp envelope whose `data` is the one-row tibble described in
 #'   [gnomad_parse_variant()]. `no_data` when gnomAD has no record of the
 #'   variant.
+#'
+#' @inherit gnomad_constraint references
 #'
 #' @examples
 #' \donttest{
@@ -810,6 +816,8 @@ gnomad_variant_alias_query <- function(variant_ids, dataset) {
 #' @return A tibble with one row per entry in `variant_ids`, same order. See
 #'   [gnomad_parse_variant()] for the columns.
 #'
+#' @inherit gnomad_constraint references
+#'
 #' @examples
 #' body <- list(data = list(
 #'   v1 = list(variant_id = "17-7676154-G-C", exome = list(af = 0.72)),
@@ -848,6 +856,8 @@ gnomad_parse_variants <- function(body, variant_ids) {
 #'
 #' @return A biohttp envelope whose `data` is a tibble with one row per entry
 #'   in `variant_ids`, in the same order. See [gnomad_parse_variant()].
+#'
+#' @inherit gnomad_constraint references
 #'
 #' @examples
 #' \donttest{

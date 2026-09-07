@@ -67,7 +67,7 @@ package behaves, and no function's arguments or output shape moved.
 
 * Every help page now cites the service behind it. The 29 service files each
   carry the canonical publication with a DOI and the service's own
-  documentation URL, and the other topics in the file inherit it, so all 125
+  documentation URL, and the other topics in the file inherit it, so all 134
   exported topics have a `References` section. Each DOI was resolved through
   CrossRef and checked against the title, author and pagination written here.
   `uniprot_features()` carries two, because it calls the EBI Proteins API on a

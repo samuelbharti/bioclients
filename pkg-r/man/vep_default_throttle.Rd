@@ -21,3 +21,9 @@ few minutes; \code{\link[=vep_variants_all]{vep_variants_all()}} applies it by d
 vep_default_throttle()
 
 }
+\references{
+McLaren et al. (2016). The Ensembl Variant Effect Predictor.
+Genome Biology 17, 122. \doi{10.1186/s13059-016-0974-4}
+
+Service documentation: \url{https://rest.ensembl.org/}
+}
