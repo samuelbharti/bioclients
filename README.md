@@ -33,7 +33,7 @@ r-universe serves prebuilt binaries of the latest release:
 install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
 ```
 
-## A first call
+## Usage
 
 ```r
 library(bioclients)
@@ -75,32 +75,19 @@ drift in ways that are hard to see from inside any one app. This package is the
 one copy, laid out the way `genescout` already lays them out: one file per
 service, with the client kept separate from the parser.
 
-## The shape of a client
+## Scope
 
-Every service module ships two halves. The client builds a request, calls into
-[`biohttp`](https://github.com/samuelbharti/biohttp), and returns the envelope,
-so it is the half that knows URLs, parameters and rate limits. The parser takes
-an already-parsed body and returns a canonical structure, touching no network at
-all. A caller holding a response body can reach for the parser alone, and the
-tests do exactly that, against stored bodies rather than a mock server.
+bioclients fetches and parses, and stops there. Ranking, scoring, curation and
+disease-to-gene assembly belong to the app that calls it. Retries, caching and
+error handling belong to [`biohttp`](https://github.com/samuelbharti/biohttp)
+underneath. There is no Shiny code here.
 
-## What it does not do
+## Services
 
-- **No ranking or scoring.** A source-weighted model belongs to the app that
-  holds it.
-- **No curation.** LLM curation and evidence review stay in the consuming apps.
-- **No disease-to-gene assembly.** That is a consuming app's product.
-- **No Shiny.** Same rule as `biohttp`.
-- **No transport.** Retries, breakers, caching, and error normalization belong to
-  `biohttp`.
+Every service the app family calls has a client. The tables below group them by
+what you are looking up rather than alphabetically.
 
-## What is in it
-
-Every service the app family calls now has a client. The tables below group them
-by the question being asked rather than alphabetically, because a caller arrives
-knowing what they want to look up and not which service answers it.
-
-### Which gene is this
+### Genes
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
@@ -109,7 +96,7 @@ knowing what they want to look up and not which service answers it.
 Nearly every other lookup starts here, because the rest are keyed on an Entrez,
 Ensembl, UniProt or HGNC id rather than a symbol.
 
-### What is known about this variant
+### Variants
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
@@ -122,7 +109,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 | VariantValidator | `variantvalidator_normalize()` | | `variantvalidator_parse()` |
 | ClinGen Allele Registry | | `clingen_alleles()` | `clingen_parse_allele()`, `clingen_parse_batch()` |
 
-### Is this gene linked to disease, and is it druggable
+### Disease and drugs
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
@@ -134,7 +121,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 | PanelApp | `panelapp_panel()`, `panelapp_panels()` | `panelapp_all_panels()` | `panelapp_parse_index()`, `panelapp_parse_panel()` |
 | ClinGen gene validity | `clingen_validity_for()` | `clingen_gene_validity()` | `clingen_parse_validity()` |
 
-### What does the protein look like
+### Proteins
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
@@ -144,7 +131,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 | PDBe | `pdbe_structures()` | | `pdbe_parse_structures()` |
 | STRING | `string_partners()`, `string_network()` | `string_map_ids()` | `string_parse_partners()`, `string_parse_network()` |
 
-### Where is it expressed, and what does it do
+### Expression and function
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
@@ -153,7 +140,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 | QuickGO | `quickgo_annotations()` | | `quickgo_parse_annotations()` |
 | Reactome | `reactome_pathways()` | | `reactome_parse_pathways()` |
 
-### What phenotype does it cause
+### Phenotypes
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
@@ -161,7 +148,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 | Monarch | `monarch_search()`, `monarch_associations()`, `monarch_gene_phenotypes()` | | `monarch_parse_search()`, `monarch_parse_associations()` |
 | IMPC | `impc_mouse_ortholog()`, `impc_gene_phenotypes()` | | `impc_parse_ortholog()`, `impc_parse_phenotypes()` |
 
-### Who has written about it
+### Literature
 
 | Service | Ask about one | Ask about many | Pure parser |
 | --- | --- | --- | --- |
@@ -171,7 +158,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 `pkg-r/_pkgdown.yml` holds the same grouping for the reference index, and
 `NEWS.md` lists the verified behaviour each client pins.
 
-## Citing bioclients
+## Citation
 
 The package is archived on Zenodo. Use the concept DOI, which always resolves to
 the newest archived release:
