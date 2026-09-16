@@ -52,6 +52,22 @@ Every client returns an envelope rather than raising, so you branch on
 `res$status` and write no `tryCatch()` of your own. A source that has nothing to
 say answers `no_data`, which is an answer rather than a fault.
 
+Ask about many genes at once and the answer comes back one row per input, in the
+order you asked:
+
+```r
+res <- mygene_genes(c("TP53", "NOT_A_GENE", "BRAF"))
+biohttp::body_or_null(res)
+#> # A tibble: 3 x 8
+#>   symbol     entrez ...
+#>   TP53       7157
+#>   NOT_A_GENE NA        <- a row of NA, not a dropped row
+#>   BRAF       673
+```
+
+A miss keeps its row, because a shorter table silently shifts every row after it
+onto the wrong gene.
+
 ## Why
 
 The same clients keep getting written across the app family, and the copies have
