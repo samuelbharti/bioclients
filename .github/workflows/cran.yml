@@ -70,14 +70,23 @@ jobs:
           )
           print(res)
 
-          known <- c("Remotes", "not in the CRAN or BioC", "New submission")
+          # Warnings that --as-cran raises for reasons that are not defects.
+          # "Insufficient package version" appears once the package is on CRAN
+          # and the repository still holds the released version, which is the
+          # normal state between releases.
+          known <- c(
+            "Remotes",
+            "not in the CRAN or BioC",
+            "New submission",
+            "Insufficient package version"
+          )
           unexpected <- Filter(
             function(w) !any(vapply(known, grepl, logical(1), x = w, fixed = TRUE)),
             res$warnings
           )
           if (length(unexpected)) {
             cat("\nUnexpected warnings:\n", paste(unexpected, collapse = "\n"))
-            stop("R CMD check reported a warning that is not the known biohttp one")
+            stop("R CMD check reported a warning that is not on the known list")
           }
         shell: Rscript {0}
         working-directory: pkg-r
