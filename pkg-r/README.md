@@ -5,7 +5,7 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/bioclients)](https://CRAN.R-project.org/package=bioclients)
 [![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
 [![r-universe](https://samuelbharti.r-universe.dev/badges/bioclients)](https://samuelbharti.r-universe.dev/bioclients)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21770870.svg)](https://doi.org/10.5281/zenodo.21770870)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21770870-1682D4)](https://doi.org/10.5281/zenodo.21770870)
 <!-- badges: end -->
 
 Look up genes, variants and proteins from R. One consistent way to call gnomAD,
