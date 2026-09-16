@@ -68,20 +68,12 @@ biohttp::body_or_null(res)
 A miss keeps its row, because a shorter table silently shifts every row after it
 onto the wrong gene.
 
-## Why
+## Motivation
 
-The same clients keep getting written across the app family, and the copies have
-drifted in ways that are hard to see from inside any one app:
-
-| Service | State today |
-| --- | --- |
-| gnomAD | Three divergent copies. They do not return the same thing and they do not query the same fields. |
-| MyGene | Two copies, in `variant-reviewer` and `genescout`. |
-| Disease resolution | Two copies, in `genescout` and one other app. |
-
-[`genescout`](https://github.com/samuelbharti/genescout)`/R/tools/` keeps one
-file per service, with the client separate from the parser. That is the best
-layout in the family and it is the reference this package follows.
+The same clients keep getting written across the app family, and the copies
+drift in ways that are hard to see from inside any one app. This package is the
+one copy, laid out the way `genescout` already lays them out: one file per
+service, with the client kept separate from the parser.
 
 ## The shape of a client
 
