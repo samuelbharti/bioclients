@@ -3,9 +3,10 @@
 <!-- badges: start -->
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![CRAN status](https://www.r-pkg.org/badges/version/bioclients)](https://CRAN.R-project.org/package=bioclients)
-[![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
 [![r-universe](https://samuelbharti.r-universe.dev/badges/bioclients)](https://samuelbharti.r-universe.dev/bioclients)
+[![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21770870-1682D4)](https://doi.org/10.5281/zenodo.21770870)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/samuelbharti/bioclients/blob/main/LICENSE)
 <!-- badges: end -->
 
 Look up genes, variants and proteins from R. One consistent way to call gnomAD,
@@ -16,8 +17,7 @@ Each database gets one client, split in two. One half makes the request. The
 other turns the answer into a table, and that half needs no network at all, so
 it is tested against a saved response.
 
-The repository root `README.md` covers scope and how the repository is laid
-out.
+Documentation is at <https://www.samuelbharti.com/bioclients/>.
 
 ## Installation
 
@@ -30,10 +30,6 @@ For the development version:
 ```r
 pak::pak("samuelbharti/bioclients/pkg-r")
 ```
-
-The `pkg-r` on the end matters. The package sits in a subdirectory, not at the
-root of the repository, and an install that leaves it off fails without saying
-why.
 
 r-universe serves prebuilt binaries of the latest release:
 
@@ -105,13 +101,13 @@ against a stored body rather than a live service.
 ## Where the traps are written down
 
 Behaviour that cost real debugging time to establish is recorded as a comment at
-the call site and pinned by a test. `NEWS.md` lists them together: MyVariant's
-silent `notfound` without `assembly=hg38`, IMPC's missing `human_gene_symbol`
-field, GTEx's own versioned GENCODE id, MyGene's upper case `HGNC`, and the
-rest.
+the call site, pinned by a test, and collected in the
+[changelog](https://www.samuelbharti.com/bioclients/news/).
 
 ## Contributing
 
-See `CONTRIBUTING.md` at the repository root. Tests are offline, fixtures are
-ported rather than regenerated, and a ported fixture that needs editing is a
-signal that a parser changed behaviour during the port.
+See [`CONTRIBUTING.md`](https://github.com/samuelbharti/bioclients/blob/main/CONTRIBUTING.md).
+
+## License
+
+MIT. See [`LICENSE`](https://github.com/samuelbharti/bioclients/blob/main/LICENSE).

@@ -3,9 +3,10 @@
 <!-- badges: start -->
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![CRAN status](https://www.r-pkg.org/badges/version/bioclients)](https://CRAN.R-project.org/package=bioclients)
-[![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
 [![r-universe](https://samuelbharti.r-universe.dev/badges/bioclients)](https://samuelbharti.r-universe.dev/bioclients)
+[![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21770870-1682D4)](https://doi.org/10.5281/zenodo.21770870)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/samuelbharti/bioclients/blob/main/LICENSE)
 <!-- badges: end -->
 
 Look up genes, variants and proteins from R. One consistent way to call gnomAD,
@@ -25,10 +26,6 @@ For the development version:
 ```r
 pak::pak("samuelbharti/bioclients/pkg-r")
 ```
-
-The `pkg-r` on the end matters. The package sits in a subdirectory, not at the
-root of the repository, and an install that leaves it off fails without saying
-why.
 
 r-universe serves prebuilt binaries of the latest release:
 
@@ -55,6 +52,22 @@ Every client returns an envelope rather than raising, so you branch on
 `res$status` and write no `tryCatch()` of your own. A source that has nothing to
 say answers `no_data`, which is an answer rather than a fault.
 
+Ask about many genes at once and the answer comes back one row per input, in the
+order you asked:
+
+```r
+res <- mygene_genes(c("TP53", "NOT_A_GENE", "BRAF"))
+biohttp::body_or_null(res)
+#> # A tibble: 3 x 8
+#>   symbol     entrez ...
+#>   TP53       7157
+#>   NOT_A_GENE NA        <- a row of NA, not a dropped row
+#>   BRAF       673
+```
+
+A miss keeps its row, because a shorter table silently shifts every row after it
+onto the wrong gene.
+
 ## Why
 
 The same clients keep getting written across the app family, and the copies have
@@ -66,24 +79,18 @@ drifted in ways that are hard to see from inside any one app:
 | MyGene | Two copies, in `variant-reviewer` and `genescout`. |
 | Disease resolution | Two copies, in `genescout` and one other app. |
 
-[`genescout`](https://github.com/samuelbharti/genescout)`/R/tools/` holds 24
-client files with one file per service and the client kept separate from the
-parser. That is the best layout in the family and it is the reference this
-package follows.
+[`genescout`](https://github.com/samuelbharti/genescout)`/R/tools/` keeps one
+file per service, with the client separate from the parser. That is the best
+layout in the family and it is the reference this package follows.
 
 ## The shape of a client
 
-Every service module ships two halves:
-
-1. **The client** builds a request, calls into
-   [`biohttp`](https://github.com/samuelbharti/biohttp), and returns the
-   envelope. It knows URLs, parameters, and rate limits. It touches the network.
-2. **The parser** takes an already-parsed body and returns a canonical structure.
-   It is pure and never touches the network.
-
-A caller that already has a response body can use the parser alone. A caller that
-wants both gets a thin wrapper. Fixture tests exercise the parser directly, with
-no network and no mock server.
+Every service module ships two halves. The client builds a request, calls into
+[`biohttp`](https://github.com/samuelbharti/biohttp), and returns the envelope,
+so it is the half that knows URLs, parameters and rate limits. The parser takes
+an already-parsed body and returns a canonical structure, touching no network at
+all. A caller holding a response body can reach for the parser alone, and the
+tests do exactly that, against stored bodies rather than a mock server.
 
 ## What it does not do
 
@@ -95,33 +102,11 @@ no network and no mock server.
 - **No transport.** Retries, breakers, caching, and error normalization belong to
   `biohttp`.
 
-## Repository layout
-
-The R package is in `pkg-r/`, not at the repository root:
-
-```text
-bioclients/
-├── .github/workflows/   R CMD check, imports-only, lint, pkgdown, secret scan
-├── air.toml .lintr .pre-commit-config.yaml
-├── README.md            this file: why it exists, scope, roadmap
-└── pkg-r/
-    ├── DESCRIPTION NAMESPACE NEWS.md
-    ├── README.md         the package itself: install and usage
-    ├── R/                one file per service, client and parser together
-    ├── man/figures/      the hex logo
-    └── tests/testthat/
-        └── fixtures/     stored response bodies, ported from the apps
-```
-
-The workflows only run on a pull request into `main`, and on the push to `main`
-that merges one. Everything else is checked locally through the prek hooks. See
-`CONTRIBUTING.md`.
-
 ## What is in it
 
-Every service the app family calls now has a client, 29 of them in all, grouped
-below by the question being asked rather than alphabetically, because a caller
-arrives knowing what they want to look up and not which service answers it.
+Every service the app family calls now has a client. The tables below group them
+by the question being asked rather than alphabetically, because a caller arrives
+knowing what they want to look up and not which service answers it.
 
 ### Which gene is this
 
@@ -194,134 +179,17 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 `pkg-r/_pkgdown.yml` holds the same grouping for the reference index, and
 `NEWS.md` lists the verified behaviour each client pins.
 
-```r
-res <- mygene_genes(c("TP53", "BRCA1", "EGFR"))
-biohttp::body_or_null(res)
-#> # A tibble: 3 x 7
-#>   symbol name              entrez ensembl_gene    uniprot ...
-#>   TP53   tumor protein p53 7157   ENSG00000141510 P04637
-#>   ...
-```
-
-The batch entry points return one row per input, **in input order**, so you can
-zip results onto your inputs by position. An unmatched gene gets a row of `NA`
-rather than being dropped, because a shorter table silently shifts every row
-after it onto the wrong gene.
-
-### gnomAD has two query types, not one
-
-The three copies of this client in the family disagreed because they answer
-different questions: variant frequency, and gene constraint. Both are here, as
-separate entry points. Neither is folded into the other, and constraint is not
-dropped because two of the three callers wanted frequency. One caller's whole
-ranking model is built on LOEUF, which is `gnomad_constraint()`.
-
-### Where the line sits on scoring
-
-Two of these clients had a scoring step in their original app copy and it did not
-come across. Pharos's source clients mapped its TDL category onto a 0 to 1
-weight; this client returns the category. DGIdb's returned a count the app then
-weighted; this one returns the count.
-
-Turning a value into a weight is ranking, and ranking is the consuming app's
-product. Copying the weights down here would put that model in two places, and a
-change to it would then need a release of this package.
-
-### Absence of evidence is not evidence of absence
-
-`dgidb_parse_genes()` reports `NA` for a gene DGIdb has never heard of and `0`
-for a gene it knows with no recorded interactions. `civic_parse_gene()` draws the
-same line. The difference matters: collapsing them tells a caller that an unknown
-gene is known not to be druggable, which is a much stronger claim than the data
-supports.
-
-## Dependencies
-
-`Imports` is `biohttp` for transport, `httr2` for the one client that has to
-assemble its own request, and `tibble`.
-
-Everything a single service needs goes in `Suggests`, guarded at the call site
-with `requireNamespace()`. This is an architectural requirement, not a cleanup
-task: a caller that wants MyGene must not install the dependency closure of the
-other services. The `imports-only` CI job is what enforces it, by installing hard
-dependencies only and then running the suite.
-
-## No compiled code
-
-The package is pure R. There is no `src/`, and there will not be.
-
-That was measured, not assumed. Against the live MyGene API a call spends about
-210 ms on the network and 0.2 ms parsing the response. Parsing is around a
-tenth of one percent of the work, and the biggest stored response in the whole
-fixture set is 8 KB. The time goes on I/O, so the things that make this faster
-are concurrent requests, batch endpoints and the cache `biohttp` already has,
-none of which need C.
-
-## Roadmap
-
-| Phase | State |
-| --- | --- |
-| 0. Scaffold | done |
-| 1. Three pilot clients: MyGene, gnomAD, ClinVar | done |
-| 1b. Batch A, the GraphQL services: Open Targets, DGIdb, Pharos, CIViC | done |
-| 2. Expand to every remaining service | done, 29 clients and 134 exports |
-| 3. Confirm the ported behaviour against live services | done, 28 of 29 confirmed |
-| 4a. Move `variant-reviewer` onto `biohttp` | shown to work, not landed |
-| 4b. Move `variant-reviewer` onto `bioclients` | not started |
-
-Phase 3 called every service once, then checked the five claims that had never
-been tested against a real server. Four held: MyGene's upper case `HGNC`,
-Reactome's 404, PanelApp's `search` that does not filter, and Ensembl's array
-wrapping a single record. The fifth did not, and that was useful. Monarch's two
-hosts turned out to serve all three routes with the same payloads, so they
-collapsed to one and Monarch now has one circuit breaker instead of two.
-
-Pharos is the one service the run could not confirm, because it was answering
-HTTP 502 from its own gateway at the time. That is an outage rather than a
-finding.
-
-The checks live in `pkg-r/tests/testthat/test-live.R` and never run on their own.
-No CI job sets the variable that turns them on.
-
-```sh
-BIOCLIENTS_LIVE=true Rscript -e 'devtools::test("pkg-r", filter = "live")'
-```
-
-Phase 4a has a working demo. Swapping `variant-reviewer`'s HTTP layer for
-`biohttp` touched one file, left its eleven API clients alone, and passed the
-app's whole suite at 340 of 340, with live calls confirmed against four
-services. It also turned up three real bugs in `biohttp`, fixed in 0.1.1.
-
-Phase 4b is the bigger half and has not started. `variant-reviewer` still has
-its own client for each service, which is the duplication bioclients exists to
-remove.
-
-## Testing
-
-Offline by default. The parsers run against stored response bodies ported
-unchanged from the apps this package replaces, mostly `genescout` and
-`variant-reviewer` with a smaller number from two other apps in the family. A
-fixture that needed editing would mean the parser changed behaviour during the
-port.
-
-One file is the exception. `pkg-r/tests/testthat/test-live.R` calls real
-services, which is the only way to answer whether a ported claim is still true.
-It is gated three ways, on `BIOCLIENTS_LIVE`, on not being CRAN, and on having a
-network, so it skips unless it is asked for by name. No CI job sets the variable.
-
 ## Citing bioclients
 
-Each release is archived on Zenodo. Use the concept DOI, which always resolves to
-the newest release:
+The package is archived on Zenodo. Use the concept DOI, which always resolves to
+the newest archived release:
 
 > Bharti, S. (2026). *bioclients: Clients for Biological Database Web Services*.
 > Zenodo. <https://doi.org/10.5281/zenodo.21770870>
 
-To pin the exact version you used, cite its own DOI instead. Version 0.1.0 is
-[10.5281/zenodo.21770871](https://doi.org/10.5281/zenodo.21770871).
-
-`CITATION.cff` carries the same metadata, so `citation("bioclients")` in R and
-the "Cite this repository" button on GitHub both work.
+`CITATION.cff` carries the same metadata and one identifier per archived
+version, so `citation("bioclients")` in R and the "Cite this repository" button
+on GitHub both work.
 
 ## Acknowledgements
 
