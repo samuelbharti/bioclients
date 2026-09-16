@@ -1,5 +1,13 @@
 # bioclients (R package) <img src="man/figures/logo.png" align="right" height="139" alt="bioclients logo" />
 
+<!-- badges: start -->
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN status](https://www.r-pkg.org/badges/version/bioclients)](https://CRAN.R-project.org/package=bioclients)
+[![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
+[![r-universe](https://samuelbharti.r-universe.dev/badges/bioclients)](https://samuelbharti.r-universe.dev/bioclients)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21770870.svg)](https://doi.org/10.5281/zenodo.21770870)
+<!-- badges: end -->
+
 Look up genes, variants and proteins from R. One consistent way to call gnomAD,
 ClinVar, UniProt, Ensembl and the other databases you already use, instead of
 writing a client for each one.
@@ -14,6 +22,12 @@ out.
 ## Installation
 
 ```r
+install.packages("bioclients")
+```
+
+For the development version:
+
+```r
 pak::pak("samuelbharti/bioclients/pkg-r")
 ```
 
@@ -21,15 +35,11 @@ The `pkg-r` on the end matters. The package sits in a subdirectory, not at the
 root of the repository, and an install that leaves it off fails without saying
 why.
 
-r-universe works too, and pulls in `biohttp` for you:
+r-universe serves prebuilt binaries of the latest release:
 
 ```r
 install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
 ```
-
-bioclients is not on CRAN yet.
-[`biohttp`](https://github.com/samuelbharti/biohttp), the transport underneath
-it, is.
 
 ## Usage
 
