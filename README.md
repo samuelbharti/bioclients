@@ -1,21 +1,26 @@
 # bioclients <img src="pkg-r/man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN status](https://www.r-pkg.org/badges/version/bioclients)](https://CRAN.R-project.org/package=bioclients)
 [![R-CMD-check](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml/badge.svg)](https://github.com/samuelbharti/bioclients/actions/workflows/r.yml)
 [![r-universe](https://samuelbharti.r-universe.dev/badges/bioclients)](https://samuelbharti.r-universe.dev/bioclients)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21770870.svg)](https://doi.org/10.5281/zenodo.21770870)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21770870-1682D4)](https://doi.org/10.5281/zenodo.21770870)
 <!-- badges: end -->
 
 Look up genes, variants and proteins from R. One consistent way to call gnomAD,
 ClinVar, UniProt, Ensembl and the other databases you already use, instead of
 writing a client for each one.
 
-> **Status:** 0.1.0 is the current release. 0.1.1 is ready and going to CRAN
-> next. Docs are at <https://www.samuelbharti.com/bioclients/>. What can still
-> change is the shape of a parser's output. A change to a column that already
-> exists is a breaking change.
+Documentation is at <https://www.samuelbharti.com/bioclients/>.
 
 ## Installation
+
+```r
+install.packages("bioclients")
+```
+
+For the development version:
 
 ```r
 pak::pak("samuelbharti/bioclients/pkg-r")
@@ -25,15 +30,11 @@ The `pkg-r` on the end matters. The package sits in a subdirectory, not at the
 root of the repository, and an install that leaves it off fails without saying
 why.
 
-r-universe works too, and pulls in `biohttp` for you:
+r-universe serves prebuilt binaries of the latest release:
 
 ```r
 install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
 ```
-
-bioclients is not on CRAN yet.
-[`biohttp`](https://github.com/samuelbharti/biohttp), the transport underneath
-it, is.
 
 ## A first call
 
