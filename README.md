@@ -27,10 +27,6 @@ For the development version:
 pak::pak("samuelbharti/bioclients/pkg-r")
 ```
 
-The `pkg-r` on the end matters. Leave it off and the install fails, because the
-package sits in a subdirectory rather than at the repository root, and nothing in
-the error says so.
-
 r-universe serves prebuilt binaries of the latest release:
 
 ```r
