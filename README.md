@@ -89,7 +89,7 @@ what you are looking up rather than alphabetically.
 
 ### Genes
 
-| Service | Ask about one | Ask about many | Pure parser |
+| Service | Single call | Batch call | Parser |
 | --- | --- | --- | --- |
 | MyGene | `mygene_gene()` | `mygene_genes()` | `mygene_parse_hits()`, `mygene_parse_batch()` |
 
@@ -98,7 +98,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 
 ### Variants
 
-| Service | Ask about one | Ask about many | Pure parser |
+| Service | Single call | Batch call | Parser |
 | --- | --- | --- | --- |
 | gnomAD constraint | `gnomad_constraint()` | `gnomad_constraints()` | `gnomad_parse_constraint()`, `gnomad_parse_constraints()` |
 | gnomAD frequency | `gnomad_frequency()`, `gnomad_frequency_by_id()` | `gnomad_frequencies()` | `gnomad_parse_frequency()`, `gnomad_parse_variant()`, `gnomad_parse_variants()`, `gnomad_parse_populations()` |
@@ -111,7 +111,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 
 ### Disease and drugs
 
-| Service | Ask about one | Ask about many | Pure parser |
+| Service | Single call | Batch call | Parser |
 | --- | --- | --- | --- |
 | Open Targets | `opentargets_gene_diseases()`, `opentargets_disease_targets()`, `opentargets_resolve_disease()`, `opentargets_drugs()`, `opentargets_pgx()` | | `opentargets_parse_diseases()`, `opentargets_parse_targets()`, `opentargets_parse_matches()` |
 | DGIdb | `dgidb_gene()` | `dgidb_genes()` | `dgidb_parse_genes()` |
@@ -123,7 +123,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 
 ### Proteins
 
-| Service | Ask about one | Ask about many | Pure parser |
+| Service | Single call | Batch call | Parser |
 | --- | --- | --- | --- |
 | UniProt | `uniprot_diseases()`, `uniprot_features()` | | `uniprot_parse_diseases()`, `uniprot_parse_features()` |
 | ProtVar | `protvar_function()`, `protvar_population()` | | `protvar_parse_function()`, `protvar_parse_population()` |
@@ -133,7 +133,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 
 ### Expression and function
 
-| Service | Ask about one | Ask about many | Pure parser |
+| Service | Single call | Batch call | Parser |
 | --- | --- | --- | --- |
 | GTEx | `gtex_median_expression()`, `gtex_gene_reference()` | | `gtex_parse_expression()`, `gtex_parse_reference()` |
 | Human Protein Atlas | `hpa_gene()` | | `hpa_parse_gene()` |
@@ -142,7 +142,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 
 ### Phenotypes
 
-| Service | Ask about one | Ask about many | Pure parser |
+| Service | Single call | Batch call | Parser |
 | --- | --- | --- | --- |
 | HPO | `hpo_search()`, `hpo_term()`, `hpo_gene_annotation()` | | `hpo_parse_search()`, `hpo_parse_term()`, `hpo_parse_diseases()` |
 | Monarch | `monarch_search()`, `monarch_associations()`, `monarch_gene_phenotypes()` | | `monarch_parse_search()`, `monarch_parse_associations()` |
@@ -150,7 +150,7 @@ Ensembl, UniProt or HGNC id rather than a symbol.
 
 ### Literature
 
-| Service | Ask about one | Ask about many | Pure parser |
+| Service | Single call | Batch call | Parser |
 | --- | --- | --- | --- |
 | Europe PMC | `europepmc_search()`, `europepmc_count()` | | `europepmc_parse_results()`, `europepmc_parse_count()` |
 | PubTator3 | `pubtator_gene_literature()` | | `pubtator_parse_results()`, `pubtator_parse_count()` |
