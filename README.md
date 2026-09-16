@@ -12,10 +12,7 @@ Look up genes, variants and proteins from R. One consistent way to call gnomAD,
 ClinVar, UniProt, Ensembl and the other databases you already use, instead of
 writing a client for each one.
 
-> **Status:** 0.1.0 is the current release. 0.1.1 is ready and going to CRAN
-> next. Docs are at <https://www.samuelbharti.com/bioclients/>. What can still
-> change is the shape of a parser's output. A change to a column that already
-> exists is a breaking change.
+Documentation is at <https://www.samuelbharti.com/bioclients/>.
 
 ## Installation
 
