@@ -84,8 +84,8 @@ underneath. There is no Shiny code here.
 
 ## Services
 
-Every service the app family calls has a client. The tables below group them by
-what you are looking up rather than alphabetically.
+Each service below has a client. The tables group them by what you are looking
+up rather than alphabetically.
 
 ### Genes
 
