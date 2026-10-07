@@ -194,6 +194,174 @@ test_that("the batch path carries the column too", {
   expect_identical(out$hgnc, c("11998", NA_character_))
 })
 
+# --- Genes with several Ensembl ids -----------------------------------------
+
+test_that("PTEN keeps its reference id when MyGene also lists a patch id", {
+  # Recorded live on 2026-10-07 with the client's own request: q=PTEN,
+  # species=human, size=5 and MYGENE_FIELDS. MyGene sends `ensembl` as a list
+  # of two objects, and the second id sits on HG2334_PATCH. Before this was
+  # fixed, the column came back NA for every such gene.
+  body <- read_fixture("mygene_pten.json")
+  expect_null(names(body$hits[[1]]$ensembl))
+
+  out <- mygene_parse_hits(body, "PTEN")
+  expect_identical(out$ensembl_gene, "ENSG00000171862")
+})
+
+test_that("HLA-A keeps the chromosome 6 id, which MyGene lists last", {
+  # Recorded live on 2026-10-07, same request as above with q=HLA-A. HLA-A has
+  # eight ids, seven of them on alternate haplotypes. The first in the list is
+  # one of those, so taking the first would give an id that looks fine and that
+  # Open Targets and the Human Protein Atlas do not know.
+  body <- read_fixture("mygene_hla_a.json")
+  ensembl <- body$hits[[1]]$ensembl
+  expect_length(ensembl, 8)
+  expect_false(identical(ensembl[[1]]$gene, "ENSG00000206503"))
+
+  out <- mygene_parse_hits(body, "HLA-A")
+  expect_identical(out$ensembl_gene, "ENSG00000206503")
+})
+
+test_that("a gene with an id on X and one on Y keeps the X one", {
+  # SHOX sits in the region X and Y share, with a separate id on each. Y is
+  # listed first here on purpose, so the test shows the pick follows the
+  # chromosome and not the list order.
+  body <- list(
+    hits = list(list(
+      symbol = "SHOX",
+      ensembl = list(
+        list(gene = "ENSG00000292354"),
+        list(gene = "ENSG00000185960")
+      ),
+      genomic_pos = list(
+        list(chr = "Y", ensemblgene = "ENSG00000292354"),
+        list(chr = "X", ensemblgene = "ENSG00000185960")
+      )
+    ))
+  )
+
+  expect_identical(
+    mygene_parse_hits(body, "SHOX")$ensembl_gene,
+    "ENSG00000185960"
+  )
+})
+
+test_that("several ids and none on a reference chromosome give NA", {
+  # HLA-DRB3 exists only on alternate haplotypes. Any of its three ids would
+  # be a guess, and none of them is a reference id.
+  body <- list(
+    hits = list(list(
+      symbol = "HLA-DRB3",
+      ensembl = list(
+        list(gene = "ENSG00000231679"),
+        list(gene = "ENSG00000230463"),
+        list(gene = "ENSG00000196101")
+      ),
+      genomic_pos = list(
+        list(chr = "HSCHR6_MHC_QBL_CTG1", ensemblgene = "ENSG00000196101"),
+        list(chr = "HSCHR6_MHC_COX_CTG1", ensemblgene = "ENSG00000231679"),
+        list(chr = "HSCHR6_MHC_APD_CTG1", ensemblgene = "ENSG00000230463")
+      )
+    ))
+  )
+
+  expect_true(is.na(mygene_parse_hits(body, "HLA-DRB3")$ensembl_gene))
+})
+
+test_that("genomic_pos as one object, not a list, is read too", {
+  # MyGene sends a single position as an object, the way it sends a single
+  # Ensembl id. Here only the reference id has a position.
+  body <- list(
+    hits = list(list(
+      symbol = "PTEN",
+      ensembl = list(
+        list(gene = "ENSG00000284792"),
+        list(gene = "ENSG00000171862")
+      ),
+      genomic_pos = list(chr = "10", ensemblgene = "ENSG00000171862")
+    ))
+  )
+
+  expect_identical(
+    mygene_parse_hits(body, "PTEN")$ensembl_gene,
+    "ENSG00000171862"
+  )
+})
+
+test_that("several ids with no genomic_pos give NA, not a guess", {
+  body <- list(
+    hits = list(list(
+      symbol = "PTEN",
+      ensembl = list(
+        list(gene = "ENSG00000171862"),
+        list(gene = "ENSG00000284792")
+      )
+    ))
+  )
+
+  expect_true(is.na(mygene_parse_hits(body, "PTEN")$ensembl_gene))
+})
+
+test_that("a single id is kept wherever it sits, as before", {
+  # Only a choice between several ids needs a reference chromosome. One id is
+  # the only answer MyGene has, so it is kept.
+  body <- list(
+    hits = list(list(
+      symbol = "HLA-DRB3",
+      ensembl = list(gene = "ENSG00000196101"),
+      genomic_pos = list(
+        chr = "HSCHR6_MHC_QBL_CTG1",
+        ensemblgene = "ENSG00000196101"
+      )
+    ))
+  )
+
+  expect_identical(
+    mygene_parse_hits(body, "HLA-DRB3")$ensembl_gene,
+    "ENSG00000196101"
+  )
+})
+
+test_that("the batch path picks the reference id too", {
+  # Both paths build their row the same way, and the issue showed up in both.
+  body <- list(
+    list(
+      query = "PTEN",
+      symbol = "PTEN",
+      ensembl = list(
+        list(gene = "ENSG00000171862"),
+        list(gene = "ENSG00000284792")
+      ),
+      genomic_pos = list(
+        list(chr = "10", ensemblgene = "ENSG00000171862"),
+        list(chr = "HG2334_PATCH", ensemblgene = "ENSG00000284792")
+      )
+    ),
+    list(
+      query = "NF1",
+      symbol = "NF1",
+      ensembl = list(gene = "ENSG00000196712")
+    )
+  )
+  out <- mygene_parse_batch(body, c("PTEN", "NF1"))
+
+  expect_identical(out$ensembl_gene, c("ENSG00000171862", "ENSG00000196712"))
+})
+
+test_that("genomic_pos is requested, both the chromosome and the id", {
+  reset_transport()
+  url <- NULL
+  httr2::local_mocked_responses(function(req) {
+    url <<- req$url
+    mock_json('{"hits":[]}')
+  })
+
+  mygene_gene("PTEN")
+
+  expect_match(url, "genomic_pos.chr", fixed = TRUE)
+  expect_match(url, "genomic_pos.ensemblgene", fixed = TRUE)
+})
+
 # --- The batch client and its chunking ---------------------------------------
 
 # A mock that answers each batch POST with one hit per query it was sent,
