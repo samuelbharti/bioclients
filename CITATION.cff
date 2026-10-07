@@ -13,7 +13,7 @@ type: software
 # This describes the newest release, which is what somebody citing the package
 # should get.
 version: 0.1.1
-date-released: "2026-09-07"
+date-released: "2026-09-15"
 # The concept DOI, which always resolves to the newest release. Cite this one
 # unless you specifically need to pin the version you used.
 doi: 10.5281/zenodo.21770870
@@ -21,6 +21,9 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.21770871
     description: Version 0.1.0
+  - type: doi
+    value: 10.5281/zenodo.23221627
+    description: Version 0.1.1
 authors:
   - family-names: Bharti
     given-names: Samuel
