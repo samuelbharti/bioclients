@@ -366,12 +366,13 @@ test_that("live: PubTator3 answers with a literature count and results", {
   expect_populated(out$results, c("pmid", "title"), "PubTator3")
 })
 
-# --- The five behaviours only a live call can confirm ------------------------
+# --- Behaviours only a live call can confirm --------------------------------
 #
-# Each of these is a claim written as a comment at a call site, carried across
-# from an app during the port. Where the claim is about the response body, this
-# asserts against the raw body rather than the parsed result, because a parser
-# that had quietly adapted to a change would hide exactly what is being asked.
+# Each of these is a claim written as a comment at a call site. Most came
+# across from an app during the port; the PTEN one came from issue #39. Where
+# the claim is about the response body, this asserts against the raw body
+# instead of the parsed result, because a parser that had quietly adapted to a
+# change would hide exactly what is being asked.
 
 test_that("live: MyGene names the HGNC id in upper case", {
   # Asking for `hgnc` returns nothing at all, and nothing reads as "this gene
@@ -393,6 +394,30 @@ test_that("live: MyGene names the HGNC id in upper case", {
   expect_true("HGNC" %in% names(hit))
   expect_false("hgnc" %in% names(hit))
   expect_true(nzchar(as.character(hit$HGNC)))
+})
+
+test_that("live: MyGene lists two Ensembl ids for PTEN and the reference one is kept", {
+  # The raw field is checked as well as the column, so if MyGene ever changes
+  # the shape this says so instead of the parser hiding it. See the note above
+  # mygene_ensembl_gene() in R/mygene.R.
+  res <- biohttp::get_json(
+    MYGENE_BASE,
+    path = "query",
+    query = list(
+      q = "PTEN",
+      species = "human",
+      size = 5,
+      fields = MYGENE_FIELDS
+    ),
+    source = "MyGene"
+  )
+  expect_true(isTRUE(res$ok))
+  hit <- mygene_pick_hit(res$data$hits, "PTEN")
+  expect_null(names(hit$ensembl))
+  expect_gt(length(hit$ensembl), 1L)
+
+  out <- biohttp::body_or_null(mygene_gene("PTEN"))
+  expect_identical(out$ensembl_gene, "ENSG00000171862")
 })
 
 test_that("live: Reactome answers 404 for a gene it maps with no pathways", {

@@ -12,7 +12,9 @@ mygene_parse_batch(body, symbols)
 \item{symbols}{The identifiers that were queried, in the order asked.}
 }
 \value{
-A tibble with one row per entry in \code{symbols}, same order.
+A tibble with one row per entry in \code{symbols}, same order, with the
+columns of \code{\link[=mygene_parse_hits]{mygene_parse_hits()}}. The note there on \code{ensembl_gene} and
+\code{genomic_pos} applies here too.
 }
 \description{
 Pure. The batch \verb{/query} POST returns a flat array where each element echoes
