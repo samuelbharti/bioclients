@@ -180,7 +180,9 @@ mygene_pick_hit <- function(hits, token) {
 #'   `ensembl_gene`, `uniprot`, `hgnc`, and `type_of_gene`. `NULL` when the body
 #'   carries no usable hit. When a gene has several Ensembl ids, `ensembl_gene`
 #'   is the one on a reference chromosome (1 to 22, X, Y or MT), and `NA` when
-#'   none of them is.
+#'   none of them is. Picking it needs `genomic_pos` in the body, which
+#'   [mygene_gene()] and [mygene_genes()] ask for. A body fetched without it
+#'   gives `NA` for any gene with several ids.
 #'
 #' @inherit mygene_gene references
 #'
@@ -244,7 +246,9 @@ mygene_row <- function(hit, fallback_symbol = NA_character_) {
 #' @param body A parsed MyGene batch response, a flat list of hit records.
 #' @param symbols The identifiers that were queried, in the order asked.
 #'
-#' @return A tibble with one row per entry in `symbols`, same order.
+#' @return A tibble with one row per entry in `symbols`, same order, with the
+#'   columns of [mygene_parse_hits()]. The note there on `ensembl_gene` and
+#'   `genomic_pos` applies here too.
 #'
 #' @inherit mygene_gene references
 #'

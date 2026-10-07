@@ -18,7 +18,9 @@ A one-row tibble with \code{symbol}, \code{name}, \code{summary}, \code{entrez},
 \code{ensembl_gene}, \code{uniprot}, \code{hgnc}, and \code{type_of_gene}. \code{NULL} when the body
 carries no usable hit. When a gene has several Ensembl ids, \code{ensembl_gene}
 is the one on a reference chromosome (1 to 22, X, Y or MT), and \code{NA} when
-none of them is.
+none of them is. Picking it needs \code{genomic_pos} in the body, which
+\code{\link[=mygene_gene]{mygene_gene()}} and \code{\link[=mygene_genes]{mygene_genes()}} ask for. A body fetched without it
+gives \code{NA} for any gene with several ids.
 }
 \description{
 Pure. Takes an already-parsed response body and never touches the network, so

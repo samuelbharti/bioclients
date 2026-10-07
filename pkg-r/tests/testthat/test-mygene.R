@@ -268,6 +268,26 @@ test_that("several ids and none on a reference chromosome give NA", {
   expect_true(is.na(mygene_parse_hits(body, "HLA-DRB3")$ensembl_gene))
 })
 
+test_that("genomic_pos as one object, not a list, is read too", {
+  # MyGene sends a single position as an object, the way it sends a single
+  # Ensembl id. Here only the reference id has a position.
+  body <- list(
+    hits = list(list(
+      symbol = "PTEN",
+      ensembl = list(
+        list(gene = "ENSG00000284792"),
+        list(gene = "ENSG00000171862")
+      ),
+      genomic_pos = list(chr = "10", ensemblgene = "ENSG00000171862")
+    ))
+  )
+
+  expect_identical(
+    mygene_parse_hits(body, "PTEN")$ensembl_gene,
+    "ENSG00000171862"
+  )
+})
+
 test_that("several ids with no genomic_pos give NA, not a guess", {
   body <- list(
     hits = list(list(
