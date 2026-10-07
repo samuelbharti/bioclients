@@ -1,3 +1,16 @@
+# bioclients (development version)
+
+## MyGene
+
+* `mygene_gene()` and `mygene_genes()` now return an Ensembl id for genes that
+  MyGene maps to more than one id, such as PTEN and MUC16. Before this,
+  `ensembl_gene` was `NA` for all of them (#39). The extra ids sit on assembly
+  patches or alternate haplotypes, and the one on a reference chromosome is
+  kept. Taking the first id would not work: for HLA-A it is on an alternate
+  haplotype. A gene whose ids all sit off the reference chromosomes, such as
+  HLA-DRB3, gets `NA`. Lookups that start from `ensembl_gene`, such as
+  `opentargets_gene_diseases()` and `hpa_gene()`, now work for these genes.
+
 # bioclients 0.1.1
 
 ## Ensembl VEP

@@ -24,6 +24,9 @@ MYGENE_FIELDS <- paste(
   "HGNC",
   "type_of_gene",
   "summary",
+  # Only used to pick the reference Ensembl id. See mygene_ensembl_gene().
+  "genomic_pos.chr",
+  "genomic_pos.ensemblgene",
   sep = ","
 )
 
@@ -57,6 +60,68 @@ mygene_first <- function(x) {
     x <- unlist(x, use.names = FALSE)
   }
   if (length(x) == 0) NA_character_ else as.character(x[[1]])
+}
+
+# Chromosomes of the reference assembly, in the order a tie is broken. A gene
+# in the region X and Y share has one id on each, and X comes first.
+MYGENE_REFERENCE_CHROMOSOMES <- c(as.character(1:22), "X", "Y", "MT")
+
+# THE FIRST ENSEMBL ID IS NOT THE REFERENCE ONE.
+#
+# MyGene sends `ensembl` as one object for most genes, and as a list of objects
+# when a gene has more than one Ensembl id. The extra ids sit on assembly
+# patches or alternate haplotypes. Reading `ensembl.gene` off a list gives
+# nothing, which is how PTEN and MUC16 came back as NA.
+#
+# Taking the first id in the list is not the fix either, because the list is
+# not ordered reference first. HLA-A has eight ids and the one on chromosome 6
+# is the last. The first is on an alternate haplotype: it looks like a normal
+# id, and Open Targets and the Human Protein Atlas find nothing for it, since
+# both use reference ids.
+#
+# `ensembl` does not say where an id sits, so `genomic_pos` is fetched too. Each
+# of its entries pairs a chromosome with the id placed there. With several ids,
+# the one on a reference chromosome is kept. A gene with several ids and none
+# on a reference chromosome, such as HLA-DRB3, gets NA. A gene with one id keeps
+# it, wherever it sits, as before.
+mygene_ensembl_gene <- function(hit) {
+  ensembl <- biohttp::pluck_at(hit, "ensembl")
+  if (is.null(ensembl) || length(ensembl) == 0) {
+    return(NA_character_)
+  }
+  # One object has names. A list of objects does not.
+  entries <- if (is.null(names(ensembl))) ensembl else list(ensembl)
+  ids <- unlist(
+    lapply(entries, function(entry) biohttp::pluck_at(entry, "gene")),
+    use.names = FALSE
+  )
+  ids <- unique(as.character(ids))
+  ids <- ids[!is.na(ids) & nzchar(ids)]
+  if (length(ids) <= 1) {
+    return(if (length(ids) == 1) ids else NA_character_)
+  }
+
+  positions <- biohttp::pluck_at(hit, "genomic_pos")
+  if (!is.null(names(positions))) {
+    positions <- list(positions)
+  }
+  pos_id <- vapply(
+    positions,
+    function(pos) mygene_first(biohttp::pluck_at(pos, "ensemblgene")),
+    character(1)
+  )
+  pos_chr <- vapply(
+    positions,
+    function(pos) mygene_first(biohttp::pluck_at(pos, "chr")),
+    character(1)
+  )
+  keep <- pos_id %in% ids & pos_chr %in% MYGENE_REFERENCE_CHROMOSOMES
+  if (!any(keep)) {
+    return(NA_character_)
+  }
+  pos_id <- pos_id[keep]
+  pos_chr <- pos_chr[keep]
+  pos_id[[order(match(pos_chr, MYGENE_REFERENCE_CHROMOSOMES))[[1]]]]
 }
 
 #' Choose the best MyGene hit for a queried token
@@ -113,7 +178,9 @@ mygene_pick_hit <- function(hits, token) {
 #'
 #' @return A one-row tibble with `symbol`, `name`, `summary`, `entrez`,
 #'   `ensembl_gene`, `uniprot`, `hgnc`, and `type_of_gene`. `NULL` when the body
-#'   carries no usable hit.
+#'   carries no usable hit. When a gene has several Ensembl ids, `ensembl_gene`
+#'   is the one on a reference chromosome (1 to 22, X, Y or MT), and `NA` when
+#'   none of them is.
 #'
 #' @inherit mygene_gene references
 #'
@@ -150,7 +217,7 @@ mygene_row <- function(hit, fallback_symbol = NA_character_) {
     entrez = as.character(
       biohttp::pluck_at(hit, "entrezgene", default = NA_character_)
     ),
-    ensembl_gene = mygene_first(biohttp::pluck_at(hit, "ensembl", "gene")),
+    ensembl_gene = mygene_ensembl_gene(hit),
     uniprot = mygene_first(
       biohttp::pluck_at(hit, "uniprot", "Swiss-Prot")
     ),
