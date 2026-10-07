@@ -369,10 +369,10 @@ test_that("live: PubTator3 answers with a literature count and results", {
 # --- Behaviours only a live call can confirm --------------------------------
 #
 # Each of these is a claim written as a comment at a call site. Most came
-# across from an app during the port; the PTEN one came from issue #39. Where
-# the claim is about the response body, this asserts against the raw body
-# instead of the parsed result, because a parser that had quietly adapted to a
-# change would hide exactly what is being asked.
+# across from an app during the port; the MyGene PTEN and ClinVar allele ones
+# came from issues #39 and #40. Where the claim is about the response body, this
+# asserts against the raw body instead of the parsed result, because a parser
+# that had quietly adapted to a change would hide exactly what is being asked.
 
 test_that("live: MyGene names the HGNC id in upper case", {
   # Asking for `hgnc` returns nothing at all, and nothing reads as "this gene
@@ -471,6 +471,30 @@ test_that("live: the Ensembl VEP id route answers with an array, not a record", 
   expect_null(names(res$data))
   expect_gte(length(res$data), 1L)
   expect_true("most_severe_consequence" %in% names(res$data[[1]]))
+})
+
+test_that("live: a ClinVar term can match several records, and allele picks one", {
+  # See the note at the top of R/clinvar.R. The HGVS name of BRAF V600E matches
+  # more than one record. If ClinVar ever stops that, this says so.
+  search <- biohttp::get_json(
+    EUTILS_BASE,
+    path = "esearch.fcgi",
+    query = list(
+      db = "clinvar",
+      term = "NM_004333.6:c.1799T>A",
+      retmode = "json"
+    ),
+    source = "ClinVar",
+    throttle = clinvar_throttle()
+  )
+  expect_true(isTRUE(search$ok))
+  expect_gt(length(search$data$esearchresult$idlist), 1L)
+
+  out <- biohttp::body_or_null(
+    clinvar_classification("rs113488022", allele = "V600E")
+  )
+  expect_identical(out$accession, "VCV000013961")
+  expect_identical(out$n_matches, 1L)
 })
 
 test_that("live: every Monarch route answers on the one host", {

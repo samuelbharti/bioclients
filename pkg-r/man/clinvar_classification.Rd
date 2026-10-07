@@ -4,30 +4,52 @@
 \alias{clinvar_classification}
 \title{Look up the ClinVar classification for a variant}
 \usage{
-clinvar_classification(term, throttle = clinvar_throttle(), ...)
+clinvar_classification(term, throttle = clinvar_throttle(), allele = NULL, ...)
 }
 \arguments{
-\item{term}{A search term, usually an rsID or an accession.}
+\item{term}{A search term. An SPDI or a VCV accession matches one record; an
+rsID or an HGVS name can match several.}
 
 \item{throttle}{A throttle spec, see \code{\link[biohttp:req_defaults]{biohttp::req_defaults()}}. Defaults to
 the documented E-utilities rate for the key in use.}
 
+\item{allele}{Optional. The protein change you mean, such as \code{"V600E"} or
+\code{"p.Val600Glu"}, for a \code{term} that can match several records. \code{NULL}, \code{NA}
+and \code{""} mean no filter.}
+
 \item{...}{Passed to \code{\link[biohttp:get_json]{biohttp::get_json()}}.}
 }
 \value{
-A biohttp envelope whose \code{data} is a one-row tibble. See
-\code{\link[=clinvar_parse_record]{clinvar_parse_record()}}.
+A biohttp envelope whose \code{data} is a one-row tibble with the columns
+of \code{\link[=clinvar_parse_record]{clinvar_parse_record()}} and \code{n_matches}, the number of records that fit
+the request. \code{no_data} when nothing matches, including when no record has
+the protein change in \code{allele}.
 }
 \description{
-Resolves \code{term} to a ClinVar UID, then fetches that record. An rsID is the
-term that works best.
+Searches ClinVar for \code{term} and returns the classification of one record.
 }
-\section{An rsID does not identify an allele}{
+\section{A term can match several records}{
 
-The same caveat as \code{\link[=gnomad_frequency]{gnomad_frequency()}}. \code{7:g.140753336A>T} and
-\code{7:g.140753336A>C} share \code{rs113488022}, so a term that is only an rsID can
-resolve to a record for the other allele. ClinVar returns the first matching
-UID, and this function returns that record.
+ClinVar's search is a text search, and an rsID or an HGVS name often matches
+more than one record. \code{rs113488022} matches BRAF V600G and V600E, and ClinVar
+lists V600G first. \code{NM_004333.6:c.1799T>A}, the HGVS name of V600E, lists
+BRAF I208V first, a different variant at a different position.
+
+There are two ways to get the record you mean:
+\itemize{
+\item Pass a precise \code{term}. An SPDI such as \code{NC_000007.14:140753335:A:T}, or a
+VCV accession such as \code{VCV000013961}, matches one record.
+\item Pass \code{allele}, the protein change you mean, such as \code{"V600E"} or
+\code{"p.Val600Glu"}. It is checked against each record's own list of protein
+changes, and the first record that has it is returned.
+}
+
+Without either, the first record ClinVar lists is returned, and \code{n_matches}
+says how many records the term matched. A value above 1 means the row may be
+for a different variant from the one you meant.
+
+Only the first 20 records ClinVar lists are fetched, so \code{allele} is checked
+against those. An rsID or an HGVS name matches far fewer.
 }
 
 \section{The NCBI API key}{
@@ -49,7 +71,8 @@ ordinary query parameters, so they are part of the cache key.
 
 \examples{
 \donttest{
-biohttp::body_or_null(clinvar_classification("rs113488022"))
+biohttp::body_or_null(clinvar_classification("NC_000007.14:140753335:A:T"))
+biohttp::body_or_null(clinvar_classification("rs113488022", allele = "V600E"))
 }
 
 }
