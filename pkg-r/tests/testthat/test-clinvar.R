@@ -248,6 +248,54 @@ test_that("more than one allele is refused before any request", {
   expect_identical(calls, 0L)
 })
 
+test_that("a record esummary cannot summarise is skipped", {
+  # ClinVar can list a UID it no longer has a summary for. esummary then sends
+  # a record holding only `error`, and parsing that would give a row of NA.
+  reset_transport()
+  record <- paste(
+    readLines(
+      testthat::test_path("fixtures", "clinvar_40389.json"),
+      warn = FALSE
+    ),
+    collapse = ""
+  )
+  httr2::local_mocked_responses(function(req) {
+    if (grepl("esearch", req$url, fixed = TRUE)) {
+      return(mock_json(
+        '{"esearchresult":{"count":"2","idlist":["999","40389"]}}'
+      ))
+    }
+    mock_json(paste0(
+      '{"result":{"uids":["999","40389"],',
+      '"999":{"error":"cannot get document summary","uid":"999"},',
+      '"40389":',
+      record,
+      "}}"
+    ))
+  })
+
+  out <- biohttp::body_or_null(clinvar_classification("rs113488022"))
+
+  expect_identical(out$accession, "VCV000040389")
+})
+
+test_that("only error records is no_data, not a row of NA", {
+  reset_transport()
+  httr2::local_mocked_responses(function(req) {
+    if (grepl("esearch", req$url, fixed = TRUE)) {
+      return(mock_json('{"esearchresult":{"idlist":["999"]}}'))
+    }
+    mock_json(
+      '{"result":{"999":{"error":"cannot get document summary","uid":"999"}}}'
+    )
+  })
+
+  res <- clinvar_classification("rs113488022")
+
+  expect_identical(res$status, "no_data")
+  expect_match(res$detail, "no summary", fixed = TRUE)
+})
+
 test_that("retmax is sent, so the record limit is visible", {
   reset_transport()
   url <- NULL

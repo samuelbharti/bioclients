@@ -391,7 +391,13 @@ clinvar_classification <- function(
     biohttp::pluck_at(summary$data, "result", uid)
   })
   names(records) <- ids
-  records <- Filter(Negate(is.null), records)
+  # esummary answers a UID it cannot summarise with a record that holds only
+  # `error` and `uid`. Parsing that gives a row of NA, so it is dropped here and
+  # a real record later in the list is used instead.
+  records <- Filter(
+    function(record) !is.null(record) && is.null(record$error),
+    records
+  )
   if (length(records) == 0) {
     return(biohttp::status_no_data(
       source = "ClinVar",
