@@ -1,3 +1,20 @@
+# bioclients (development version)
+
+## ClinVar
+
+* `clinvar_classification()` gains `allele`, the protein change you mean, such
+  as `"V600E"` or `"p.Val600Glu"` (#40). ClinVar's search often matches several
+  records, and the first is not always the variant you asked for: `rs113488022`
+  lists BRAF V600G before V600E, the HGVS name of V600E lists BRAF I208V first,
+  and `rs121913343` lists TP53 R273G before R273C. With `allele`, the record
+  that has that protein change is returned, or `no_data` when none has it.
+* The result has a new column, `n_matches`: how many records fit the request.
+  A value above 1 means the row may be for a different variant from the one
+  you meant. Without `allele` the first record is still returned, so existing
+  code keeps working.
+* The help page now names the terms that match one record, an SPDI or a VCV
+  accession, and no longer suggests an rsID as the best term.
+
 # bioclients 0.1.1
 
 ## Ensembl VEP

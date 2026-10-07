@@ -2,9 +2,25 @@
 #
 # Ported from variant-reviewer/R/api_clinvar.R.
 #
-# Two requests, not one: esearch resolves a term to a UID, esummary turns that
-# UID into a record. There is no single-call endpoint, so the client makes both
-# and the caller sees one envelope.
+# Two requests, not one: esearch resolves a term to UIDs, esummary turns them
+# into records. There is no single-call endpoint, so the client makes both and
+# the caller sees one envelope. esummary takes every UID in one call, so a term
+# that matches several records still costs two requests.
+#
+# A TERM CAN MATCH SEVERAL RECORDS, AND THE FIRST IS OFTEN THE WRONG ONE.
+#
+# esearch is a text search. rs113488022 matches BRAF V600G and V600E, and lists
+# V600G first. NM_004333.6:c.1799T>A, the HGVS name of V600E, lists BRAF I208V
+# first, a different variant at a different position. rs121913343 lists TP53
+# R273G before R273C. Keeping the first UID returned the wrong record in all
+# three. That was issue #40.
+#
+# An SPDI or a VCV accession matches one record. For any other term the caller
+# can pass `allele`, a protein change, and the client keeps the record whose own
+# `protein_change` field has it. That field lists the change once per transcript
+# ("V600E, V512E, ..."), so it is split and matched as a list, not searched for
+# in the title. Without `allele` the first record is still returned, and
+# `n_matches` says how many records the term matched.
 #
 # THE NCBI KEY GOES IN THE QUERY STRING, NOT A HEADER.
 #
@@ -56,6 +72,78 @@ clinvar_identity_query <- function() {
     out$email <- email
   }
   out
+}
+
+# How many UIDs esearch is asked for. This is also its default, and it is sent
+# so the limit is visible here. An rsID or an HGVS name matches a handful.
+CLINVAR_MAX_RECORDS <- 20L
+
+# Three-letter amino acid codes to the one-letter codes ClinVar uses in
+# `protein_change`. Ter is a stop, which ClinVar writes as *.
+CLINVAR_AMINO_ACIDS <- c(
+  ala = "A",
+  arg = "R",
+  asn = "N",
+  asp = "D",
+  cys = "C",
+  gln = "Q",
+  glu = "E",
+  gly = "G",
+  his = "H",
+  ile = "I",
+  leu = "L",
+  lys = "K",
+  met = "M",
+  phe = "F",
+  pro = "P",
+  ser = "S",
+  thr = "T",
+  trp = "W",
+  tyr = "Y",
+  val = "V",
+  sec = "U",
+  pyl = "O",
+  ter = "*"
+)
+
+# Bring a protein change into the form ClinVar writes: "p.Val600Glu",
+# "p.(Val600Glu)" and "v600e" all become "V600E", and any frameshift ends in a
+# bare "fs", as in "Q1756fs". A form this does not recognise is returned
+# trimmed, and then simply matches no record.
+clinvar_protein_change <- function(allele) {
+  x <- gsub("[()]", "", sub("^p\\.", "", trimws(as.character(allele))))
+  three <- regmatches(
+    x,
+    regexec("^([A-Za-z]{3})([0-9]+)([A-Za-z]{3}|fs.*|\\*)$", x)
+  )[[1]]
+  if (length(three) == 4) {
+    from <- CLINVAR_AMINO_ACIDS[tolower(three[[2]])]
+    to <- if (startsWith(three[[4]], "fs")) {
+      "fs"
+    } else if (three[[4]] == "*") {
+      "*"
+    } else {
+      CLINVAR_AMINO_ACIDS[tolower(three[[4]])]
+    }
+    if (!anyNA(c(from, to))) {
+      return(unname(paste0(from, three[[3]], to)))
+    }
+  }
+  one <- regmatches(x, regexec("^([A-Za-z])([0-9]+)([A-Za-z*]|fs.*)$", x))[[1]]
+  if (length(one) == 4) {
+    to <- if (startsWith(one[[4]], "fs")) "fs" else toupper(one[[4]])
+    return(paste0(toupper(one[[2]]), one[[3]], to))
+  }
+  x
+}
+
+# TRUE when an esummary record lists `change` among its protein changes.
+clinvar_has_protein_change <- function(record, change) {
+  listed <- chr_at(record, "protein_change")
+  if (is.na(listed)) {
+    return(FALSE)
+  }
+  change %in% trimws(strsplit(listed, ",", fixed = TRUE)[[1]])
 }
 
 #' Collapse a ClinVar trait set into one condition string
@@ -163,14 +251,28 @@ clinvar_category <- function(significance) {
 
 #' Look up the ClinVar classification for a variant
 #'
-#' Resolves `term` to a ClinVar UID, then fetches that record. An rsID is the
-#' term that works best.
+#' Searches ClinVar for `term` and returns the classification of one record.
 #'
-#' @section An rsID does not identify an allele:
-#' The same caveat as [gnomad_frequency()]. `7:g.140753336A>T` and
-#' `7:g.140753336A>C` share `rs113488022`, so a term that is only an rsID can
-#' resolve to a record for the other allele. ClinVar returns the first matching
-#' UID, and this function returns that record.
+#' @section A term can match several records:
+#' ClinVar's search is a text search, and an rsID or an HGVS name often matches
+#' more than one record. `rs113488022` matches BRAF V600G and V600E, and ClinVar
+#' lists V600G first. `NM_004333.6:c.1799T>A`, the HGVS name of V600E, lists
+#' BRAF I208V first, a different variant at a different position.
+#'
+#' There are two ways to get the record you mean:
+#'
+#' * Pass a precise `term`. An SPDI such as `NC_000007.14:140753335:A:T`, or a
+#'   VCV accession such as `VCV000013961`, matches one record.
+#' * Pass `allele`, the protein change you mean, such as `"V600E"` or
+#'   `"p.Val600Glu"`. It is checked against each record's own list of protein
+#'   changes, and the first record that has it is returned.
+#'
+#' Without either, the first record ClinVar lists is returned, and `n_matches`
+#' says how many records the term matched. A value above 1 means the row may be
+#' for a different variant from the one you meant.
+#'
+#' Only the first 20 records ClinVar lists are fetched, so `allele` is checked
+#' against those. An rsID or an HGVS name matches far fewer.
 #'
 #' @section The NCBI API key:
 #' Set `NCBI_API_KEY` and both requests carry it, which raises the rate limit
@@ -185,13 +287,19 @@ clinvar_category <- function(significance) {
 #' biohttp builds its User-Agent from, and a blank one is omitted. They are
 #' ordinary query parameters, so they are part of the cache key.
 #'
-#' @param term A search term, usually an rsID or an accession.
+#' @param term A search term. An SPDI or a VCV accession matches one record; an
+#'   rsID or an HGVS name can match several.
 #' @param throttle A throttle spec, see [biohttp::req_defaults()]. Defaults to
 #'   the documented E-utilities rate for the key in use.
+#' @param allele Optional. The protein change you mean, such as `"V600E"` or
+#'   `"p.Val600Glu"`, for a `term` that can match several records. `NULL`, `NA`
+#'   and `""` mean no filter.
 #' @param ... Passed to [biohttp::get_json()].
 #'
-#' @return A biohttp envelope whose `data` is a one-row tibble. See
-#'   [clinvar_parse_record()].
+#' @return A biohttp envelope whose `data` is a one-row tibble with the columns
+#'   of [clinvar_parse_record()] and `n_matches`, the number of records that fit
+#'   the request. `no_data` when nothing matches, including when no record has
+#'   the protein change in `allele`.
 #'
 #' @references
 #' Landrum et al. (2018). ClinVar: improving access to variant
@@ -202,23 +310,42 @@ clinvar_category <- function(significance) {
 #'
 #' @examples
 #' \donttest{
-#' biohttp::body_or_null(clinvar_classification("rs113488022"))
+#' biohttp::body_or_null(clinvar_classification("NC_000007.14:140753335:A:T"))
+#' biohttp::body_or_null(clinvar_classification("rs113488022", allele = "V600E"))
 #' }
 #'
 #' @export
-clinvar_classification <- function(term, throttle = clinvar_throttle(), ...) {
+clinvar_classification <- function(
+  term,
+  throttle = clinvar_throttle(),
+  allele = NULL,
+  ...
+) {
   if (biohttp::is_blank(term)) {
     return(biohttp::status_no_data(
       source = "ClinVar",
       detail = "no variant identifier was supplied"
     ))
   }
+  if (length(allele) > 1) {
+    stop("allele must be a single protein change", call. = FALSE)
+  }
+  wanted <- if (biohttp::is_blank(allele)) {
+    NULL
+  } else {
+    clinvar_protein_change(allele)
+  }
   identity <- clinvar_identity_query()
   search <- biohttp::get_json(
     EUTILS_BASE,
     path = "esearch.fcgi",
     query = c(
-      list(db = "clinvar", term = as.character(term), retmode = "json"),
+      list(
+        db = "clinvar",
+        term = as.character(term),
+        retmode = "json",
+        retmax = CLINVAR_MAX_RECORDS
+      ),
       identity
     ),
     source = "ClinVar",
@@ -237,12 +364,21 @@ clinvar_classification <- function(term, throttle = clinvar_throttle(), ...) {
       detail = paste0("no ClinVar record for ", term)
     ))
   }
-  uid <- as.character(ids[[1]])
+  ids <- as.character(unlist(ids, use.names = FALSE))
+  matched <- suppressWarnings(as.integer(
+    biohttp::pluck_at(search$data, "esearchresult", "count", default = NA)
+  ))
+  if (is.na(matched)) {
+    matched <- length(ids)
+  }
 
   summary <- biohttp::get_json(
     EUTILS_BASE,
     path = "esummary.fcgi",
-    query = c(list(db = "clinvar", id = uid, retmode = "json"), identity),
+    query = c(
+      list(db = "clinvar", id = paste(ids, collapse = ","), retmode = "json"),
+      identity
+    ),
     source = "ClinVar",
     throttle = throttle,
     secret_query = clinvar_secret_query(),
@@ -251,16 +387,45 @@ clinvar_classification <- function(term, throttle = clinvar_throttle(), ...) {
   if (!isTRUE(summary$ok)) {
     return(summary)
   }
-  parsed <- clinvar_parse_record(
-    biohttp::pluck_at(summary$data, "result", uid),
-    uid
-  )
-  if (is.null(parsed)) {
+  records <- lapply(ids, function(uid) {
+    biohttp::pluck_at(summary$data, "result", uid)
+  })
+  names(records) <- ids
+  records <- Filter(Negate(is.null), records)
+  if (length(records) == 0) {
     return(biohttp::status_no_data(
       source = "ClinVar",
       http = summary$http,
-      detail = paste0("ClinVar returned no summary for UID ", uid)
+      detail = paste0(
+        "ClinVar returned no summary for UID ",
+        paste(ids, collapse = ", ")
+      )
     ))
   }
+  if (!is.null(wanted)) {
+    has_it <- vapply(
+      records,
+      clinvar_has_protein_change,
+      logical(1),
+      change = wanted
+    )
+    if (!any(has_it)) {
+      return(biohttp::status_no_data(
+        source = "ClinVar",
+        http = summary$http,
+        detail = paste0(
+          "no ClinVar record for ",
+          term,
+          " has the protein change ",
+          wanted
+        )
+      ))
+    }
+    records <- records[has_it]
+    matched <- length(records)
+  }
+
+  parsed <- clinvar_parse_record(records[[1]], names(records)[[1]])
+  parsed$n_matches <- as.integer(matched)
   biohttp::status_ok(data = parsed, source = "ClinVar", http = summary$http)
 }

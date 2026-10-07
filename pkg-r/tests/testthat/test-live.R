@@ -448,6 +448,30 @@ test_that("live: the Ensembl VEP id route answers with an array, not a record", 
   expect_true("most_severe_consequence" %in% names(res$data[[1]]))
 })
 
+test_that("live: a ClinVar term can match several records, and allele picks one", {
+  # See the note at the top of R/clinvar.R. The HGVS name of BRAF V600E matches
+  # more than one record. If ClinVar ever stops that, this says so.
+  search <- biohttp::get_json(
+    EUTILS_BASE,
+    path = "esearch.fcgi",
+    query = list(
+      db = "clinvar",
+      term = "NM_004333.6:c.1799T>A",
+      retmode = "json"
+    ),
+    source = "ClinVar",
+    throttle = clinvar_throttle()
+  )
+  expect_true(isTRUE(search$ok))
+  expect_gt(length(search$data$esearchresult$idlist), 1L)
+
+  out <- biohttp::body_or_null(
+    clinvar_classification("rs113488022", allele = "V600E")
+  )
+  expect_identical(out$accession, "VCV000013961")
+  expect_identical(out$n_matches, 1L)
+})
+
 test_that("live: every Monarch route answers on the one host", {
   # This is what let the second host go. See the note at the top of R/monarch.R.
   routes <- list(
