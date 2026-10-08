@@ -32,7 +32,8 @@ For the development version:
 pak::pak("samuelbharti/bioclients/pkg-r")
 ```
 
-r-universe serves prebuilt binaries of the latest release:
+r-universe builds from `main` and serves prebuilt binaries, so it has fixes
+before they reach CRAN:
 
 ```r
 install.packages("bioclients", repos = "https://samuelbharti.r-universe.dev")
