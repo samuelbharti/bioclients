@@ -15,7 +15,12 @@
 # Messages expected for reasons that are not defects. Each is matched against
 # the start of one message.
 known <- c(
-  # Between releases the repository holds the version CRAN already has.
+  # Between releases the version ends in .9000, as in 0.1.1.9000, which says it
+  # is newer than the last release and not a release itself. R notes any
+  # version part that large.
+  "Version contains large components",
+  # Right after a release, until the version moves to .9000, the repository
+  # holds the version CRAN already has.
   "Insufficient package version",
   # The examples call live services, so their elapsed time is the services'
   # time. cran-comments.md explains this to CRAN.
