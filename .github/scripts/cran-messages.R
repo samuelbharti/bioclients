@@ -27,6 +27,31 @@ known <- c(
   "Examples with CPU (user + system) or elapsed time > 5s"
 )
 
+# Messages expected only in exactly this form. Each is matched against the
+# whole message, with spacing ignored, so a message that reports anything more
+# is still unknown.
+known_whole <- c(
+  # ror.org answers the requests of the check with 429 Too Many Requests. R
+  # asks it about the ROR id of Posit twice, once for the link in the package
+  # help page and once for the id in DESCRIPTION, and reports both. The id is
+  # valid, so neither message is a defect. A second link in the same message,
+  # or any other status for this one, such as 404, is still unknown.
+  paste(
+    "Found the following (possibly) invalid URLs:",
+    "URL: https://ror.org/03wc8by49",
+    "From: man/bioclients-package.Rd",
+    "Status: 429",
+    "Message: Too Many Requests"
+  ),
+  paste(
+    "Found the following (possibly) invalid ROR IDs:",
+    "ID: 03wc8by49 (from: DESCRIPTION)"
+  )
+)
+
+# A message with each run of spaces, tabs and line breaks made one space.
+squish <- function(x) trimws(gsub("[[:space:]]+", " ", x))
+
 # One warning or note, as rcmdcheck gives it, to its separate messages. The
 # first line names the check. After it, findings are paragraphs split by blank
 # lines. The incoming check always opens with a "Maintainer:" paragraph, which
@@ -92,7 +117,9 @@ if (is.null(found)) {
 
 found$known <- vapply(
   found$message,
-  function(message) any(startsWith(message, known)),
+  function(message) {
+    any(startsWith(message, known)) || squish(message) %in% known_whole
+  },
   logical(1)
 )
 
